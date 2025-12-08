@@ -371,7 +371,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
   return (
 
     <motion.div 
-        className="w-[85%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white p-5"
+        className="w-[85%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white pb-10"
         whileHover={{ scale: 1.05 }} 
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
@@ -384,12 +384,12 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
             style={{ transformStyle: "preserve-3d", transformOrigin: "center" }}
         >
 
-            <div className={`absolute w-full h-full backface-hidden flex flex-col justify-center items-center rotate-y-180 gap-5`}>
+            <div className={`absolute w-full h-full backface-hidden flex flex-col justify-center items-center rotate-y-180 `}>
                 
                 <div className="w-full h-[30%] flex flex-col items-center justify-center">
                     
                     <motion.div 
-                        className="w-20 h-20 bg-white border-1 rounded-full flex 
+                        className="w-20 h-20 bg-white border-1 rounded-full flex
                                    items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
                         animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
@@ -420,7 +420,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                             </svg>
                         )}
                     </motion.div>
-                    <span className={`mt-1 block text-[11px] font-light text-black text-center tracking-widest`}>
+                    <span className={`mb-2 block text-[11px] font-light text-black text-center tracking-widest`}>
                         Choose a profile picture
                     </span>
                 </div>
@@ -463,6 +463,9 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                         </motion.div> 
 
                     </div>
+
+        
+
 
 
                     {/* SIGN UP dob */}
@@ -555,28 +558,31 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
 
                     {/* SIGN UP Password */}
                     <motion.div 
-                        className={`flex mt-5 flex-col justify-between ${showSignUp ? "" : "hidden"}`}
+                        className={`w-full h-full flex mt-5 flex-col justify-between ${showSignUp ? "" : "hidden"}`}
                         animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full h-full">
                             {[0, 1, 2, 3, 4, 5].map((i) => (
                                     <input
                                         key={i}
                                         ref={(el) => (passcode_inputRefs.current[i] = el)}
                                         maxLength={1}
-                                        type="password"
+                                        type="tel"
                                         inputMode="numeric"
                                         pattern="[0-9]*"
                                         onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs)}
-                                        onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)} 
-                                    className="w-8 h-8 flex items-center justify-center rounded-md bg-white
+                                        onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)}
+                                        onTouchStart={(e) => {
+                                            e.target.focus();
+                                        }} 
+                                    className="w-10 h-10 flex items-center justify-center rounded-md bg-white
                                                 text-center text-black text-md font-thin outline-1
                                                 focus:outline-2 focus:outline-indigo-500 cursor-text"
                                     tabIndex={0} 
                                     />
                             ))}
                         </div>
-                        <span htmlFor="email" className={`block mt-2 text-[11px] font-light text-black tracking-widest`}>
+                        <span htmlFor="email" className={`block mt-5 text-[11px] font-light text-black tracking-widest`}>
                             Choose a 6 digit password
                         </span>
                     </motion.div>
@@ -608,7 +614,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
             className={`w-full h-full flex flex-col items-center justify-center gap-5 ${confirmSignUp ? "" : "hidden"} `}
         >
             <span className={`block mt-2 text-[20px] font-light text-black text-center tracking-widest`}>
-                    Confirm your email
+                    Confirm your email {payload_inputRefs.signUp_confirm_user_email.current?.value}
             </span>     
             <motion.div 
                 className={`flex flex-col justify-between mt-5 ${showSignUp ? "" : "hidden"}`}

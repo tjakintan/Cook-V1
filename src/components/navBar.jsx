@@ -46,7 +46,7 @@ function NavItem({ to, label, ActiveIcon, DefaultIcon }) {
 function Navbar() {
   return (
     <motion.nav className="w-4/5 sm:w-2/3 md:w-1/2 lg:w-1/3 
-            fixed bottom-5 md:bottom-5 lg:bottom-5 left-1/2 transform -translate-x-1/2 
+            fixed bottom-1 md:bottom-5 lg:bottom-5 left-1/2 transform -translate-x-1/2 
             flex justify-around items-center 
             space-x-4 sm:space-x-6 p-4 outline-1
             rounded-[60px]  bg-white/30 backdrop-blur-lg 

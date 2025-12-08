@@ -29,7 +29,11 @@ function useFiveSecondDelay() {
 }
 
 export default function App() {
+    
     const showCooKWaitPage = useFiveSecondDelay();
+
+   
+
     if (!showCooKWaitPage) {
         return <CookMainPage />
     }

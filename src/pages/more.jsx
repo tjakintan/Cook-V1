@@ -69,12 +69,12 @@ export default function More() {
                         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto"/>
 
                         {/* SIGN UP/IN */}
-                        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none pb-5">
+                        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none pb-10 overflow-y-auto">
 
                             <div 
                                 className="w-full md:w-2/3 lg:w-4/5 h-[90%] md:h-4/5 lg-4/5 max-w-[600px] max-h-[600px]
-                                            rounded-[30px] pointer-events-auto
-                                            flex flex-col justify-center items-center p-5 bg-white">
+                                            rounded-[30px] pointer-events-auto 
+                                            flex flex-col justify-center items-center bg-white">
 
                                 <motion.div 
                                     className="relative w-full h-[10%] flex justify-center items-center"

@@ -23,10 +23,9 @@ export default function Upload() {
                     setFile={setSelectedFile}
                 />
                 {!accessToken && (
-                    <div className="fixed inset-0 w-screen h-screen overflow-hidden flex justify-center items-center bg-black/70 backdrop-blur-sm">
-                        <div className="w-[50%] md:w-[25%] lg:w-[25%] h-[20%] rounded-[30px] flex flex-col justify-between items-center bg-white py-5 px-2">
-                            <span className="font-thin tracking-wider text-[15px]">Please sign in to post</span>
-                            <div className="w-4/5 border-t border-gray-300"></div>
+                    <div className="fixed inset-0 w-screen h-screen overflow-hidden flex justify-center items-center bg-black/30 backdrop-blur-sm">
+                        <div className="w-[50%] md:w-[25%] lg:w-[25%] h-[20%] flex flex-col justify-center items-center">
+                            
                             <button 
                                 className="flex w-15 h-15 justify-center items-center rounded-full bg-black px-3 py-1.5 text-sm font-light text-white tracking-widest 
                                 cursor-pointer hover:border-[2px] hover:border-blue-600"
