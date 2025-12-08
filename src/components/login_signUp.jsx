@@ -371,7 +371,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
   return (
 
     <motion.div 
-        className="w-[90] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white p-5"
+        className="w-[90%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white p-5"
         whileHover={{ scale: 1.05 }} 
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >

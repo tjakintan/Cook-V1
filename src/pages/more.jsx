@@ -73,8 +73,8 @@ export default function More() {
 
                             <div 
                                 className="w-[90vw] h-[90vw] max-w-[600px] max-h-[600px]
-                                            overflow-hidden rounded-[30px] pointer-events-auto
-                                            flex flex-col justify-center items-center pb-5">
+                                             rounded-[30px] pointer-events-auto
+                                            flex flex-col justify-center items-center pb-5 gap-5">
 
                                 <motion.div 
                                     className="relative w-full h-[10%] flex justify-center items-center"
@@ -94,7 +94,7 @@ export default function More() {
                                     </button>
                                 </motion.div>
 
-                                <div className="relative w-full h-full  flex justify-center items-center">
+                                <div className="relative w-full h-full flex justify-center items-center">
                                     <SignUpIn showProfile={showProfile} setShowProfile={setShowProfile}/>
                                 </div>
 
@@ -116,7 +116,7 @@ export default function More() {
 
                 {/* Appearances Section */}    
                 <motion.div 
-                    className={`w-full h-1/5 flex justify-center items-center rounded-[30px] hover:bg-gray-50 ${showSectionPage ? "hidden" : ""}`}
+                    className={`w-full h-1/5 flex justify-center items-center rounded-[30px] hover:bg-gray-50 ${showSectionPage ? "hidden" : ""} `}
                     whileHover={{ scale: 1.05 }} 
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}>
                     <div className="w-full h-full relative flex flex-row items-center pl-10 space-x-5">
