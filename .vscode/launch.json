@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "type": "aws-sam",
+            "request": "direct-invoke",
+            "name": "upload_goMeal:index.handler (nodejs24.x)",
+            "invokeTarget": {
+                "target": "code",
+                "projectRoot": "${workspaceFolder}/upload_goMeal",
+                "lambdaHandler": "index.handler"
+            },
+            "lambda": {
+                "runtime": "nodejs24.x",
+                "payload": {},
+                "environmentVariables": {}
+            }
+        }
+    ]
+}

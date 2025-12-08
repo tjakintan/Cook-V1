@@ -49,7 +49,7 @@ function Navbar() {
             fixed bottom-5 left-1/2 transform -translate-x-1/2 
             flex justify-around items-center 
             space-x-4 sm:space-x-6 p-4 
-            rounded-3xl bg-white 
+            rounded-[60px] bg-white 
             z-50"
             whileHover={{ scale: 1.05 }} 
             transition={{ type: "spring", stiffness: 300, damping: 20 }}

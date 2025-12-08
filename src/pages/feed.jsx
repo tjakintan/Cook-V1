@@ -166,7 +166,7 @@ export default function Feed() {
     );
 
     return (
-        <div className="h-screen w-screen flex justify-center items-center bg-gray-100">
+        <div className="h-screen w-screen flex justify-center items-center">
 
             <div  className={`relative w-full h-full overflow-y-auto scrollbar-hide flex flex-col justify-center items-center gap-5`}>
                 
@@ -174,11 +174,11 @@ export default function Feed() {
                 {posts.map((post) => (
 
                     <div 
-                        className="relative w-[80%] min-h-[700px] max-h-[600px] flex flex-col overflow-hidden justify-center items-center p-5"
+                        className="relative w-full md:w-[80%] lg:w-[90%] min-h-[700px] max-h-[600px] flex flex-col overflow-hidden justify-center items-center p-5"
                     >
 
                         <motion.div 
-                            className="w-full h-full justify-center items-center overflow-hidden flex rounded-[60px]"
+                            className="w-full md:w-[80%] lg:w-[90%] h-full justify-center items-center overflow-hidden flex rounded-[60px]"
                             whileHover={{ scale: 1.05 }} 
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
                         >
@@ -194,7 +194,7 @@ export default function Feed() {
                         
 
 
-                        <div className=" w-[90%] h-full flex flex-col justify-between bg-gray-100">
+                        <div className=" w-[90%] h-full flex flex-col justify-between">
 
                             <motion.div 
                                 whileHover={{ scale: 1.05 }} 
