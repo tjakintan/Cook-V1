@@ -91,7 +91,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
 
 
     const handleSignUp = async (e) => {
-        e.preventDefault();
+        //e.preventDefault();
         const payload = sign_up_payload();
 
         if (!payload) {
@@ -146,7 +146,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
     };
 
     const handleSignIn = async (e) => {
-        e.preventDefault();
+        //e.preventDefault();
         const payload = sign_in_payload();
         
         if (!payload) {
