@@ -346,13 +346,13 @@ export default function Profile() {
                     
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
 
-                        <div className={`w-2/3 ${showAccountUpdateSection ? "h-[70%]" : "h-[20%]"}
+                        <div className={`w-full md:w-2/3 lg:w-2/3 ${showAccountUpdateSection ? "h-[70%]" : "h-[20%]"}
                                         flex justify-center items-center rounded-3xl overflow-hidden`}>
 
                             <div className="w-full h-full flex flex-col items-center justify-center pointer-events-auto p-5 ">
          
                                     {/* Update Account Section */}
-                                    <div className={`w-2/3 h-full ${showAccountUpdateSection ? "" : "hidden"} flex flex-col justify-center items-center p-10 gap-5 bg-white rounded-[30px]`}>
+                                    <div className={`w-full md:w-2/3 lg:w-2/3 h-full ${showAccountUpdateSection ? "" : "hidden"} flex flex-col justify-center items-center p-10 gap-5 bg-white rounded-[30px]`}>
 
                                         {/* EDIT profile image */}                         
                                         <div className="w-full h-[30%] flex flex-col justify-center items-center">
