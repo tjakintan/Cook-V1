@@ -1,9 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, use } from "react";
 import { motion } from "framer-motion";
 import { input, tr } from "framer-motion/client";
 import { jwtDecode } from "jwt-decode";
 import { Navigate, useNavigate } from "react-router-dom";
-import "../styles/component_style.css"
+import "../styles/component_style.css";
+import Messages  from "./messages.jsx";
 
 function MenuButton({ label, icon, onClick }) {
 
@@ -28,38 +29,89 @@ export default function Profile() {
 
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState([]);
-    const [inbox, setInbox] = useState([]);
     const [showPostSection, setShowPostSection] = useState(false);
     const [showLikeSection, setShowLikeSection] = useState(false);
     const [showInboxSection, setShowInboxSection] = useState(false);
     const [showMessageSection, setShowMessageSection] = useState(false);
     const [showAccountSection, setShowAccountSection] = useState(false);
     const [showAccountUpdateSection, setShowAccountUpdateSection] = useState(false);
+    const fileInputRef = useRef(null);
+    const profile_img = useRef(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const navigate = useNavigate();
 
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) return;
-
-    const decoded = jwtDecode(accessToken); 
-    const sub = decoded.sub;
 
     const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        async function fetchUserInfo() {
+    const accessToken = localStorage.getItem("accessToken");
+    let sub = null;
 
+    if (accessToken) {
+        const decoded = jwtDecode(accessToken);
+        sub = decoded.sub;
+    }
+
+    useEffect(() => {
+        if (!sub) return;
+
+        async function fetchUserInfo() {
             const response = await fetch(
                 "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user",
                 {
-                method: "POST",
-                headers: { "content-type": "application/json" },
-                body: JSON.stringify({ sub }),
+                    method: "POST",
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify({ sub }),
                 }
             );
             const data = await response.json();
             setUser(data.user);
         }
+
         fetchUserInfo();
-    }, []);
+    }, [sub]);  
+
+
+    
+    const upload_inputRefs = {
+        user_first_name: useRef(null),
+        user_last_name: useRef(null),
+        user_name: useRef(null),
+    };
+
+    const date_inputRefs = useRef([]);
+    const date_inputs = [
+        { id: "month", maxLength: 2, placeholder: "MM" },
+        { id: "day", maxLength: 2, placeholder: "DD" },
+        { id: "year", maxLength: 4, placeholder: "YYYY" },
+    ];
+
+
+    const dob_handleChange = (e, i) => {
+        // Allow only digits
+        const value = e.target.value.replace(/\D/, "");
+        e.target.value = value;
+
+        // Auto-tab to next input if field is filled
+        if (value.length >= date_inputs[i].maxLength && i < date_inputRefs.current.length - 1) {
+            date_inputRefs.current[i + 1].focus();
+        }
+    };
+
+    const dob_handleKeyDown = (e, i) => {
+        const value = e.target.value;
+
+        // Backspace navigation
+        if (e.key === "Backspace") {
+            // If current input is empty, move to previous input
+            if (!value && i > 0) {
+            const prevInput = date_inputRefs.current[i - 1];
+            prevInput.focus();
+            // Optional: remove last character from previous field
+            prevInput.value = prevInput.value.slice(0, prevInput.value.length - 1);
+            }
+        }
+    };
+
 
     if (!user) return (
         <div className="h-screen w-screen flex justify-center items-center">
@@ -72,7 +124,7 @@ export default function Profile() {
         </div>
     );
 
-    const callAction = async (actionName) => {
+    const callAction = async (actionName, payload = {}) => {
         try {
             const res = await fetch(
                 "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
@@ -82,7 +134,8 @@ export default function Profile() {
                     body: JSON.stringify({
                         action: actionName,
                         user_sub: sub,
-                    })
+                        ...payload, // merge in any additional data
+                    }),
                 }
             );
 
@@ -93,6 +146,19 @@ export default function Profile() {
         } catch (err) {
             console.error("API error:", err);
             return null;
+        }
+    };
+
+
+
+    const handleDeleteAccount = async() => {
+
+        const result = await callAction("delete_user_account");
+
+        if (result?.status === "success") {
+            handleLogout();
+        } else {
+            console.error("Failed to delete account:", result);
         }
     };
 
@@ -118,26 +184,65 @@ export default function Profile() {
         }
     };
 
-    const handleGetInbox = async () => {
-        console.log("get_inbox");
-
-        const result = await callAction("get_inbox");
-
-        if (result?.status === "success") {
-            setInbox(result.inbox || []);
-            setShowInboxSection(true);
-        }
-    };
-
     const handleLogout = () => {
         // Clear auth tokens
         localStorage.removeItem("accessToken");
         localStorage.removeItem("idToken");
-        window.location.reload();
+        navigate("/feed");
     };
 
+    const openFilePicker = () => fileInputRef.current.click();
 
+    const handleImageSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const fullBase64 = reader.result;
+
+            if (!fullBase64) return; 
+
+            const base64Only = fullBase64.split(",")[1] || "";
+            profile_img.current = fullBase64.split(",")[1] || "";
+            setPreviewUrl(fullBase64 || user.profile_img_url);
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    const handleUpdateAccount = async () => {
+        const first_name = upload_inputRefs.user_first_name.current?.value || user.first_name;
+        const last_name = upload_inputRefs.user_last_name.current?.value || user.last_name;
+        const profile_name = upload_inputRefs.user_name.current?.value || user.profile_name;
+        const profile_img_base64 = profile_img.current || null;
+
+        const [month, day, year] = date_inputRefs.current.map(input => input.value);
+        const dob = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+
+        const result = await callAction("update_user_account", {
+            first_name,
+            last_name,
+            profile_name,
+            profile_img_base64,
+            dob
+        });
+
+        if (result?.status === "success") {
+                    setUser(prev => ({
+            ...prev,
+            
+            ...result.updated_user,
+        }));
+
+            setShowAccountSection(false);
+        } else {
+            console.error("Failed to update account:", result);
+        }
+    };
+
+    
 
 
     return (
@@ -209,7 +314,8 @@ export default function Profile() {
                             }
                             onClick={handleGetLikedPosts}
                         />
-
+                        
+                        {/** 
                         <MenuButton
                             label="Inbox"
                             icon={
@@ -220,77 +326,216 @@ export default function Profile() {
                                     <path fill="#000000" d="M16.157 0c.378 0 .842.372 1.035.83L20 7.439V18a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V7.438L2.808.831C3 .372 3.465 0 3.843 0ZM6.741 8.838H1.4V18a.6.6 0 0 0 .6.6h16a.6.6 0 0 0 .6-.6V8.838h-4.341a3.902 3.902 0 0 1-7.518 0ZM15.913 1.4H4.087L1.52 7.438h6.505a2.5 2.5 0 1 0 4.95 0h5.505L15.913 1.4Z"/>
                                 </svg>
                             }
-                            onClick={handleGetInbox}
+                        //onClick={() => setShowInboxSection(true)} CHANGE LATER
                         />
+                        */}
 
                     </div>
+
+                
                 </div>
+                
 
             </div>
 
             {showAccountSection && user && (
 
                 <>
-                    {/* Fullscreen dark background */}
-                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto" 
-                        onClick={() => {
-                            setShowAccountSection(false);
-                            setShowAccountUpdateSection(false);}}
-                    ></div>
-
-                    {/* Centered square */}
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto" onClick={() => {setShowAccountSection(false);setShowAccountUpdateSection(false);se}}/>
+                    
+                    
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
 
-                        <div className={`w-[90vw] ${showAccountUpdateSection ? "h-[90vw]" : "h-[20vw]"} max-w-[600px] max-h-[600px] 
-                                        bg-white rounded-3xl p-5 overflow-hidden`}>
+                        <div className={`w-2/3 ${showAccountUpdateSection ? "h-[70%]" : "h-[20%]"}
+                                        flex justify-center items-center rounded-3xl overflow-hidden`}>
 
-                            {/* CONTENT INSIDE THE SQUARE */}
-                            <div className="w-full h-full flex flex-col items-center justify-center pointer-events-auto p-5 gap-5">
-                                
-                                {/* update user content */}
-                                <div className={`w-full h-${showAccountUpdateSection ? "full" : ""}`}>
+                            <div className="w-full h-full flex flex-col items-center justify-center pointer-events-auto p-5 ">
+         
+                                    {/* Update Account Section */}
+                                    <div className={`w-2/3 h-full ${showAccountUpdateSection ? "" : "hidden"} flex flex-col justify-center items-center p-10 gap-5 bg-white rounded-[30px]`}>
 
-                                </div>
+                                        {/* EDIT profile image */}                         
+                                        <div className="w-full h-[30%] flex flex-col justify-center items-center">
+                                            <img
+                                                src={previewUrl}
+                                                className="w-25 h-25 rounded-full object-cover overflow-hidden outline-1 cursor-pointer"
+                                                onClick={openFilePicker}
+                                            />
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                ref={fileInputRef}
+                                                className="hidden"
+                                                onChange={handleImageSelect}
+                                            />
+                                            <span htmlFor="email" className={`mt-1 block text-[11px] font-light text-black text-center tracking-widest`}>
+                                                Choose a profile picture
+                                            </span>
+                                        </div>
 
-                                {/* buttons */}
-                                <div className={`w-full h-${showAccountUpdateSection ? "[10%]" : "full"} flex flex-row justify-center items-center`}>
+                                        <div className="w-full border-t border-gray-300"></div>
+                                        
 
-                                    <motion.div 
-                                        whileHover={{ scale: 1.05 }} 
-                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-red-500 cursor-pointer ${showAccountUpdateSection ? "hidden" : ""}`}
-                                        //onClick={() => handleASendMessage(selectedPost.id)}
-                                    >
-                                        <span className="text-md font-light text-center tracking-widest">Delete</span>
-                                    </motion.div>
+                                        <div className="w-full h-full flex flex-col justify-center items-center bg-white gap-5 rounded-[30px]">
+                                                 
+                                            <span className={`block text-[15px] font-light text-black text-center tracking-widest`}>
+                                                {user.email}
+                                            </span>
+
+                                            {/* EDIT first name*/}
+                                            <motion.div 
+                                                    className="w-full"
+                                            >
+                                                <input
+                                                    id="user_first_name"
+                                                    name="user_first_name"
+                                                    type="text"
+                                                    ref={upload_inputRefs.user_first_name}
+                                                    placeholder={user.first_name}
+                                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                                />
+                                            </motion.div>
+
+                                            {/* EDIT last name*/}
+                                            <motion.div 
+                                                className="w-full"
+                                            >
+                                                <input
+                                                    id="user_last_name"
+                                                    name="user_last_name"
+                                                    type="text"
+                                                    ref={upload_inputRefs.user_last_name}
+                                                    placeholder={user.last_name}
+                                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
+                                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                                />
+                                            </motion.div> 
+
+                                            {/* EDIT dob */}
+                                            <motion.div 
+                                                className="w-full flex flex-col justify-start"
+                                            >
+                                                <div className="w-full flex items-center justify-start gap-2">
+                                                    {date_inputs.map((date_input, i) => {
+                                                        
+                                                       const dobDate = user?.dob ? new Date(user.dob) : null;
+
+                                                        // Extract parts in order: MM / DD / YYYY
+                                                        const dobParts = dobDate
+                                                        ? [
+                                                            String(dobDate.getMonth() + 1).padStart(2, "0"), // Month (0-based, so +1)
+                                                            String(dobDate.getDate()).padStart(2, "0"),      // Day
+                                                            String(dobDate.getFullYear())                    // Year
+                                                            ]
+                                                        : ["", "", ""];
+
+                                                        // For your input
+                                                        const placeholderValue = dobParts[i] || date_input.placeholde
+
+                                                        return (
+                                                            <React.Fragment key={date_input.id}>
+                                                                <input
+                                                                    id={date_input.id}
+                                                                    ref={(el) => (date_inputRefs.current[i] = el)}
+                                                                    maxLength={date_input.maxLength}
+                                                                    placeholder={placeholderValue}
+                                                                    onChange={(e) => dob_handleChange(e, i)}
+                                                                    onKeyDown={(e) => dob_handleKeyDown(e, i)}
+                                                                    className="w-12 h-8 flex items-center justify-center rounded-md bg-white text-center text-black 
+                                                                            text-sm outline-1 outline-black focus:outline-2 focus:outline-indigo-500 cursor-text"
+                                                                />
+                                                                {i < date_inputs.length - 1 && <span className="text-black text-sm">/</span>}
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </motion.div>
+
+                                            {/* EDIT user_name*/}
+                                            <motion.div 
+                                                className="w-1/2"
+                                            >
+                                                <input
+                                                    id="user_last_name"
+                                                    name="user_last_name"
+                                                    type="text"
+                                                    ref={upload_inputRefs.user_name}
+                                                    placeholder={user.profile_name}
+                                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
+                                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                                />
+                                            </motion.div> 
+
+                                        </div>
+
+                                        <motion.div 
+                                            whileHover={{ scale: 1.05 }} 
+                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                            className={`w-full h-full flex flex-col justify-center items-center space-x-1 cursor-pointer `}
+                                            onClick={handleUpdateAccount}
+                                        >
+                                            <span className="w-full text-md rounded-[30px] font-light text-center tracking-widest hover:bg-gray-50 px-3 py-2">Update</span>                                      
+                                        </motion.div>
+
+                                        <span className={`text-[10px] font-thin text-center text-black tracking-widest`}>
+                                            Changes will be fully reflected after restarting the application.
+                                        </span> 
+
+                                    </div>
 
 
-                                    <motion.div 
-                                        whileHover={{ scale: 1.05 }} 
-                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-green-500 cursor-pointer`}
-                                        onClick={() => setShowAccountUpdateSection(true)}
-                                    >
-                                        <span className="text-md font-light text-center tracking-widest">Update</span>
-                                    </motion.div>
+                                    <div className={`w-full h-full flex flex-col justify-center items-center p-5 gap-2 ${showAccountUpdateSection ? "hidden" : ""} bg-white rounded-[30px]`}>
 
 
-                                    <motion.div 
-                                        whileHover={{ scale: 1.05 }} 
-                                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer ${showAccountUpdateSection ? "hidden" : ""}`}
-                                        onClick={handleLogout}
-                                    >
-                                        <span className="text-md font-light text-center tracking-widest">Log out</span>
-                                    </motion.div>
+                                        {/* buttons */}
+                                        <div className={`w-full h-full flex flex-row justify-center items-center`}>
 
-                                </div>
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }} 
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-red-500 cursor-pointer}`}
+                                                //onClick={handleDeleteAccount}
+                                            >
+                                                <span className="text-md font-light text-center tracking-widest">Delete</span>
+                                            </motion.div>
 
-                                <span className={`font-thin text-[9px] tracking-widest text-center ${showAccountUpdateSection ? "hidden" : ""}`}>
-                                    Please note that deleted data will be retained for 30 days in accordance with our policy. For more details, please review our 
-                                    <span className="underline">terms & conditions</span>.
-                                </span>
 
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }} 
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-green-500 cursor-pointer`}
+                                                onClick={() => {
+                                                    setShowAccountUpdateSection(true);
+                                                    setPreviewUrl(user.profile_img_url);}}
+                                            >
+                                                <span className="text-md font-light text-center tracking-widest">Update</span>
+                                            </motion.div>
+
+
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }} 
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer`}
+                                                onClick={handleLogout}
+                                            >
+                                                <span className="text-md font-light text-center tracking-widest">Log out</span>
+                                            </motion.div>
+
+                                        </div>
+
+                                        <span className={`font-thin text-[9px] tracking-widest text-center ${showAccountUpdateSection ? "hidden" : ""}`}>
+                                            Please note that deleted data will be retained for 30 days in accordance with our policy. For more details, please review our 
+                                            <span className="underline">terms & conditions</span>.
+                                        </span>
+                                    
+                                     </div>
+
+                          
+                            
                             </div>
 
                         </div>
@@ -502,33 +747,32 @@ export default function Profile() {
                     </div>
                 </>
             )}
-            
-            {showInboxSection && inbox && (
-                 <>
-                    {/* Fullscreen dark background */}
-                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto" 
-                        onClick={() => setShowInboxSection(false)}
-                    ></div>
 
-                    {/* Centered square */}
-                    <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-                        <div className="w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] 
-                                        bg-white rounded-3xl shadow-2xl p-6 overflow-hidden ">
+        {/* Inbox Section     
+            {showInboxSection && (
+            <>
+                <div
+                    className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto"
+                    onClick={() => setShowInboxSection(false)}
+                ></div>
 
-                            {/* CONTENT INSIDE THE SQUARE */}
-                            <div className="w-full h-full flex flex-row items-center justify-center pointer-events-auto">
+                <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
 
+                    <div className="w-[90vw] max-w-[600px] aspect-square flex flex-col overflow-hidden pointer-events-auto">
+                        
+                        <div className="w-full h-full flex flex-col items-center justify-center overflow-hidden">
 
-
-
-
-
-                            </div>
-
+                            <Messages />
+                            
                         </div>
+
                     </div>
-                </>
+                </div>
+            </>
             )}
+
+        */}
+
         </>
 
 

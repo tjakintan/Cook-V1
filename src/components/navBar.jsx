@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
 import "../styles/component_style.css";
 
 const moreIcon = () => (
@@ -44,18 +45,20 @@ function NavItem({ to, label, ActiveIcon, DefaultIcon }) {
 
 function Navbar() {
   return (
-    <nav className="w-11/12 sm:w-2/3 md:w-1/2 lg:w-1/3 
+    <motion.nav className="w-11/12 sm:w-2/3 md:w-1/2 lg:w-1/3 
             fixed bottom-5 left-1/2 transform -translate-x-1/2 
             flex justify-around items-center 
             space-x-4 sm:space-x-6 p-4 
-            rounded-3xl bg-white/30 backdrop-blur-sm
+            rounded-3xl bg-white 
             z-50"
+            whileHover={{ scale: 1.05 }} 
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       <NavItem to="/feed" label="Feed" ActiveIcon={feedIconActive} DefaultIcon={feedIcon} />
-      <NavItem to="/discover" label="Discover" ActiveIcon={discoverIconActive} DefaultIcon={discoverIcon} />
+      {/*<NavItem to="/discover" label="Discover" ActiveIcon={discoverIconActive} DefaultIcon={discoverIcon} />*/}
       <NavItem to="/upload" label="Upload" ActiveIcon={uploadIconActive} DefaultIcon={uploadIcon} />
       <NavItem to="/more" label="More" ActiveIcon={moreIconActive} DefaultIcon={moreIcon} />
-    </nav>
+    </motion.nav>
   );
 }
 

@@ -67,41 +67,35 @@ export default function More() {
                         <>
                         {/* Fullscreen dark background */}
                         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto"/>
-            
+
+                        {/* SIGN UP/IN */}
                         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
 
-                            <div className="w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] 
-                                            bg-white rounded-3xl p-5 overflow-hidden ">
-            
-                                {/* CONTENT INSIDE THE SQUARE */}
-                                <div className="w-full h-full flex flex-col items-center justify-center pointer-events-auto">
+                            <div 
+                                className="w-[90vw] h-[90vw] max-w-[600px] max-h-[600px]
+                                            overflow-hidden rounded-[30px] pointer-events-auto
+                                            flex flex-col justify-center items-center pb-5">
 
-                                    <div className="w-full h-full flex flex-col justify-center items-center pt-10 pb-10">
-
-                                        <motion.div 
-                                            className="relative w-full h-[10%] flex justify-center items-center"
-                                            whileHover={{ scale: 1.05 }} 
-                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        >
-                                            <button
-                                                className="absolute left-5 w-10 h-10 bg-white rounded-full outline-1 flex justify-center items-center cursor-pointer dark:bg-black"
-                                                onClick={() => setShowSectionPage(false)}
+                                <motion.div 
+                                    className="relative w-full h-[10%] flex justify-center items-center"
+                                    whileHover={{ scale: 1.05 }} 
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                >
+                                    <button
+                                        className="absolute left-5 w-10 h-10 bg-white rounded-full outline-1 flex justify-center items-center cursor-pointer dark:bg-black"
+                                        onClick={() => setShowSectionPage(false)}
+                                    >
+                                        <svg 
+                                            viewBox="0 0 32 32"
+                                            className="w-5 h-5 text-red-500"
                                             >
-                                                <svg 
-                                                    viewBox="0 0 32 32"
-                                                    className="w-5 h-5 text-red-500"
-                                                    >
-                                                    <path fill="currentColor" d="m13.28 6.78l-8.5 8.5l-.686.72l.687.72l8.5 8.5l1.44-1.44L7.936 17H28v-2H7.937l6.782-6.78l-1.44-1.44z"/>
-                                                </svg>
-                                            </button>
-                                        </motion.div>
+                                            <path fill="currentColor" d="m13.28 6.78l-8.5 8.5l-.686.72l.687.72l8.5 8.5l1.44-1.44L7.936 17H28v-2H7.937l6.782-6.78l-1.44-1.44z"/>
+                                        </svg>
+                                    </button>
+                                </motion.div>
 
-                                        <div className="relative w-full h-full flex justify-center items-center">
-                                            <SignUpIn showProfile={showProfile} setShowProfile={setShowProfile}/>
-                                        </div>
-
-                                    </div>
-
+                                <div className="relative w-full h-full  flex justify-center items-center">
+                                    <SignUpIn showProfile={showProfile} setShowProfile={setShowProfile}/>
                                 </div>
 
                             </div>

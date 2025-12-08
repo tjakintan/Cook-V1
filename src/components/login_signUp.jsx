@@ -1,6 +1,12 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { input, tr } from "framer-motion/client";
+import {
+  handleForgotPassword as cognitoForgot,
+  handleConfirmForgotPassword as cognitoConfirmForgotPassword,
+  handleConfirmUser as cognitoConfirmUser,
+  handleResendConfirmationCode as resendConfirmUser
+} from "../components/cognito.js";
 
 export default function SignUpIn({ showProfile, setShowProfile }) {
 
@@ -8,6 +14,10 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
 
     const passcode_inputRefs = useRef([]);
     const passcode_inputRefs2 = useRef([]);
+    const passcode_inputRefs3 = useRef([]);
+    const passcode_inputRefs4 = useRef([]);
+    const passcode_inputRefs5 = useRef([]);
+
     const date_inputRefs = useRef([]);
     const payload_inputRefs = {
         user_first_name: useRef(null),
@@ -24,6 +34,11 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
     const [emailInUse, setEmailInUse ] = useState(false);
     const [passcodeIncorrect, setPasscodeIncorrect] = useState(false);
     const [emailNotMatch, setEmailNotMatch] = useState(false);
+    const [showForgotPasswordSection, setShowForgotPasswordSection] = useState(false);
+    const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+    const [confirmForgotPasswordSent, setConfirmForgotPasswordSent] = useState(false);
+    const [confirmSignUp, setConfirmSignUp] = useState(false);
+    const [invalidEmail, setInvalidEmail] = useState(false);
 
     const sign_up_payload = () => {
 
@@ -35,6 +50,14 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
         const email = payload_inputRefs.signUp_user_email.current?.value || '';
         const confirm_email = payload_inputRefs.signUp_confirm_user_email.current?.value || '';
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email) || !emailRegex.test(confirm_email)) {
+            setInvalidEmail(true);
+            setTimeout(() => setInvalidEmail(false), 1500); 
+            return null;
+        }
+        
         if (email !== confirm_email){
             setEmailNotMatch(true);
             setTimeout(() => setEmailNotMatch(false), 500);
@@ -85,7 +108,8 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
             const data = await response.json();
 
             if (response.ok) {
-                setShowSignUp(false);
+                setConfirmSignUp(true);
+                //setShowSignUp(false);
                 console.log('User signed up successfully:', data);
             } else if (response.status === 409) {
                 setEmailInUse(true);
@@ -103,15 +127,18 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
         const email = payload_inputRefs.signIn_user_email.current?.value || '';
         const rawPasscode = passcode_inputRefs2.current.map(input => input.value).join('');
 
-        if (!email) {
-            setShake(true);
-            setTimeout
-            return null; 
-        }
-        const passcode = rawPasscode && rawPasscode.length > 0 ? rawPasscode : '000000';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        // Validate email
+        if (!email || !emailRegex.test(email)) {
+            setInvalidEmail(true);
+            setTimeout(() => setInvalidEmail(false), 1500);
+            return null;
+        } 
+
         const jsonData = {
             email,
-            passcode
+            incomingPasscode: rawPasscode
         };
 
         return jsonData;
@@ -163,34 +190,34 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
         { id: "year", placeholder: "yyyy", maxLength: 4 },
     ];
 
-    const passcode_handleChange = (e, index) => {
+    // Handle change for a group of inputs
+    const passcode_handleChange = (e, index, refArray) => {
         const value = e.target.value;
 
         // Only allow digits
         if (!/^\d*$/.test(value)) {
-        e.target.value = "";
-        return;
+            e.target.value = "";
+            return;
         }
 
-        e.target.value = value.slice(-1); // keep only last digit
+        // Keep only the last digit typed
+        e.target.value = value.slice(-1);
 
-        // Move to next input if exists and value is not empty
-        if (value && index < passcode_inputRefs.current.length - 1) {
-        passcode_inputRefs.current[index + 1].focus();
-        }
-        if (value && index < passcode_inputRefs2.current.length - 1) {
-        passcode_inputRefs2.current[index + 1].focus();
+        // Move to next input if exists
+        if (value && index < refArray.current.length - 1) {
+            refArray.current[index + 1]?.focus();
         }
     };
 
-    const passcode_handleKeyDown = (e, index) => {
+    // Handle backspace for a group of inputs
+    const passcode_handleKeyDown = (e, index, refArray) => {
         if (e.key === "Backspace") {
-        if (!e.target.value && index > 0) {
-            passcode_inputRefs.current[index - 1].focus();
-            passcode_inputRefs2.current[index - 1].focus();
-        }
+            if (!e.target.value && index > 0) {
+                refArray.current[index - 1]?.focus();
+            }
         }
     };
+
 
     const date_handleChange = (e, i) => {
         // Allow only digits
@@ -238,24 +265,129 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
         reader.readAsDataURL(file);
     };
 
+    const handleForgotPassword = async () => {
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!forgotPasswordEmail || !emailRegex.test(forgotPasswordEmail)) {
+            setInvalidEmail(true);
+            setTimeout(() => setInvalidEmail(false), 1500); 
+            return;
+        }
+
+        try {
+            const res = await cognitoForgot(forgotPasswordEmail);
+
+            if (res.success) {
+                setConfirmForgotPasswordSent(true);
+            } else {
+                setConfirmForgotPasswordSent(false);
+            }
+        } catch (err) {
+            console.error("Error sending forgot password request:", err);
+            setConfirmForgotPasswordSent(false);
+        }
+    };
+
+    const handleConfirmForgotPassword = async () => {
+        const newPassword = passcode_inputRefs5.current.map(input => input.value).join(''); 
+        const code = passcode_inputRefs4.current.map(input => input.value).join('');
+        
+        try {
+            // ✅ Use the imported alias
+            const res = await cognitoConfirmForgotPassword(forgotPasswordEmail, code, newPassword);
+
+            if (res.success) {
+                setConfirmForgotPasswordSent(false);
+                setForgotPasswordEmail(false);
+                console.log("Password reset successfully.");
+            } else {
+                console.error("Password reset failed:", res.error);
+            }
+        } catch (err) {
+            console.error("Unexpected error confirming forgot password:", err);
+        }
+    };
+
+    const handleConfirmUser = async () => {
+
+        const code = passcode_inputRefs3.current.map(input => input.value).join('');
+        const email = payload_inputRefs.signUp_confirm_user_email.current?.value || '';
+
+        try {
+
+        const res = await cognitoConfirmUser(email, code);
+
+        if (res.success) {
+            setShowSignUp(false);
+            setConfirmSignUp(false);
+            } 
+        } catch (err) {
+            console.error("Unexpected error confirming user:", err);
+        }
+                    
+    };
+
+    const handleResendConfirmationCode = async () => {
+        const email = payload_inputRefs.signUp_confirm_user_email.current?.value || ''; 
+
+        try {
+            const res = await resendConfirmUser(email);
+
+            if (res.success) {
+                passcode_inputRefs3.current.forEach((input) => {
+                    if (input) input.value = "";
+                });
+
+                passcode_inputRefs3.current[0]?.focus();
+
+                console.log("Confirmation code resent successfully.");
+            } 
+        } catch (err) {
+            console.error("Unexpected error resending confirmation code:", err);
+        }
+    };
+
+    const handleResendConfirmationCode2 = async () => {
+
+        try {
+            const res = await resendConfirmUser(forgotPasswordEmail);
+
+            if (res.success) {
+                passcode_inputRefs4.current.forEach((input) => {
+                    if (input) input.value = "";
+                });
+
+                passcode_inputRefs4.current[0]?.focus();
+
+                console.log("Confirmation code resent successfully.");
+            } 
+        } catch (err) {
+            console.error("Unexpected error resending confirmation code:", err);
+        }
+    };
+
+
   return (
 
-    <div className="w-[90] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center">
+    <motion.div 
+        className="w-[90] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white p-5"
+        whileHover={{ scale: 1.05 }} 
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
 
-        {/* Conditionally render this div if user needs to sign up */}
+        {/* SIGN UP */}
         <motion.div 
-            className="w-full h-full relative"
+            className={`w-full h-full relative ${confirmSignUp ? "hidden" : ""}`}
             animate={{ rotateY: showSignUp ? 180 : 0 }}
             transition={{ duration: 0.4 }}
             style={{ transformStyle: "preserve-3d", transformOrigin: "center" }}
         >
 
-            {/* Back show first name, last name and email field*/}
-            <div 
-                className={`absolute w-full h-full backface-hidden
-                            flex flex-col justify-center items-center rotate-y-180`}
-            >
-                <div className="w-full h-full flex flex-col items-center justify-between py-5 pt-20">
+            <div className={`absolute w-full h-full backface-hidden flex flex-col justify-center items-center rotate-y-180 gap-5`}>
+                
+                <div className="w-full h-[30%] flex flex-col items-center justify-center">
+                    
                     <motion.div 
                         className="w-20 h-20 bg-white border-1 rounded-full flex 
                                    items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
@@ -288,13 +420,14 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                             </svg>
                         )}
                     </motion.div>
-                    <span htmlFor="email" className={`mt-2 block text-[11px] font-light text-black text-center tracking-widest`}>
+                    <span className={`mt-1 block text-[11px] font-light text-black text-center tracking-widest`}>
                         Choose a profile picture
                     </span>
                 </div>
 
-                <div className="w-full h-full flex flex-col">
+                <div className="w-full h-full flex flex-col gap-2">
 
+                    {/* SIGN UP first name & last name*/}
                     <div className="w-full h-full flex flex-row gap-5">
                         {/* SIGN UP first name*/}
                         <motion.div 
@@ -328,15 +461,16 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
                             />
                         </motion.div> 
+
                     </div>
 
-                    <div className="w-full h-full flex flex-col justify-center items-center pt-2">
-                        {/* SIGN UP dob */}
+
+                    {/* SIGN UP dob */}
                         <motion.div 
-                            className="flex-1 justify-center items-center"
+                            className="w-full flex flex-col justify-start"
                             animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
-                            <div className="mb-1 w-full flex items-center justify-center gap-2">
+                            <div className="w-full flex items-center justify-start gap-2">
                                 {date_inputs.map((date_input, i) => (
                                     <React.Fragment key={date_input.id}>
                                     <input
@@ -355,24 +489,19 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                 ))}
                             </div>
                         </motion.div> 
-                    </div>
-                            
 
-                </div> 
 
-                <div className="w-full h-full flex flex-col items-center justify-between py-5">
-                    
                     {/* SIGN UP email */}
                     <motion.div 
                         className="w-full flex flex-col justify-start"
-                        animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        animate={invalidEmail ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
                         <div className="mb-1">
                             <input
                                 id="user_email"
                                 ref={payload_inputRefs.signUp_user_email}
                                 name="user_email"
-                                type="text"
+                                type="email"
                                 placeholder="email"
                                 className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
                                         text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
@@ -387,14 +516,14 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                     {/* SIGN UP confirm email */}
                     <motion.div 
                         className="w-full flex flex-col justify-start"
-                        animate={shake || emailNotMatch ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        animate={invalidEmail || emailNotMatch ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
                         <div className="mb-1">
                             <input
                                 id="user_email"
                                 ref={payload_inputRefs.signUp_confirm_user_email}
                                 name="user_email"
-                                type="text"
+                                type="email"
                                 placeholder="confirm email"
                                 className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
                                         text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
@@ -424,19 +553,18 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
 
                     {/* SIGN UP Password */}
                     <motion.div 
-                        className={`flex flex-col justify-between mt-5 ${showSignUp ? "" : "hidden"}`}
+                        className={`flex flex-col justify-between ${showSignUp ? "" : "hidden"}`}
                         animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
                         <div className="flex gap-2">
                             {[0, 1, 2, 3, 4, 5].map((i) => (
                                     <input
-                                    key={i}
-                                    id={`${i}.digit`}
-                                    type="password" 
-                                    ref={(el) => (passcode_inputRefs.current[i] = el)}
-                                    maxLength={1}
-                                    onChange={(e) => passcode_handleChange(e, i)}
-                                    onKeyDown={(e) => passcode_handleKeyDown(e, i)}
+                                        key={i}
+                                        ref={(el) => (passcode_inputRefs.current[i] = el)}
+                                        maxLength={1}
+                                        type="password"
+                                        onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs)}
+                                        onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)} 
                                     className="w-8 h-8 flex items-center justify-center rounded-md bg-white
                                                 text-center text-black text-md font-thin outline-1
                                                 focus:outline-2 focus:outline-indigo-500 cursor-text"
@@ -444,11 +572,12 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                     />
                             ))}
                         </div>
-                        <span htmlFor="email" className={`block mt-2 text-[11px] font-light text-black text-center tracking-widest`}>
+                        <span htmlFor="email" className={`block mt-2 text-[11px] font-light text-black tracking-widest`}>
                             Choose a 6 digit password
                         </span>
                     </motion.div>
 
+                    {/* SIGN UP button */}
                     <motion.div
                         whileHover={{ scale: 1.05 }} 
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -459,82 +588,272 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                         Sign Up
                     </motion.div>  
 
-                </div>
+                    {/* SIGN UP text */}
+                    <span className={`text-[10px] font-thin text-black tracking-widest`}>
+                            Sign up with your email to use GoMeal. We respect your privacy and use your email only for account management.
+                    </span>   
+
+                </div> 
 
             </div>
 
         </motion.div>
 
+        {/* Confirm Password */}
+        <div 
+            className={`w-full h-full flex flex-col items-center justify-center gap-5 ${confirmSignUp ? "" : "hidden"} `}
+        >
+            <span className={`block mt-2 text-[20px] font-light text-black text-center tracking-widest`}>
+                    Confirm your email
+            </span>     
+            <motion.div 
+                className={`flex flex-col justify-between mt-5 ${showSignUp ? "" : "hidden"}`}
+                animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+            >
+                <div className="flex gap-2">
+                    {[0, 1, 2, 3, 4, 5].map((i) => (
+                            <input
+                                key={i}
+                                ref={(el) => (passcode_inputRefs3.current[i] = el)}
+                                maxLength={1}
+                                onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs3)}
+                                onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs3)} 
+                            className="w-8 h-8 flex items-center justify-center rounded-md bg-white
+                                        text-center text-black text-md font-thin outline-1
+                                        focus:outline-2 focus:outline-indigo-500 cursor-text"
+                            tabIndex={0} 
+                            />
+                    ))}
+                </div>
+            </motion.div>
+            <span className={`block mt-2 text-[10px] font-thin text-black text-center tracking-widest`}>
+                    Enter the code sent to your email. Please check your spam.
+            </span>
+            <motion.div
+                whileHover={{ scale: 1.05 }} 
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className={`flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light  tracking-widest 
+                            cursor-pointer hover:bg-gray-100`}
+                onClick={handleConfirmUser}
+            >
+                Confirm email
+            </motion.div> 
+            <motion.div
+                whileHover={{ scale: 1.05 }} 
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className={`flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light bg-black text-white tracking-widest 
+                            cursor-pointer hover:bg-gray-50 hover:text-black`}
+                onClick={handleResendConfirmationCode}
+            >
+                Resend code
+            </motion.div>   
+        </div>
+
+
+
+
+
         
+
 
         {/* Show the Sign in area first */}
         <div className={`w-full h-full flex flex-col items-center justify-center gap-10 ${showSignUp ? "hidden" : ""}`}>
 
-            {/* SIGN IN email */}
-            <div className={`w-full flex flex-col justify-start gap-1`}>
-                <span htmlFor="email" className={`block text-md font-light text-black tracking-widest`}>
-                    Email
-                </span>
-                <div className="mt-2">
-                    <input
-                        id="email"
-                        ref={payload_inputRefs.signIn_user_email}
-                        name="email"
-                        type="text"
-                        placeholder="email"
-                        className="w-full rounded-md bg-white px-3 py-1.5 text-base placeholder:text-xs text-sm
-                                    text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
-                                    focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                    />
+             {/* Forgot Password */}
+            <div className={`${confirmForgotPasswordSent ? "" : "hidden"}`}>
+
+                <div 
+                    className={`w-full h-full flex flex-col items-center justify-center gap-5`}
+                >
+
+                    <div className="mb-5">
+                        <span className={`block mt-2 text-[20px] font-light text-black text-center tracking-widest`}>
+                                New Passcode 
+                        </span>     
+                        <motion.div 
+                            className={`flex flex-col justify-between mt-5`}
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="flex gap-2">
+                                {[0, 1, 2, 3, 4, 5].map((i) => (
+                                        <input
+                                            key={i}
+                                            ref={(el) => (passcode_inputRefs5.current[i] = el)}
+                                            maxLength={1}
+                                            type="password"
+                                            onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs5)}
+                                            onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs5)} 
+                                        className="w-8 h-8 flex items-center justify-center rounded-md bg-white
+                                                    text-center text-black text-md font-thin outline-1
+                                                    focus:outline-2 focus:outline-indigo-500 cursor-text"
+                                        tabIndex={0} 
+                                        />
+                                ))}
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    <div className="mt-5">
+                        <span className={`block mt-2 text-[20px] font-light text-black text-center tracking-widest`}>
+                                6 digit code 
+                        </span>     
+                        <motion.div 
+                            className={`flex flex-col justify-between mt-5`}
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="flex gap-2">
+                                {[0, 1, 2, 3, 4, 5].map((i) => (
+                                    <input
+                                        key={i}
+                                        ref={(el) => (passcode_inputRefs4.current[i] = el)}
+                                        maxLength={1}
+                                        onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs4)}
+                                        onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs4)} 
+                                    className="w-8 h-8 flex items-center justify-center rounded-md bg-white
+                                                text-center text-black text-md font-thin outline-1
+                                                focus:outline-2 focus:outline-indigo-500 cursor-text"
+                                    tabIndex={0} 
+                                    />
+                                ))}
+                            </div>
+                        </motion.div>
+                    </div>
+                    
+
+                    <span className={`block mt-2 text-[10px] font-thin text-black text-center tracking-widest`}>
+                            Enter the code sent to your email. Please check your spam.
+                    </span>
+                    <motion.div
+                        whileHover={{ scale: 1.05 }} 
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className={`flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light  tracking-widest 
+                                    cursor-pointer hover:bg-gray-100`}
+                        onClick={handleConfirmForgotPassword}
+                    >
+                        Confirm 
+                    </motion.div> 
+                    <motion.div
+                        whileHover={{ scale: 1.05 }} 
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className={`flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light tracking-widest 
+                                    cursor-pointer hover:bg-gray-100 `}
+                        onClick={handleResendConfirmationCode2}
+                    >
+                        Resend code
+                    </motion.div>   
                 </div>
+
             </div>
 
-            {/* SIGN IN Password */}
-            <motion.div 
-                className={`w-full flex flex-col justify-between gap-1`}
-                animate={passcodeIncorrect ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                transition={{ duration: 0.4 }}
-            >
-                <span className={`block text-md font-light text-black tracking-widest`}>
-                    Password
-                </span>
-                <div className="flex gap-2 mt-2">
-                    {[0, 1, 2, 3, 4, 5].map((i) => (
-                        
-                            <input
-                                key={i}
-                                id={`${i}.digit`}
-                                type="password" 
-                                ref={(el) => (passcode_inputRefs2.current[i] = el)}
-                                maxLength={1}
-                                onChange={(e) => passcode_handleChange(e, i)}
-                                onKeyDown={(e) => passcode_handleKeyDown(e, i)}
-                                className="w-8 h-8 flex items-center justify-center rounded-md bg-white
-                                            text-center text-black text-md font-thin 
-                                            focus:outline-2 focus:outline-indigo-500 cursor-text"
-                                tabIndex={0} 
-                            />
-                        
-                    ))}
-                </div>
-                <a className={`mt-1 text-[10px] font-thin text-black tracking-wider hover:text-blue-800 cursor-pointer ${passcodeIncorrect ? "hidden" : ""}`}>
-                    Forgot password ?
-                </a>
-            </motion.div>   
+            {/* SIGN IN  */}
+            <div className={`w-full h-full flex flex-col justify-center items-center$ gap-5 ${confirmForgotPasswordSent ? "hidden" : ""}`}>
 
-            <motion.div
-                whileHover={{ scale: 1.05 }} 
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light  tracking-widest 
-                            cursor-pointer hover:bg-gray-100"
-                onClick={handleSignIn}
-            >
-                Sign In
-            </motion.div>  
+                {/* SIGN IN email */}
+                <motion.div 
+                    className={`w-full flex flex-col justify-start gap-1 ${showForgotPasswordSection ? "hidden" : ""}`}
+                    animate={invalidEmail ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                >
+                    <span htmlFor="email" className={`block text-md font-light text-black tracking-widest`}>
+                        Email
+                    </span>
+                    <div className="mt-2">
+                        <input
+                            id="email"
+                            ref={payload_inputRefs.signIn_user_email}
+                            name="email"
+                            type="text"
+                            placeholder="email"
+                            className="w-full rounded-md bg-white px-3 py-1.5 text-base placeholder:text-xs text-sm
+                                        text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                        focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                        />
+                    </div>
+                </motion.div>
 
-        </div>
+                {/* SIGN IN Password */}
+                <motion.div 
+                    className={`w-full flex flex-col justify-between gap-1 ${showForgotPasswordSection ? "hidden" : ""}`}
+                    animate={passcodeIncorrect ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                    transition={{ duration: 0.4 }}
+                >
+                    <span className={`block text-md font-light text-black tracking-widest`}>
+                        Password
+                    </span>
+                    <div className="flex gap-2 mt-2">
+                        {[0, 1, 2, 3, 4, 5].map((i) => (
+                            
+                                <input
+                                    key={i}
+                                    ref={(el) => (passcode_inputRefs2.current[i] = el)}
+                                    maxLength={1}
+                                    type="password"
+                                    onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs2)}
+                                    onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs2)} 
+                                    className="w-8 h-8 flex items-center justify-center rounded-md bg-white
+                                                text-center text-black text-md font-thin 
+                                                focus:outline-2 focus:outline-indigo-500 cursor-text"
+                                    tabIndex={0} 
+                                />
+                            
+                        ))}
+                    </div>
+                    <a className={`mt-1 text-[12px] font-thin text-black tracking-wider hover:text-blue-800 cursor-pointer ${passcodeIncorrect ? "hidden" : ""}`}
+                        onClick={() => setShowForgotPasswordSection(true)}>
+                        Forgot password ?
+                    </a>
+                </motion.div>   
 
-    </div>
+                <motion.div
+                    whileHover={{ scale: 1.05 }} 
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className={`flex flex-col mt-5 justify-center items-center rounded-[30px] px-5 py-3 text-sm font-light  tracking-widest 
+                                cursor-pointer hover:bg-gray-100 ${showForgotPasswordSection ? "hidden" : ""}`}
+                    onClick={handleSignIn}
+                >
+                    Sign In
+                </motion.div> 
+
+
+                <motion.div 
+                    className={`w-full flex flex-col justify-start gap-1  ${showForgotPasswordSection ? "" : "hidden"}`}
+                    animate={invalidEmail ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                >
+                    <span htmlFor="email" className={`block text-md font-light text-black tracking-widest`}>
+                        Email
+                    </span>
+                    <div className="mt-2">
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="email"
+                            value={forgotPasswordEmail}
+                            onChange={(e) => setForgotPasswordEmail(e.target.value)}
+                            className="w-full rounded-md bg-white px-3 py-1.5 text-base placeholder:text-xs text-sm
+                                        text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                        focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                        />
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    whileHover={{ scale: 1.05 }} 
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className={`flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light  tracking-widest 
+                                cursor-pointer hover:bg-gray-100 ${showForgotPasswordSection ? "" : "hidden"}`}
+                    onClick={handleForgotPassword}
+                >
+                    Send Code
+                </motion.div>   
+
+            </div>
+
+
+
+            </div>
+
+
+    </motion.div>
 
   )
 }

@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import "../styles/pages_style.css";
 import "../styles/component_style.css";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 export default function Feed() {
+
+    const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
     const [like, setLike] = useState(false);
     const [more, setMore] = useState(false);
@@ -13,8 +16,31 @@ export default function Feed() {
     const [selectedPost, setSelectedPost] = useState(null);
     const [showMessageSection, setShowMessageSection ] = useState(false);
     const [messageText, setMessageText] = useState("");
+
     const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) return;
+    if (!accessToken) return (
+         <div className="fixed inset-0 w-screen h-screen overflow-hidden flex justify-center items-center bg-black/70 backdrop-blur-sm">
+            <div className="w-[50%] md:w-[25%] lg:w-[25%] h-[20%] rounded-[30px] flex flex-col justify-between items-center bg-white py-5 px-2">
+                <span className="font-thin tracking-wider text-[15px] text-center">Please sign in to see Feed</span>
+                <div className="w-4/5 border-t border-gray-300"></div>
+                <button 
+                    className="flex w-15 h-15 justify-center items-center rounded-full bg-black px-3 py-1.5 text-sm font-light text-white tracking-widest 
+                    cursor-pointer hover:border-[2px] hover:border-blue-600"
+                    onClick={() => navigate("/more")}>
+                        <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            viewBox="0 0 32 32" 
+                            preserveAspectRatio="none"
+                            className="w-8 h-8 text-blue-400"
+                        >
+                            <path fill="currentColor" d="m18.72 6.78l-1.44 1.44L24.063 15H4v2h20.063l-6.782 6.78l1.44 1.44l8.5-8.5l.686-.72l-.687-.72l-8.5-8.5z"/>
+                        </svg> 
+                </button>
+
+            </div>
+        </div>
+
+    );
 
     const decoded = jwtDecode(accessToken); 
     const sub = decoded.sub;
@@ -101,7 +127,7 @@ export default function Feed() {
                 "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "content-type": "application/json" },
                     body: JSON.stringify({
                         action: "send_message",
                         post_id: postId,
@@ -116,57 +142,67 @@ export default function Feed() {
                 setShowMessageSection(false); 
                 setMessageText(""); 
             } else {
-                console.error("Failed to send message:", data);
+                console.error("Failed to send message:");
             }
         } catch (err) {
-            console.error("Error sending message:", err);
+            console.error("Error sending message:");
         }
 
     };
 
+
+
     if (loading) return (
 
-        <div className="h-screen w-screen flex bg-black justify-center items-center">
+        <div className="h-screen w-screen flex bg-white justify-center items-center">
             <svg 
                 width="50" height="50" 
                 viewBox="0 0 24 24"
             >
-                <circle cx="12" cy="2" r="0" fill="#fff"><animate attributeName="r" begin="0" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(45 12 12)"><animate attributeName="r" begin="0.125s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(90 12 12)"><animate attributeName="r" begin="0.25s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(135 12 12)"><animate attributeName="r" begin="0.375s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(180 12 12)"><animate attributeName="r" begin="0.5s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(225 12 12)"><animate attributeName="r" begin="0.625s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(270 12 12)"><animate attributeName="r" begin="0.75s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(315 12 12)"><animate attributeName="r" begin="0.875s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle>
+                <circle cx="12" cy="2" r="0" fill="#0000"><animate attributeName="r" begin="0" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(45 12 12)"><animate attributeName="r" begin="0.125s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(90 12 12)"><animate attributeName="r" begin="0.25s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(135 12 12)"><animate attributeName="r" begin="0.375s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(180 12 12)"><animate attributeName="r" begin="0.5s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(225 12 12)"><animate attributeName="r" begin="0.625s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(270 12 12)"><animate attributeName="r" begin="0.75s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle><circle cx="12" cy="2" r="0" fill="#000000" transform="rotate(315 12 12)"><animate attributeName="r" begin="0.875s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/></circle>
             </svg>
         </div>
     
     );
 
     return (
-        <div className="h-screen w-screen flex justify-center items-center pb-1 pt-1">
+        <div className="h-screen w-screen flex justify-center items-center bg-gray-100">
 
-            <div  className={`relative w-full h-full overflow-y-auto scrollbar-hide flex flex-col justify-center items-center space-y-5 rounded-[30px]`}>
+            <div  className={`relative w-full h-full overflow-y-auto scrollbar-hide flex flex-col justify-center items-center gap-5`}>
                 
                 {/* Preview of how it will appear on feed */}
                 {posts.map((post) => (
 
-                    <motion.div 
-                        className="relative w-[95%] min-h-[400px] max-h-[600px] flex flex-col overflow-hidden justify-center items-center rounded-[30px] gap-10"
-                        whileHover={{ scale: 1.05 }} 
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    <div 
+                        className="relative w-[80%] min-h-[700px] max-h-[600px] flex flex-col overflow-hidden justify-center items-center p-5"
                     >
-                        
-                        {/* Image(file) container */}
-                        <img 
-                            src={post.image_url} 
-                            alt="preview" 
-                            className="w-full h-full object-cover"
-                        />
 
-                        {/* Preview container */}
-                        <div className="absolute w-full h-full flex flex-col justify-between  bg-gradient-to-t from-black/60 to-transparent p-10">
+                        <motion.div 
+                            className="w-full h-full justify-center items-center overflow-hidden flex rounded-[60px]"
+                            whileHover={{ scale: 1.05 }} 
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        >
+
+                            {/* Image(file) container */}
+                            <img 
+                                src={post.image_url} 
+                                alt="preview" 
+                                className="w-full h-full object-cover"
+                            />
+                            
+                        </motion.div>
+                        
+
+
+                        <div className=" w-[90%] h-full flex flex-col justify-between bg-gray-100">
 
                             <motion.div 
                                 whileHover={{ scale: 1.05 }} 
                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                className="w-full h-auto top-5 flex flex-col px-10 py-5 rounded-[60px] bg-white/30 backdrop-blur-xs cursor-pointer">
-                                <text className="font-light text-2xl tracking-widest text-white font-bold">{post.dish_name}</text>
-                                <text className="font-thin text-md tracking-wide text-white">{post.description}</text>  
+                                className="w-full h-auto top-5 flex flex-col px-10 py-5 rounded-[60px] hover:bg-gray-100/30 hover:backdrop-blur-xs cursor-pointer "
+                            >
+                                    <text className="font-light text-2xl tracking-widest text-black font-bold">{post.dish_name}</text>
+                                    <text className="font-thin text-md tracking-wide text-black">{post.description}</text>  
                             </motion.div>
                             
                             <div className="flex flex-row justify-center items-center w-full h-[10%] pr-5 pl-5">
@@ -176,15 +212,15 @@ export default function Feed() {
                                     <motion.div 
                                         whileHover={{ scale: 1.05 }} 
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className={`w-15 h-15 cursor-pointer flex justify-center items-center rounded-full bg-white/30 backdrop-blur-xs`}
+                                        className={`w-15 h-15 cursor-pointer flex justify-center items-center rounded-full hover:backdrop-blur-lg hover:bg-white/70`}
                                         onClick={() => setMore(true)}
                                         >
                                         <svg 
                                             width="20" 
                                             height="20"
                                             xmlns="http://www.w3.org/2000/svg" 
-                                            viewBox="0 0 24 24">
-                                            <path fill={`${more ? "#000000" : "white" }`} stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.5 6.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m6.5 11a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m-13 0a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" color="currentColor"/>
+                                            viewBox="0 0 24 24 ">
+                                            <path fill="transparent" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.5 6.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m6.5 11a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m-13 0a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" color="currentColor"/>
                                         </svg>
                                     </motion.div>
 
@@ -194,7 +230,7 @@ export default function Feed() {
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                         className="flex flex-row justify-center items-center space-x-2">
                                         <button 
-                                            className="text-md font-light text-center text-white tracking-wider cursor-pointer rounded-[60px] bg-white/30 backdrop-blur-xs p-3"
+                                            className="text-md font-light text-center text-black tracking-wider cursor-pointer rounded-[60px] hover:backdrop-blur-lg p-3 hover:bg-white/70"
                                             onClick={() => {
                                                 setSelectedPost(post);
                                                 setShowMessageSection(true);
@@ -203,7 +239,7 @@ export default function Feed() {
                                 </div>
 
                                 {/* Like button */}
-                                <div className="w-full h-full flex flex-row justify-end items-center space-x-1">
+                                <div className="w-full h-full flex flex-row justify-end items-center space-x-5">
                                     <motion.div 
                                         whileHover={{ scale: 1.05 }} 
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -217,17 +253,20 @@ export default function Feed() {
                                             <path fill={post.likes.includes(sub) ? "red" : "white"}  strokeLinecap="round" strokeLinejoin="round" d="m7 12.45l-5.52-5c-3-3 1.41-8.76 5.52-4.1c4.11-4.66 8.5 1.12 5.52 4.1Z"/>
                                         </svg>
                                     </motion.div>
-                                    <span className="text-[17px] font-light px-2 text-white">{post.likes_count || 0}</span>
+                                    <span className="text-[17px] font-light px-2 text-black">{post.likes_count || 0}</span>
                                 </div>
 
-                            </div>  
+                            </div> 
+
+                            <div className="w-full border-t border-gray-300"></div> 
 
                         </div>
 
-                    </motion.div>
+                                                    
+
+                    </div>
 
                     ))}
-    
 
             {/* Share & Report */}
             {more && (
@@ -269,7 +308,7 @@ export default function Feed() {
                 </>
             )}
 
-                        {/* Share & Report */}
+            {/* Share & Report */}
             {showMessageSection && selectedPost && (
                 <>
                     {/* Dimmed background */}
@@ -280,7 +319,7 @@ export default function Feed() {
 
                     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
 
-                        <div className="pointer-events-auto w-2/3 md:w-1/2 lg:w-1/2 h-2/3 md:h-1/2 lg:h-1/2 bg-white rounded-[30px] shadow-lg flex flex-col overflow-hidden">
+                        <div className="pointer-events-auto w-2/3 md:w-1/2 lg:w-1/2 h-2/3 md:h-1/2 hlg:h-1/2 bg-white rounded-[30px] shadow-lg flex flex-col overflow-hidden">
                 
                             <div className="w-full h-full flex flex-col justify-between items-center p-5">
                                 <span className="font-light text-[20px] tracking-wider text-gray-800 text-center">Ask {selectedPost.profile_name} a question about {selectedPost.dish_name}.</span>
