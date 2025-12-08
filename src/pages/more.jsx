@@ -47,7 +47,7 @@ export default function More() {
                         </div>                        
                         <div className="w-[30%] h-full flex justify-end items-center pr-10">
                             <button 
-                                className="w-11 h-11 bg-white rounded-full  flex justify-center items-center cursor-pointer dark:bg-black"
+                                className="w-11 h-11 rounded-full  flex justify-center items-center cursor-pointer dark:bg-black"
                                 onClick={() => setShowSectionPage(true)}
                             >
                                 <svg 
@@ -69,12 +69,12 @@ export default function More() {
                         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto"/>
 
                         {/* SIGN UP/IN */}
-                        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+                        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none pb-5">
 
                             <div 
-                                className="w-[90vw] h-[90vw] max-w-[600px] max-h-[600px]
-                                             rounded-[30px] pointer-events-auto
-                                            flex flex-col justify-center items-center pb-5 gap-5">
+                                className="w-full md:w-2/3 lg:w-4/5 h-[90%] md:h-4/5 lg-4/5 max-w-[600px] max-h-[600px]
+                                            rounded-[30px] pointer-events-auto
+                                            flex flex-col justify-center items-center p-5 bg-white">
 
                                 <motion.div 
                                     className="relative w-full h-[10%] flex justify-center items-center"

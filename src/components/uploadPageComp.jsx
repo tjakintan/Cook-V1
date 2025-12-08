@@ -18,7 +18,7 @@ export function UploadPage({ onNext, setFile }) {
 
     return (
         <div className="h-screen flex justify-center items-center">
-            <div className="w-2/3 h-3/4">
+            <div className="w-full md:w-2/3 lg:w-2/3 h-full md:h-3/4 lg:h-3/4 pb-2 pt-2">
                 <p className="relative top-5 text-center tracking-wider">UPLOAD</p>
                 <div className="h-full flex justify-center items-center">
                     <div className="relative w-[70px] h-[70px] rounded-lg shadow-lg">
@@ -94,10 +94,10 @@ export function UploadNextPage({ onBack, data, file, onNext }) {
 
         <div className="h-screen w-screen flex justify-center items-center">
 
-            <div className="w-2/3 h-3/4 overflow-y-auto scrollbar-hide">
+            <div className="w-full md:w-2/3 lg:w-2/3 h-[95%] md:h-3/4 lg:h-3/4 pb-10 overflow-y-auto scrollbar-hide">
 
                 {/* Header */}
-                <div className="relative flex flex-row items-center justify-between px-4 py-3 pb-10">
+                <div className="relative flex flex-row items-center justify-between px-4 py-3 ">
                     <button onClick={onBack} className="relative left-5 cursor-pointer z-10 hover:brightness-70">
                         <svg 
                         xmlns="http://www.w3.org/2000/svg" 
@@ -290,9 +290,9 @@ export function UploadPreview({ data, onBack, post }) {
     
     return (
 
-        <div className="h-screen w-screen flex justify-center items-center">
+        <div className="h-screen w-screen flex justify-center items-center ">
 
-            <div className="w-2/3 h-3/4 rounded-[30px] flex flex-col shadow-lg scrollbar-hide bg-black overflow-hidden">
+            <div className="w-full md:w-2/3 lg:w-2/3 h-3/4 flex flex-col scrollbar-hide overflow-hidden">
 
                 {/* Header */}
                 <div className="relative w-full h-[10%] flex flex-row items-center justify-between">
@@ -306,7 +306,7 @@ export function UploadPreview({ data, onBack, post }) {
                         <path fill="red" d="M16 21.308L6.692 12L16 2.692l1.063 1.064L8.82 12l8.244 8.244L16 21.308Z" />
                         </svg>
                     </button>
-                    <span className="text-center tracking-widest w-full -ml-6 text-white ">PREVIEW</span>
+                    <span className="text-center tracking-widest w-full -ml-6 text-black ">PREVIEW</span>
                 </div>
 
                 
@@ -314,7 +314,7 @@ export function UploadPreview({ data, onBack, post }) {
 
                     {/* Preview of how it will appear on feed */}
                     <div className="flex flex-col w-full h-[80%] justify-center items-center p-4">
-                        <div className="flex flex-col w-full h-full rounded-[30px] bg-white overflow-hidden">
+                        <div className="flex flex-col w-full h-full rounded-[30px] bg-black overflow-hidden">
                             {/* Image(file) container */}
                             <div className="w-full h-[65%]">
                                 <img 
@@ -324,10 +324,10 @@ export function UploadPreview({ data, onBack, post }) {
                                 />
                             </div>
                             {/* Preview container */}
-                            <div className="w-full h-[35%] bg-white flex flex-col pt-2 pl-4 pb-4">
+                            <div className="w-full h-[35%] bg-black flex flex-col pt-2 pl-4 pb-4">
                                 <div className="w-full h-[90%] flex flex-col gap-2">
-                                    <text className="font-light text-2xl tracking-widest text-black font-bold">{dishName}</text>
-                                    <text className="font-thin text-md tracking-wide text-black ">{description}</text>   
+                                    <text className="font-light text-2xl tracking-widest text-white font-bold">{dishName}</text>
+                                    <text className="font-thin text-md tracking-wide text-white ">{description}</text>   
                                 </div>  
                             </div>
                         </div>
@@ -338,7 +338,7 @@ export function UploadPreview({ data, onBack, post }) {
                     <div className="flex flex-col w-full h-[20%] justify-center items-center">
 
                         <button 
-                            className=" w-[100px] h-[40px] bg-white text-black rounded-[30px] cursor-pointer"
+                            className=" w-[100px] h-[40px] bg-black text-white rounded-[30px] cursor-pointer"
                             onClick={() => {
                                 submitPost();
                                 navigate("/feed");

@@ -207,12 +207,12 @@ export default function Feed() {
                             
                             <div className="flex flex-row justify-center items-center w-full h-[10%] pr-5 pl-5">
 
-                                <div className="w-full h-full flex items-center flex-row space-x-5">
+                                <div className="w-full h-full flex items-center flex-row space-x-1">
                                     {/* More button */}
                                     <motion.div 
                                         whileHover={{ scale: 1.05 }} 
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className={`w-15 h-15 cursor-pointer flex justify-center items-center rounded-full hover:backdrop-blur-lg hover:bg-white/70`}
+                                        className={`w-15 h-15 cursor-pointer flex justify-center items-center rounded-full hover:backdrop-blur-lg hover:bg-white/70 outline-1`}
                                         onClick={() => setMore(true)}
                                         >
                                         <svg 
@@ -230,7 +230,7 @@ export default function Feed() {
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                         className="flex flex-row justify-center items-center space-x-2">
                                         <button 
-                                            className="text-md font-light text-center text-black tracking-wider cursor-pointer rounded-[60px] hover:backdrop-blur-lg p-3 hover:bg-white/70"
+                                            className="text-md font-light text-center text-black tracking-wider cursor-pointer rounded-[60px] hover:backdrop-blur-lg p-3 hover:bg-white/70 outline-1"
                                             onClick={() => {
                                                 setSelectedPost(post);
                                                 setShowMessageSection(true);
@@ -239,18 +239,18 @@ export default function Feed() {
                                 </div>
 
                                 {/* Like button */}
-                                <div className="w-full h-full flex flex-row justify-end items-center space-x-5">
+                                <div className="w-full h-full flex flex-row justify-end items-center space-x-1">
                                     <motion.div 
                                         whileHover={{ scale: 1.05 }} 
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                        className={`w-15 h-15 cursor-pointer flex justify-center items-center rounded-full bg-white/30 backdrop-blur-xs p-1 hover:bg-red-500`}
+                                        className={`w-15 h-15 cursor-pointer flex justify-center items-center rounded-full bg-white/30 backdrop-blur-xs p-1 hover:bg-red-500 outline-1`}
                                         onClick={() => handleLike(post.id)}>
                                         <svg 
                                             width="24" 
                                             height="24"
                                             xmlns="http://www.w3.org/2000/svg" 
                                             viewBox="0 0 14 14">
-                                            <path fill={post.likes.includes(sub) ? "red" : "white"}  strokeLinecap="round" strokeLinejoin="round" d="m7 12.45l-5.52-5c-3-3 1.41-8.76 5.52-4.1c4.11-4.66 8.5 1.12 5.52 4.1Z"/>
+                                            <path fill={post.likes.includes(sub) ? "red" : "white"} stroke="#000000" strokeLinecap="round" strokeLinejoin="round" d="m7 12.45l-5.52-5c-3-3 1.41-8.76 5.52-4.1c4.11-4.66 8.5 1.12 5.52 4.1Z"/>
                                         </svg>
                                     </motion.div>
                                     <span className="text-[17px] font-light px-2 text-black">{post.likes_count || 0}</span>
@@ -258,7 +258,7 @@ export default function Feed() {
 
                             </div> 
 
-                            <div className="w-full border-t border-gray-300"></div> 
+                            <div className="w-full mt-5 border-t border-gray-300"></div> 
 
                         </div>
 
@@ -308,7 +308,7 @@ export default function Feed() {
                 </>
             )}
 
-            {/* Share & Report */}
+            {/* Ask a question */}
             {showMessageSection && selectedPost && (
                 <>
                     {/* Dimmed background */}
@@ -319,7 +319,7 @@ export default function Feed() {
 
                     <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
 
-                        <div className="pointer-events-auto w-2/3 md:w-1/2 lg:w-1/2 h-2/3 md:h-1/2 hlg:h-1/2 bg-white rounded-[30px] shadow-lg flex flex-col overflow-hidden">
+                        <div className="pointer-events-auto w-full md:w-1/2 lg:w-1/2 h-2/3 md:h-1/2 hlg:h-1/2 bg-white rounded-[30px] shadow-lg flex flex-col overflow-hidden">
                 
                             <div className="w-full h-full flex flex-col justify-between items-center p-5">
                                 <span className="font-light text-[20px] tracking-wider text-gray-800 text-center">Ask {selectedPost.profile_name} a question about {selectedPost.dish_name}.</span>

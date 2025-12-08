@@ -39,6 +39,7 @@ export default function Profile() {
     const profile_img = useRef(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const navigate = useNavigate();
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
 
     const [user, setUser] = useState(null);
@@ -162,6 +163,8 @@ export default function Profile() {
         }
     };
 
+    
+
     const handleGetLikedPosts = async () => {
         console.log("get_user_liked_post");
 
@@ -241,6 +244,7 @@ export default function Profile() {
             console.error("Failed to update account:", result);
         }
     };
+
 
     
 
@@ -341,17 +345,86 @@ export default function Profile() {
             {showAccountSection && user && (
 
                 <>
-                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto" onClick={() => {setShowAccountSection(false);setShowAccountUpdateSection(false);se}}/>
+                    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 pointer-events-auto" onClick={() => {setShowAccountSection(false);setShowAccountUpdateSection(false);setShowDeleteConfirm(false);}}/>
                     
                     
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
 
-                        <div className={`w-full md:w-2/3 lg:w-2/3 ${showAccountUpdateSection ? "h-[70%]" : "h-[20%]"}
+                        <div className={`w-full md:w-2/3 lg:w-2/3 ${showAccountUpdateSection ? "h-4/5" : "h-1/3"}
                                         flex justify-center items-center rounded-3xl overflow-hidden`}>
 
-                            <div className="w-full h-full flex flex-col items-center justify-center pointer-events-auto p-5 ">
+                            <div className="w-full h-full flex flex-col items-center justify-center pointer-events-auto">
          
-                                    {/* Update Account Section */}
+                                    <div className={`w-full h-full flex flex-col justify-center items-center p-5 gap-2 ${showAccountUpdateSection  ? "hidden" : ""} bg-white rounded-[30px]`}>
+
+
+                                        {/* buttons */}
+                                        <div className={`w-full h-full flex flex-row justify-center items-center`}>
+
+                                            <motion.button
+                                                    className="relative w-full h-full rounded-[10px] cursor-pointer "
+                                                    animate={{ rotateY: showDeleteConfirm ? 180 : 0 }}
+                                                    transition={{ duration: 0.4 }}
+                                                    style={{ transformStyle: "preserve-3d" }}
+                                                    onClick={() => setShowDeleteConfirm(true)}
+                                                >
+
+                                                    {/* Front (Delete) */}
+                                                    <div
+                                                        className="absolute inset-0 flex items-center justify-center"
+                                                        style={{ backfaceVisibility: "hidden" }}
+                                                    >
+                                                        <span className="text-md font-light tracking-widest">Delete</span>
+                                                    </div>
+
+                                                    {/* Back (Confirm delete) */}
+                                                    <div
+                                                        className="absolute w-full h-full inset-0 flex items-center justify-center bg-red-500 rounded-[30px]"
+                                                        style={{
+                                                        transform: "rotateY(180deg)",
+                                                        backfaceVisibility: "hidden"
+                                                        }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setShowAccountSection(false);
+                                                            setShowDeleteConfirm(false);
+                                                            //handleDeleteAccount();
+                                                        }}
+                                                    >
+                                                    </div>
+
+                                                </motion.button>
+
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }} 
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-green-500 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
+                                                onClick={() => {
+                                                    setShowAccountUpdateSection(true);
+                                                    setPreviewUrl(user.profile_img_url);}}
+                                            >
+                                                <span className="text-md font-light text-center tracking-widest">Update</span>
+                                            </motion.div>
+
+
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }} 
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
+                                                onClick={handleLogout}
+                                            >
+                                                <span className="text-md font-light text-center tracking-widest">Log out</span>
+                                            </motion.div>
+
+                                        </div>
+
+                                        <span className={`font-thin text-[9px] tracking-widest text-center ${showDeleteConfirm ? "" : "hidden"}`}>
+                                            Please note that upon <span className="text-[9px] font-bold">Tapping the red circle</span>, all your data will be <span className="text-[10px] font-bold">deleted</span> and retained for 30 days in accordance with our policy. Review our <span className="underline">terms & conditions</span>, for more.
+                                        </span>
+                                    
+                                     </div>
+
+                                      {/* Update Account Section */}
                                     <div className={`w-full md:w-2/3 lg:w-2/3 h-full ${showAccountUpdateSection ? "" : "hidden"} flex flex-col justify-center items-center p-10 gap-5 bg-white rounded-[30px]`}>
 
                                         {/* EDIT profile image */}                         
@@ -368,8 +441,8 @@ export default function Profile() {
                                                 className="hidden"
                                                 onChange={handleImageSelect}
                                             />
-                                            <span htmlFor="email" className={`mt-1 block text-[11px] font-light text-black text-center tracking-widest`}>
-                                                Choose a profile picture
+                                            <span htmlFor="email" className={`mt-1 block text-[12px] font-light text-black text-center tracking-widest`}>
+                                                Change your a profile picture
                                             </span>
                                         </div>
 
@@ -433,7 +506,7 @@ export default function Profile() {
                                                         : ["", "", ""];
 
                                                         // For your input
-                                                        const placeholderValue = dobParts[i] || date_input.placeholde
+                                                        const placeholderValue = dobParts[i] || date_input.placeholder
 
                                                         return (
                                                             <React.Fragment key={date_input.id}>
@@ -487,53 +560,6 @@ export default function Profile() {
 
                                     </div>
 
-
-                                    <div className={`w-full h-full flex flex-col justify-center items-center p-5 gap-2 ${showAccountUpdateSection ? "hidden" : ""} bg-white rounded-[30px]`}>
-
-
-                                        {/* buttons */}
-                                        <div className={`w-full h-full flex flex-row justify-center items-center`}>
-
-                                            <motion.div 
-                                                whileHover={{ scale: 1.05 }} 
-                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-red-500 cursor-pointer}`}
-                                                //onClick={handleDeleteAccount}
-                                            >
-                                                <span className="text-md font-light text-center tracking-widest">Delete</span>
-                                            </motion.div>
-
-
-                                            <motion.div 
-                                                whileHover={{ scale: 1.05 }} 
-                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-green-500 cursor-pointer`}
-                                                onClick={() => {
-                                                    setShowAccountUpdateSection(true);
-                                                    setPreviewUrl(user.profile_img_url);}}
-                                            >
-                                                <span className="text-md font-light text-center tracking-widest">Update</span>
-                                            </motion.div>
-
-
-                                            <motion.div 
-                                                whileHover={{ scale: 1.05 }} 
-                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer`}
-                                                onClick={handleLogout}
-                                            >
-                                                <span className="text-md font-light text-center tracking-widest">Log out</span>
-                                            </motion.div>
-
-                                        </div>
-
-                                        <span className={`font-thin text-[9px] tracking-widest text-center ${showAccountUpdateSection ? "hidden" : ""}`}>
-                                            Please note that deleted data will be retained for 30 days in accordance with our policy. For more details, please review our 
-                                            <span className="underline">terms & conditions</span>.
-                                        </span>
-                                    
-                                     </div>
-
                           
                             
                             </div>
@@ -546,6 +572,7 @@ export default function Profile() {
 
             ) }
 
+
             {showPostSection && posts && (
                  <>
                     {/* Fullscreen dark background */}
@@ -556,7 +583,7 @@ export default function Profile() {
                     <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
 
                         
-                        <div className="w-[90vw] h-[90vw] max-w-[600px] max-h-[600px] 
+                        <div className="w-full max-w-[600px] max-h-[600px] 
                                         rounded-[20px] overflow-hidden ">
 
                             {/* CONTENT INSIDE THE SQUARE */}
@@ -567,16 +594,16 @@ export default function Profile() {
                                     {posts.length > 0 ? (
 
                                         posts.map((post) => (
-                                            <div className="w-full h-1/2 flex flex-col items-center justify-center">
+                                            <div className="w-full h flex flex-col items-center justify-center pr-1">
 
-                                                <div className="w-full h-full rounded-[20px] flex flex-row overflow-hidden items-center justify-between ">
+                                                <div className="w-full h-full flex flex-row overflow-hidden items-center justify-between ">
 
                                                     {/* Image */}
-                                                    <div className="w-[60%] h-full flex justify-center items-center">
+                                                    <div className="w-3/5 h-full flex justify-center items-center">
                                                         <img
                                                             src={post.image_url}
                                                             alt={post.dish_name}
-                                                            className="w-2/3 h-4/5 rounded-[20px] object-cover overflow-hidden"
+                                                            className="w-2/3 h-full rounded-[20px] object-cover overflow-hidden"
                                                         />    
                                                     </div>         
 
@@ -635,8 +662,9 @@ export default function Profile() {
 
                                                     </div>  
 
-                                                        
-                                                    <div className="w-[40%] h-full flex justify-center items-center">
+
+                                                    {/**  
+                                                     *    <div className="w-[40%] h-full flex justify-center items-center">
                                                         <motion.div 
                                                             whileHover={{ scale: 1.05 }} 
                                                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -651,6 +679,9 @@ export default function Profile() {
                                                         </motion.div>
                         
                                                     </div> 
+                                                     */}
+                                                        
+                                               
 
                                                 </div>
                                             </div>
@@ -772,6 +803,8 @@ export default function Profile() {
             )}
 
         */}
+
+
 
         </>
 

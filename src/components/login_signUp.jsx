@@ -371,7 +371,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
   return (
 
     <motion.div 
-        className="w-[90%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white p-5"
+        className="w-[85%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white p-5"
         whileHover={{ scale: 1.05 }} 
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
@@ -478,6 +478,8 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                         ref={(el) => (date_inputRefs.current[i] = el)}
                                         maxLength={date_input.maxLength}
                                         placeholder={date_input.placeholder}
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         onChange={(e) => date_handleChange(e, i)}
                                         onKeyDown={(e) => date_handleKeyDown(e, i)}
                                         className="w-12 h-8 flex items-center justify-center rounded-md bg-white text-center text-black 
@@ -553,7 +555,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
 
                     {/* SIGN UP Password */}
                     <motion.div 
-                        className={`flex flex-col justify-between ${showSignUp ? "" : "hidden"}`}
+                        className={`flex mt-5 flex-col justify-between ${showSignUp ? "" : "hidden"}`}
                         animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
                         <div className="flex gap-2">
@@ -563,6 +565,8 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                         ref={(el) => (passcode_inputRefs.current[i] = el)}
                                         maxLength={1}
                                         type="password"
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs)}
                                         onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)} 
                                     className="w-8 h-8 flex items-center justify-center rounded-md bg-white
@@ -616,6 +620,8 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                 key={i}
                                 ref={(el) => (passcode_inputRefs3.current[i] = el)}
                                 maxLength={1}
+                                inputMode="numeric"
+                                pattern="[0-9]*"
                                 onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs3)}
                                 onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs3)} 
                             className="w-8 h-8 flex items-center justify-center rounded-md bg-white
@@ -681,6 +687,8 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                             ref={(el) => (passcode_inputRefs5.current[i] = el)}
                                             maxLength={1}
                                             type="password"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
                                             onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs5)}
                                             onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs5)} 
                                         className="w-8 h-8 flex items-center justify-center rounded-md bg-white
@@ -707,6 +715,8 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                         key={i}
                                         ref={(el) => (passcode_inputRefs4.current[i] = el)}
                                         maxLength={1}
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
                                         onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs4)}
                                         onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs4)} 
                                     className="w-8 h-8 flex items-center justify-center rounded-md bg-white
@@ -787,6 +797,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                     ref={(el) => (passcode_inputRefs2.current[i] = el)}
                                     maxLength={1}
                                     type="password"
+                                    inputMode="numeric"
                                     onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs2)}
                                     onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs2)} 
                                     className="w-8 h-8 flex items-center justify-center rounded-md bg-white
