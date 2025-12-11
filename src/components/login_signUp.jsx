@@ -827,7 +827,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
                                 cursor-pointer hover:bg-gray-100 ${showForgotPasswordSection ? "hidden" : ""}`}
                     onClick={handleSignIn}
                 >
-                    Sign In
+                    Sign in | up
                 </motion.div> 
 
 
