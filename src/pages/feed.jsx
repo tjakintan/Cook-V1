@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, use } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import "../styles/pages_style.css";
 import "../styles/component_style.css";
@@ -12,6 +12,7 @@ export default function Feed() {
     const [like, setLike] = useState(false);
     const [more, setMore] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [ showFullDesc, setShowFullDesc] = useState(false);
 
     const [selectedPost, setSelectedPost] = useState(null);
     const [showMessageSection, setShowMessageSection ] = useState(false);
@@ -194,9 +195,11 @@ export default function Feed() {
             console.error("Error loading/creating conversation", err);
         }
     };
-
-
-
+    const truncateText = (text, wordLimit) => {
+        const words = text.split(' ');
+        if (words.length <= wordLimit) return text;
+        return words.slice(0, wordLimit).join(' ') + '...';
+    };
 
 
 
@@ -225,7 +228,7 @@ export default function Feed() {
                 {posts.map((post) => (
                 
                     <div 
-                        className="relative w-full min-h-[600px] flex flex-col items-center p-1"
+                        className="relative w-full min-h-[600px] flex flex-col items-center py-3"
                     >
 
                         {/* Post image container */}
@@ -245,10 +248,12 @@ export default function Feed() {
                             {/* Desc container */}
                             <div 
                                 className="w-full md:w-5/6 lg:w-5/6 h-auto top-5 flex flex-col items-center justify-between px-10 py-5 rounded-[60px] hover:bg-gray-50 cursor-pointer"
+                                onClick={() => setShowFullDesc(post)}
+                            
                             >
                                     <text className="font-light text-2xl tracking-widest text-black font-bold">{post.dish_name}</text>
                                     <div className="w-2/3 mt-5 mb-5 border-t border-gray-300"></div>
-                                    <text className="font-thin text-md tracking-wide text-black">{post.description}</text> 
+                                    <text className="font-thin text-md tracking-wide text-black">{truncateText(post.description, 20)}</text> 
                             </div>
                             
                             {/* Functionality row container */}
@@ -454,6 +459,39 @@ export default function Feed() {
                     </div>
 
                 ))}
+
+            {showFullDesc && (
+                <>
+                    {/* Dimmed background */}
+                    <div
+                    className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
+                    onClick={() => setShowFullDesc(null)} 
+                    ></div>
+
+                    <div
+                        className="fixed top-1/2 left-1/2 w-full md:w-2/3 lg:w-2/3 h-2/3 bg-white rounded-[30px] shadow-lg cursor-pointer
+                                    -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col justify-center items-center p-5 overflow-hidden"
+                    >
+                        <text className="font-light text-2xl tracking-widest text-black font-bold">{showFullDesc.dish_name}</text>
+                        <div className="w-2/3 mt-5 mb-5 border-t border-gray-300"></div>
+                        <div className="w-full h-full overflow-y-auto p-3">
+                            <text className="font-thin text-md tracking-wide text-black">{showFullDesc.description}</text>
+                        </div>
+
+                        {/* Close */}
+                        <motion.div 
+                            className="flex w-full items-center mt-5 rounded-[30px] hover:bg-gray-50 justify-center p-2"
+                            onClick={() => setShowFullDesc(null)}
+                            whileHover={{ scale: 1.07 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <span className="text-md font-thin tracking-wide">close...</span>
+                        </motion.div>                        
+
+                    </div>
+                </>
+            )}
+
 
             {/* Share & Report */}
             {more && (
