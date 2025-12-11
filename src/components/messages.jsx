@@ -1,55 +1,118 @@
-import React, { useRef, useState, useEffect, use } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { motion } from "framer-motion";
 import "../styles/component_style.css";
 
 export default function Messages() {
-
     const [user, setUser] = useState(null);
-    const [inbox, setInbox] = useState([]); 
-    const [messageContent, setMessageContent] = useState(""); 
+    const [inbox, setInbox] = useState({});
+    const [groupedInbox, setGroupedInbox] = useState({});
+    const [openConversation, setOpenConversation] = useState({});
+    const [messageText, setMessageText] = useState("");
+    const [activeUserSub, setActiveUserSub] = useState(null); // current open conversation
+    const [messages, setMessages] = useState([]);
     const messagesEndRef = useRef(null);
-    const [selectedPost, setSelectedPost] = useState(null);
-    const [selectedConversationId, setSelectedConversationId] = useState(null);
-    const [selectedConversationName, setSelectedConversationName] = useState(null);
-    const [showReplyPostQuestion, setShowReplyPostQuestion] = useState(false);
-
-
-    const [showSendMessageSection, setShowSendMessageSection] = useState(false);
-    const [selectedSenderId, setSelectedSenderId] = useState(null);
-    const [selectedUserName, setSelectedUserName] = useState(null);
-    const [showReplyUserPostQuestion, setShowReplyUserPostQuestion] = useState(true);
-   
-    const [selectedRootMessageId, setSelectedRootMessageId] = useState(null);
-
 
     const accessToken = localStorage.getItem("accessToken");
-    let sub = null;
+    const sub = accessToken ? jwtDecode(accessToken).sub : null;
 
-    if (accessToken) {
-        const decoded = jwtDecode(accessToken);
-        sub = decoded.sub;
-    }
-
+    // Fetch user info
     useEffect(() => {
         if (!sub) return;
 
-        async function fetchUserInfo() {
-            const response = await fetch(
-                "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user",
-                {
+        const fetchUserInfo = async () => {
+            try {
+                const res = await fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user", {
                     method: "POST",
                     headers: { "content-type": "application/json" },
                     body: JSON.stringify({ sub }),
-                }
-            );
-            const data = await response.json();
-            setUser(data.user);
-        }
+                });
+                const data = await res.json();
+                setUser(data.user);
+            } catch (err) {
+                console.error("Failed to fetch user info:", err);
+            }
+        };
         fetchUserInfo();
-    }, [sub]);  
+    }, [sub]);
 
     const callAction = async (actionName, payload = {}) => {
+        try {
+            const res = await fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ action: actionName, user_sub: sub, ...payload }),
+            });
+            return await res.json();
+        } catch (err) {
+            console.error("API error:", err);
+            return null;
+        }
+    };
+
+    // Fetch inbox and group by user pairs
+    const fetchInbox = async () => {
+        const result = await callAction("get_inbox");
+        if (result?.status === "success") {
+            const inboxObj = result.inbox || {};
+
+            // Group by other user sub
+            const grouped = {};
+            Object.values(inboxObj).forEach(item => {
+                const otherSub = item.other_user?.sub || "unknown";
+
+                // Keep the latest message
+                if (!grouped[otherSub] || new Date(item.last_message_at) > new Date(grouped[otherSub].last_message_at)) {
+                    grouped[otherSub] = item;
+                }
+            });
+
+            // Sort by newest message
+            const sortedGrouped = Object.fromEntries(
+                Object.entries(grouped).sort(
+                    ([, a], [, b]) => new Date(b.last_message_at) - new Date(a.last_message_at)
+                )
+            );
+
+            setInbox(inboxObj);
+            setGroupedInbox(sortedGrouped);
+        }
+    };
+
+    // Load all messages for a user pair
+    const openOrLoadConversation = async (otherUserSub) => {
+        try {
+            const res = await fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({
+                    action: "get_or_create_conversation",
+                    user_a: sub,
+                    user_b: otherUserSub,
+                }),
+            });
+
+            const data = await res.json();
+            const parsed = data.body ? JSON.parse(data.body) : data;
+
+            if (parsed.success) {
+                setMessages(parsed.messages || []);
+                setActiveUserSub(otherUserSub);
+                setTimeout(() => {
+                    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+            }
+        } catch (err) {
+            console.error("Error loading conversation:", err);
+        }
+    };
+
+    const handleASendMessage = async () => {
+
+        if (!messageText.trim()) {
+            return;
+        }
+
         try {
             const res = await fetch(
                 "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
@@ -57,41 +120,26 @@ export default function Messages() {
                     method: "POST",
                     headers: { "content-type": "application/json" },
                     body: JSON.stringify({
-                        action: actionName,
-                        user_sub: sub,
-                        ...payload, 
+                        action: "send_message",
+                        user_a: sub,
+                        user_b: activeUserSub,
+                        message: messageText
                     }),
                 }
             );
-
             const data = await res.json();
-            console.log("API Response:", data);
 
-            return data;
-        } catch (err) {
-            console.error("API error:", err);
-            return null;
-        }
-    };
-
-    const fetchInbox = async () => {
-        try {
-            const result = await callAction("get_inbox");
-
-            if (result?.status === "success") {
-                const inboxData = result.inbox || [];
-
-                const sortedInbox = inboxData.sort(
-                    (a, b) => new Date(a.sent_at) - new Date(b.sent_at)
-                );
-                setInbox(sortedInbox);
-                setTimeout(() => {
-                    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                }, 100);
+            if (data.status === "success") {
+                setActiveUserSub(null); 
+                //setShowProfileSection(null);
+                setMessageText(""); 
+            } else {
+                console.error("Failed to send message:");
             }
         } catch (err) {
-            console.error("Failed to fetch inbox:", err);
+            console.error("Error sending message:", err);
         }
+
     };
 
     useEffect(() => {
@@ -99,105 +147,104 @@ export default function Messages() {
         fetchInbox();
     }, [sub]);
 
-    useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [inbox]);
-
-    const handleSend = async (replyToId = null) => {
-
-        if (!messageContent.trim()) return;
-
-        if (!selectedPost) {
-            console.error("No post selected to send message to!");
-            return;
-        }
-
-        const res = await fetch(
-        "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
-        {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-            action: "send_message",
-            user_sub: sub,
-            post_id: selectedPost.post_id,
-            message: messageContent,
-            reply_to_id: replyToId
-            }),
-        }
-        );
-
-        const data = await res.json();
-
-        if (data.status === "success") {
-            setMessageContent("");
-            setShowReplyPostQuestion(false);
-            await fetchInbox();
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });      
-        }   
-
-    };
-        
     return (
+        <div className="w-full flex flex-col items-center justify-start p-2 gap-4 overflow-y-auto scrollbar-hide">
+            {Object.entries(groupedInbox).map(([otherSub, convo]) => {
+                const other = convo.other_user || {};
+                const displayName = other.name || "Unknown";
+                const displayImg = other.img || "/default.png";
 
-        <div className="w-full h-full flex flex-col items-center justify-start p-5 gap-4 overflow-y-auto scrollbar-hide bg-blue-100">
+                const isOpen = activeUserSub === otherSub; // only expand if this conversation is active
 
-             {/* Conversation List */}
-            <div className="w-full h-full flex flex-col gap-2 p-2 bg-red-100 rounded-[45px] overflow-y-auto scrollbar-hide">
+                return (
+                    <motion.div
+                        key={otherSub}
+                        layout // enables smooth height animation
+                        whileHover={{ scale: 1.03 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="w-full flex flex-col bg-white rounded-[30px] p-3 cursor-pointer"
+                        onClick={() => {
+                            if (isOpen) {
+                                setActiveUserSub(null); // collapse if already open
+                            } else {
+                                openOrLoadConversation(otherSub);
+                            }
+                        }}
+                    >
+                        <div className="flex flex-row items-center space-x-3">
+                            <img src={displayImg} alt={displayName} className="w-10 h-10 rounded-full" />
+                            <div className="flex flex-col">
+                                <span className="font-extralight tracking-wider text-lg">{displayName}</span>
+                                <span className={`text-gray-500 font-thin text-xs ${isOpen ? "hidden" : ""}`}>{convo.last_message}</span>
+                            </div>
+                            <span className={`ml-auto text-xs text-gray-400 ${isOpen ? "hidden" : ""}`}>
+                                {new Date(convo.last_message_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                        </div>
 
-  {[...new Set(inbox.map(m => m.conversation_id))].map(conversation_id => {
+                        {isOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="mt-3 rounded-lg p-3"
+                            >
+                                <div className="w-full max-h-[25vh] flex flex-col p-4 rounded-xl overflow-y-auto scrollbar-hide">
 
-      const allMessagesMap = inbox.filter(m => m.conversation_id === conversation_id);
+                                    {messages.length === 0 ? (
+                                        <div className="text-gray-500 text-center">No messages in this conversation</div>
+                                    ) : (
+                                        messages.map(msg => {
+                                            const isSender = msg.sender_sub === sub;
+                                            return (
+                                                <div key={msg.message_id} className={`flex ${isSender ? 'justify-end' : 'justify-start'} w-full mb-2`}>
+                                                    <div className={`flex flex-col max-w-[70%] ${isSender ? 'items-end' : 'items-start'}`}>
+                                                        <div className={`px-5 py-1 rounded-[30px] ${isSender ? 'bg-indigo-500 text-white rounded-br-none' : 'bg-white text-black rounded-bl-none'} shadow`}>
+                                                            {msg.reply_to && (
+                                                                <div className="text-xs text-gray-400 italic mb-1 border-l-2 border-gray-300 pl-2">
+                                                                    {msg.reply_to.content}
+                                                                </div>
+                                                            )}
+                                                            {msg.content}
+                                                        </div>
+                                                        <div className="text-right text-[10px] font-thin text-gray-500 mt-1">
+                                                            {new Date(msg.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                    <div ref={messagesEndRef} />
+                               
+                                </div>
+                                {/* Send conversation */}
+                                <div className={`w-full mt-1 flex items-center flex-row `}
+                                    onClick={(e) => e.stopPropagation()}>
+                                        <textarea 
+                                        value={messageText}      
+                                        onChange={(e) => {setMessageText(e.target.value)}} 
+                                        onKeyDown={async (e) => {
+                                        if (e.key === "Enter" && !e.shiftKey) {
+                                            e.preventDefault();
+                                            const result = await handleASendMessage();
+                                        }
+                                        }}
+                                        className="w-full h-9 rounded-[30px] px-3 py-2 text-base placeholder:text-xs text-sm bg-white
+                                        text-black placeholder:text-gray-400 outline-1 placeholder:italic 
+                                        focus:outline-1 focus:-outline-offset-1 focus:outline-indigo-500 overflow-hidden"
+                                        placeholder=""
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+                    </motion.div>
+                );
+            })}
 
-      return (
-          <div
-              key={conversation_id}
-              className={`flex flex-col gap-2 p-2 rounded-[45px] cursor-pointer overflow-hidden ${
-                  selectedConversationId === conversation_id ? "bg-blue-200" : "bg-white"
-              }`}
-              onClick={() => {
-                  setSelectedConversationId(conversation_id);
-                  if (allMessagesMap.length > 0) {
-                      setSelectedConversationName(allMessagesMap[allMessagesMap.length - 1].sender_name);
-                  }
-              }}
-          >
-
-              {/* Render all messages inside this conversation */}
-              {allMessagesMap.map((msg, index) => (
-                  <div
-                      key={msg.message_id}
-                      className="flex flex-row justify-between items-center p-2 rounded-[25px] bg-blue-100"
-                  >
-                      <div className="flex flex-row items-center space-x-2">
-                          <img 
-                              src={msg.sender_img} 
-                              alt="Sender Profile" 
-                              className="w-10 h-10 rounded-full object-cover outline-1" 
-                          />
-                          <span className="font-thin tracking-wide">{msg.sender_name}</span>
-                      </div>
-                      <div className="flex flex-row items-center">
-                          {msg.post_img && (
-                              <img
-                                  src={msg.post_img}
-                                  alt="Post Image"
-                                  className="w-20 h-20 rounded-[15px] object-cover"
-                              />
-                          )}
-                          <span className="ml-2">{msg.content}</span>
-                      </div>
-                  </div>
-              ))}
-
-          </div>
-      );
-  })}
-
-</div>
-        
         </div>
-
     );
-
 }
+
+

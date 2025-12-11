@@ -19,7 +19,6 @@ export function UploadPage({ onNext, setFile }) {
     return (
         <div className="h-screen flex justify-center items-center">
             <div className="w-full md:w-2/3 lg:w-2/3 h-full md:h-3/4 lg:h-3/4 pb-2 pt-2">
-                <p className="relative top-5 text-center tracking-wider">UPLOAD</p>
                 <div className="h-full flex justify-center items-center">
                     <div className="relative w-[70px] h-[70px] rounded-lg shadow-lg">
                         <div className="absolute inset-0 bg-black bg-opacity-25 rounded-lg shadow-lg hover:brightness-50">
@@ -59,7 +58,6 @@ export function UploadNextPage({ onBack, data, file, onNext }) {
     const [dishName, setDishName] = useState(data?.dishName || "");
     const [description, setDescription] = useState(data?.description || "");
     const [difficulty, setDifficulty] = useState(data?.difficulty || "");
-    //const [steps, setSteps] = useState("");
 
     const [shake, setShake] = useState(false);
 
@@ -67,11 +65,6 @@ export function UploadNextPage({ onBack, data, file, onNext }) {
     const [open, setOpen] = useState(false);
 
     const imageUrl = file ? URL.createObjectURL(file) : null;
-    
-    function TempStorage () {
-
-
-    };
 
     const submitPost = () => {
    
@@ -97,26 +90,22 @@ export function UploadNextPage({ onBack, data, file, onNext }) {
             <div className="w-full md:w-2/3 lg:w-2/3 h-[95%] md:h-3/4 lg:h-3/4 pb-10 overflow-y-auto scrollbar-hide">
 
                 {/* Header */}
-                <div className="relative flex flex-row items-center justify-between px-4 py-3 ">
-                    <button onClick={onBack} className="relative left-5 cursor-pointer z-10 hover:brightness-70">
+                <div className="relative w-full flex flex-row items-center justify-between px-4 py-3 ">
+                    <button onClick={onBack} className="w-10 h-10 rounded-full bg-black p-3 flex items-center justify-center relative left-5 cursor-pointer z-10">
                         <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        width="24" 
-                        height="24" 
-                        viewBox="0 0 24 24"
-                        >
-                        <path fill="red" d="M16 21.308L6.692 12L16 2.692l1.063 1.064L8.82 12l8.244 8.244L16 21.308Z"/>
+                            viewBox="0 0 32 32"
+                            className="w-10 h-10 text-red-500"
+                            >
+                            <path fill="currentColor" d="m13.28 6.78l-8.5 8.5l-.686.72l.687.72l8.5 8.5l1.44-1.44L7.936 17H28v-2H7.937l6.782-6.78l-1.44-1.44z"/>
                         </svg>
                     </button>
-                    <span className="text-center tracking-widest w-full -ml-6">INFORMATION</span>
-                    <button  onClick={submitPost} className="relative right-5 cursor-pointer">
-                        <svg
+                    <button  onClick={submitPost} className="w-10 h-10 rounded-full bg-black p-3 flex items-center justify-center relative right-5 cursor-pointer">
+                        <svg 
                             xmlns="http://www.w3.org/2000/svg" 
-                            width="30" 
-                            height="30" 
-                            viewBox="0 0 24 24"
-                            >
-                            <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" d="M3.85.5L10 6.65a.48.48 0 0 1 0 .7L3.85 13.5"/>
+                            viewBox="0 0 32 32" 
+                            className="w-8 h-8 text-blue-400"
+                        >
+                            <path fill="currentColor" d="m18.72 6.78l-1.44 1.44L24.063 15H4v2h20.063l-6.782 6.78l1.44 1.44l8.5-8.5l.686-.72l-.687-.72l-8.5-8.5z"/>
                         </svg>
                     </button>
                 </div> 
@@ -306,7 +295,6 @@ export function UploadPreview({ data, onBack, post }) {
                         <path fill="red" d="M16 21.308L6.692 12L16 2.692l1.063 1.064L8.82 12l8.244 8.244L16 21.308Z" />
                         </svg>
                     </button>
-                    <span className="text-center tracking-widest w-full -ml-6 text-black ">PREVIEW</span>
                 </div>
 
                 
@@ -314,7 +302,7 @@ export function UploadPreview({ data, onBack, post }) {
 
                     {/* Preview of how it will appear on feed */}
                     <div className="flex flex-col w-full h-[80%] justify-center items-center p-4">
-                        <div className="flex flex-col w-full h-full rounded-[30px] bg-black overflow-hidden">
+                        <div className="flex flex-col w-full h-full  overflow-hidden">
                             {/* Image(file) container */}
                             <div className="w-full h-[65%]">
                                 <img 
@@ -324,10 +312,11 @@ export function UploadPreview({ data, onBack, post }) {
                                 />
                             </div>
                             {/* Preview container */}
-                            <div className="w-full h-[35%] bg-black flex flex-col pt-2 pl-4 pb-4">
-                                <div className="w-full h-[90%] flex flex-col gap-2">
-                                    <text className="font-light text-2xl tracking-widest text-white font-bold">{dishName}</text>
-                                    <text className="font-thin text-md tracking-wide text-white ">{description}</text>   
+                            <div className="w-full h-[35%] flex flex-col pt-2 pl-4 pb-4">
+                                <div className="w-full h-[90%] flex flex-col gap-2 items-center">
+                                    <text className="font-light text-2xl tracking-widest font-bold">{dishName}</text>
+                                    <div className="w-3/5 border-t border-gray-300"></div>
+                                    <text className="font-thin text-md tracking-wide">{description}</text>   
                                 </div>  
                             </div>
                         </div>
@@ -335,19 +324,23 @@ export function UploadPreview({ data, onBack, post }) {
 
 
                     {/* Post button */}
-                    <div className="flex flex-col w-full h-[20%] justify-center items-center">
+                    <motion.div 
+                        className="flex flex-col w-full h-[20%] justify-center items-center"
+                        whileHover={{ scale: 1.05 }} 
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
 
                         <button 
-                            className=" w-[100px] h-[40px] bg-black text-white rounded-[30px] cursor-pointer"
+                            className=" w-[100px] h-[40px] bg-black text-white rounded-[30px] cursor-pointer font-thin tracking-widest"
                             onClick={() => {
                                 submitPost();
                                 navigate("/feed");
                             }}
                         >   
-                            POST
+                            Post
                         </button>
 
-                    </div>
+                    </motion.div>
 
                 </div>
 

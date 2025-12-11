@@ -162,22 +162,22 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
 
             const data = await response.json();
 
-            if (response.status === 200 ||data.status === "success") {
+            if (response.status === 200 || data.status === "success") {
                 const { tokens } = data;
-                localStorage.setItem('idToken', tokens.IDToken);
-                localStorage.setItem('accessToken', tokens.AccessToken);
+                const expiryTime = new Date().getTime() + 60 * 60 * 3000; // 1 hour expiry
+
+                localStorage.setItem('idToken', JSON.stringify({ value: tokens.IDToken, expiry: expiryTime }));
+                localStorage.setItem('accessToken', JSON.stringify({ value: tokens.AccessToken, expiry: expiryTime }));
+
                 setShowProfile(true);
                 window.location.reload();
-                console.log('User signed in successfully:', data);
             }
             if (response.status === 403 || data.status === "not_found") {
                 setShowSignUp(true);
-                console.error('User does not exist', data);
             } 
             if (response.status === 401 || data.status === "unauthorized") {
                 setPasscodeIncorrect(true);
                 setTimeout(() => setPasscodeIncorrect(false), 500);
-                console.error('passcode incorrect', data);
             }
         } catch (err) {
             console.error('Network error:', err);
@@ -371,7 +371,7 @@ export default function SignUpIn({ showProfile, setShowProfile }) {
   return (
 
     <motion.div 
-        className="w-[85%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] bg-white pb-10"
+        className="w-[85%] md:w-2/3 lg:w-2/3 h-full md:h-full lg:h-full flex flex-col items-center justify-center rounded-[30px] pb-10"
         whileHover={{ scale: 1.05 }} 
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >

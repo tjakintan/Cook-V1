@@ -288,7 +288,7 @@ export default function Profile() {
                 </div>
 
                 {/* Functionality section */}
-                <div className="w-full h-[20%] flex items-center justify-center p-5">
+                <div className="w-full h-[20%] flex items-center justify-center py-5">
 
                     <div className="w-full h-full flex items-center justify-around">
 
@@ -317,9 +317,8 @@ export default function Profile() {
                                 </svg>
                             }
                             onClick={handleGetLikedPosts}
-                        />
-                        
-                        {/** 
+                        /> 
+                         
                         <MenuButton
                             label="Inbox"
                             icon={
@@ -330,9 +329,8 @@ export default function Profile() {
                                     <path fill="#000000" d="M16.157 0c.378 0 .842.372 1.035.83L20 7.439V18a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V7.438L2.808.831C3 .372 3.465 0 3.843 0ZM6.741 8.838H1.4V18a.6.6 0 0 0 .6.6h16a.6.6 0 0 0 .6-.6V8.838h-4.341a3.902 3.902 0 0 1-7.518 0ZM15.913 1.4H4.087L1.52 7.438h6.505a2.5 2.5 0 1 0 4.95 0h5.505L15.913 1.4Z"/>
                                 </svg>
                             }
-                        //onClick={() => setShowInboxSection(true)} CHANGE LATER
+                            onClick={() => setShowInboxSection(true)}
                         />
-                        */}
 
                     </div>
 
@@ -371,7 +369,7 @@ export default function Profile() {
 
                                                     {/* Front (Delete) */}
                                                     <div
-                                                        className="absolute inset-0 flex items-center justify-center"
+                                                        className="absolute inset-0 flex items-center justify-center hover:bg-red-500 rounded-[30px]"
                                                         style={{ backfaceVisibility: "hidden" }}
                                                     >
                                                         <span className="text-md font-light tracking-widest">Delete</span>
@@ -388,7 +386,7 @@ export default function Profile() {
                                                             e.stopPropagation();
                                                             setShowAccountSection(false);
                                                             setShowDeleteConfirm(false);
-                                                            //handleDeleteAccount();
+                                                            handleDeleteAccount();
                                                         }}
                                                     >
                                                     </div>
@@ -398,7 +396,7 @@ export default function Profile() {
                                             <motion.div 
                                                 whileHover={{ scale: 1.05 }} 
                                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-green-500 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
+                                                className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[30px] flex flex-row justify-center items-center space-x-1 hover:bg-green-500 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
                                                 onClick={() => {
                                                     setShowAccountUpdateSection(true);
                                                     setPreviewUrl(user.profile_img_url);}}
@@ -410,7 +408,7 @@ export default function Profile() {
                                             <motion.div 
                                                 whileHover={{ scale: 1.05 }} 
                                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                                className={`w-full h-full rounded-[10px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
+                                                className={`w-full h-full rounded-[30px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
                                                 onClick={handleLogout}
                                             >
                                                 <span className="text-md font-light text-center tracking-widest">Log out</span>
@@ -779,7 +777,7 @@ export default function Profile() {
                 </>
             )}
 
-        {/* Inbox Section     
+        {/* Inbox Section */}    
             {showInboxSection && (
             <>
                 <div
@@ -802,12 +800,6 @@ export default function Profile() {
             </>
             )}
 
-        */}
-
-
-
         </>
-
-
     )
 }
