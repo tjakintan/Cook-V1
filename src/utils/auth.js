@@ -1,3 +1,28 @@
+import { jwtDecode } from "jwt-decode";
+
+export function getUserSub() {
+  const raw = localStorage.getItem("accessToken");
+  if (!raw) return null;
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    localStorage.removeItem("accessToken");
+    return null;
+  }
+
+  if (!parsed.value) return null;
+
+  try {
+    const decoded = jwtDecode(parsed.value);
+    return decoded.sub || null;
+  } catch (err) {
+    console.error("Failed to decode accessToken", err);
+    return null;
+  }
+}
+
 export function getValidAccessToken() {
   const raw = localStorage.getItem("accessToken");
   if (!raw) return null;
@@ -26,7 +51,6 @@ export function getValidAccessToken() {
 
   return parsed.value;
 }
-
 
 export function logout() {
   localStorage.removeItem("accessToken");

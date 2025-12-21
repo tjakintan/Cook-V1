@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/component_style.css";
 import Messages  from "./messages.jsx";
 import { useUser } from "../utils/user.jsx";
-import { logout } from "../utils/auth.js";
+import { logout, getUserSub } from "../utils/auth.js";
 
 function MenuButton({ label, icon, onClick }) {
 
@@ -95,6 +95,14 @@ export default function Profile() {
     );
 
     const callAction = async (actionName, payload = {}) => {
+
+        const sub = getUserSub();
+
+        if (!sub) {
+            console.error("No use sub speciied")
+
+        }
+
         try {
             const res = await fetch(
                 "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
@@ -104,7 +112,7 @@ export default function Profile() {
                     body: JSON.stringify({
                         action: actionName,
                         user_sub: sub,
-                        ...payload, // merge in any additional data
+                        ...payload, 
                     }),
                 }
             );
@@ -118,8 +126,6 @@ export default function Profile() {
             return null;
         }
     };
-
-
 
     const handleDeleteAccount = async() => {
 
