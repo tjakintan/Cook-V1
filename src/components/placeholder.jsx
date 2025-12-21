@@ -17,11 +17,11 @@ export default function Placeholder() {
     }, []);
 
     return (
-        <div className="w-full h-full p-5 overflow-hidden">
+        <div className="w-full h-full overflow-hidden p-1">
             {/* BIG SCROLLER */}
             <motion.div 
                 animate={controls}
-                className="flex flex-row space-x-10 w-max h-full"
+                className="flex flex-row space-x-1 w-max h-full"
             >
                 {/* 1st row of items */}
                 <CarouselRow />
@@ -77,12 +77,12 @@ function CarouselRow() {
                     key={idx}
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="w-[60vw] h-full rounded-[30px] flex-shrink-0 overflow-hidden bg-gray-200"
+                    className="w-[60vw] h-full flex-shrink-0 overflow-hidden bg-gray-200"
                 >
                     <img 
                         src={post.image_url} 
                         alt={`Post ${idx}`} 
-                        className="w-full h-full object-cover rounded-[30px]"
+                        className="w-full h-full object-cover"
                     />
                 </motion.div>
             ))}

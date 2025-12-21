@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect, use } from "react";
 import { motion } from "framer-motion";
-import { input, tr } from "framer-motion/client";
-import { jwtDecode } from "jwt-decode";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../styles/component_style.css";
 import Messages  from "./messages.jsx";
+import { useUser } from "../utils/user.jsx";
+import { logout } from "../utils/auth.js";
 
 function MenuButton({ label, icon, onClick }) {
 
@@ -24,8 +24,9 @@ function MenuButton({ label, icon, onClick }) {
   );
 }
 
-
 export default function Profile() {
+
+    const { user, setUser, loading } = useUser();
 
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState([]);
@@ -41,38 +42,6 @@ export default function Profile() {
     const navigate = useNavigate();
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-
-    const [user, setUser] = useState(null);
-
-    const accessToken = localStorage.getItem("accessToken");
-    let sub = null;
-
-    if (accessToken) {
-        const decoded = jwtDecode(accessToken);
-        sub = decoded.sub;
-    }
-
-    useEffect(() => {
-        if (!sub) return;
-
-        async function fetchUserInfo() {
-            const response = await fetch(
-                "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user",
-                {
-                    method: "POST",
-                    headers: { "content-type": "application/json" },
-                    body: JSON.stringify({ sub }),
-                }
-            );
-            const data = await response.json();
-            setUser(data.user);
-        }
-
-        fetchUserInfo();
-    }, [sub]);  
-
-
-    
     const upload_inputRefs = {
         user_first_name: useRef(null),
         user_last_name: useRef(null),
@@ -188,10 +157,8 @@ export default function Profile() {
     };
 
     const handleLogout = () => {
-        // Clear auth tokens
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("idToken");
-        navigate("/feed");
+        logout();
+        window.location.reload();
     };
 
     const openFilePicker = () => fileInputRef.current.click();
@@ -245,26 +212,22 @@ export default function Profile() {
         }
     };
 
-
-    
-
-
     return (
         <>            
             <div className="w-full h-full flex flex-col justify-end items-center">
 
                 {/* Headers section */}
-                <div className="w-full h-1/3 flex flex-row items-center justify-between px-10 py-15">
+                <div className="w-full h-1/3 flex flex-row items-center justify-center mb-15">
 
                     <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 rounded-full overflow-hidden shadow cursor-pointer relative group">
+                        <div className="w-17 h-17 rounded-full overflow-hidden shadow cursor-pointer relative group">
                             <img 
                                 src={user.profile_img_url}
                                 alt="profile"
-                                className="absolute w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-30"
+                                className="absolute w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
                             />
                             <div 
-                                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-50 transition-opacity duration-300"
+                                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                 onClick={() => setShowAccountSection(true)}
                             >
                                 <svg 

@@ -45,17 +45,18 @@ function NavItem({ to, label, ActiveIcon, DefaultIcon }) {
 
 function Navbar() {
   return (
-    <motion.nav className="w-4/5 sm:w-2/3 md:w-1/2 lg:w-1/3 
-            fixed bottom-1 md:bottom-5 lg:bottom-5 left-1/2 transform -translate-x-1/2 
+    <motion.nav 
+      className="w-4/5 sm:w-2/3 md:w-1/2 lg:w-1/3 
+            fixed bottom-5 left-1/2 transform -translate-x-1/2 
             flex justify-around items-center 
-            space-x-4 sm:space-x-6 p-4
-            rounded-[60px]  bg-white/30 backdrop-blur-lg 
+            space-x-4 sm:space-x-6 p-4 outline-2
+            rounded-[60px]  bg-white/30 backdrop-blur-lg  scrollbar-hide
             z-50"
-            whileHover={{ scale: 1.05 }} 
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      whileHover={{ scale: 1.05 }} 
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       <NavItem to="/feed" label="Feed" ActiveIcon={feedIconActive} DefaultIcon={feedIcon} />
-      {/*<NavItem to="/discover" label="Discover" ActiveIcon={discoverIconActive} DefaultIcon={discoverIcon} />*/}
+      <NavItem to="/discover" label="Discover" ActiveIcon={discoverIconActive} DefaultIcon={discoverIcon} />
       <NavItem to="/upload" label="Upload" ActiveIcon={uploadIconActive} DefaultIcon={uploadIcon} />
       <NavItem to="/more" label="More" ActiveIcon={moreIconActive} DefaultIcon={moreIcon} />
     </motion.nav>

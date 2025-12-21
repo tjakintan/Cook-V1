@@ -66,7 +66,7 @@ export default function Feed() {
                             "content-type": "application/json",
                         },
                     }
-                ); // replace with your API Gateway URL
+                ); 
                 const data = await res.json();
 
                 setPosts(data.posts);

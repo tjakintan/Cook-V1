@@ -2,9 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { motion } from "framer-motion";
 import "../styles/component_style.css";
+import { useUser } from "../utils/user.jsx"
+
 
 export default function Messages() {
-    const [user, setUser] = useState(null);
+    const { user } = useUser();
     const [inbox, setInbox] = useState({});
     const [groupedInbox, setGroupedInbox] = useState({});
     const [openConversation, setOpenConversation] = useState({});
@@ -15,26 +17,6 @@ export default function Messages() {
 
     const accessToken = localStorage.getItem("accessToken");
     const sub = accessToken ? jwtDecode(accessToken).sub : null;
-
-    // Fetch user info
-    useEffect(() => {
-        if (!sub) return;
-
-        const fetchUserInfo = async () => {
-            try {
-                const res = await fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user", {
-                    method: "POST",
-                    headers: { "content-type": "application/json" },
-                    body: JSON.stringify({ sub }),
-                });
-                const data = await res.json();
-                setUser(data.user);
-            } catch (err) {
-                console.error("Failed to fetch user info:", err);
-            }
-        };
-        fetchUserInfo();
-    }, [sub]);
 
     const callAction = async (actionName, payload = {}) => {
         try {
