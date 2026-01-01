@@ -1,5 +1,6 @@
 import {
   CognitoIdentityProviderClient,
+  SignUpCommand,  
   ConfirmSignUpCommand, 
   ForgotPasswordCommand,
   ConfirmForgotPasswordCommand,
@@ -11,6 +12,28 @@ export const cognitoClient = new CognitoIdentityProviderClient({
 });
 
 const CLIENT_ID = "4uau22bthur4fir2o6tj19b23r";
+
+export const signUpUser = async (email, password, profile_name) => {
+  try {
+    const command = new SignUpCommand({
+      ClientId: CLIENT_ID,
+      Username: email,
+      Password: password,
+      UserAttributes: [
+        { Name: "email", Value: email },
+        { Name: "name", Value: profile_name },
+      ]
+    });
+
+    const response = await cognitoClient.send(command);
+    return { success: true, sub: response.UserSub  };
+    
+  } catch (err) {
+    if (err.name === "UsernameExistsException") {
+      return { success: false, error: "Email already in use" };
+    }
+  }
+};
 
 export const handleForgotPassword = async (email) => {
   try {
@@ -25,7 +48,6 @@ export const handleForgotPassword = async (email) => {
     console.log("Code sent:", response);
     return { success: true };
   } catch (err) {
-    // Handle missing verified email/phone gracefully
     if (
       err.name === "InvalidParameterException" &&
       err.message.includes("no registered/verified email or phone_number")

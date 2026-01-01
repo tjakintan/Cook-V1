@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, use } from "react";
 import { motion, useAnimation } from "framer-motion";
-import { getValidAccessToken } from "../utils/auth.js";
+import { useUser } from "../utils/user.jsx";
 import SignUpIn from "../components/login_signUp.jsx";
 import Profile from "../components/profile.jsx";
 import AppSettings from "../components/appSettings.jsx";
@@ -9,16 +9,13 @@ import "../styles/pages_style.css";
 
 export default function More() {
 
+    const { user } = useUser();
+
     const [showSectionPage, setShowSectionPage] = useState(false);
     const [showAppSettings, setShowAppSettings] = useState(false);
     const [showProfile, setShowProfile] = useState(
-        Boolean(getValidAccessToken())
+        Boolean(user)
     );
-
-    useEffect(() => {
-        const token = getValidAccessToken();
-        setShowProfile(Boolean(token));
-    }, []);
 
     const controls = useAnimation();
 
@@ -153,7 +150,7 @@ export default function More() {
                     </motion.div>
 
 
-                    {/* Contact Section */}
+                    {/* Contact Section 
                     <motion.div 
                         className={`w-4/5 h-1/5 flex justify-center items-center rounded-[30px] hover:bg-gray-100 cursor-pointer`}
                         whileHover={{ scale: 1.05 }} 
@@ -172,6 +169,8 @@ export default function More() {
                             </span>
                         </div>
                     </motion.div> 
+
+                    */}
 
                 </div>
 

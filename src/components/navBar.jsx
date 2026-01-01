@@ -1,66 +1,188 @@
 import React, { useEffect, useState, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useUser } from "../utils/user";
 import "../styles/component_style.css";
+import Profile from "./profile";
 
-const moreIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 1024 1024"><path fill="currentColor" d="M176 416a112 112 0 1 0 0 224a112 112 0 0 0 0-224m0 64a48 48 0 1 1 0 96a48 48 0 0 1 0-96zm336-64a112 112 0 1 1 0 224a112 112 0 0 1 0-224zm0 64a48 48 0 1 0 0 96a48 48 0 0 0 0-96zm336-64a112 112 0 1 1 0 224a112 112 0 0 1 0-224zm0 64a48 48 0 1 0 0 96a48 48 0 0 0 0-96z"/></svg>
-);
-
-const moreIconActive = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 344 384"><path fill="currentColor" d="M42.5 149q17.5 0 30 12.5T85 192t-12.5 30.5t-30 12.5t-30-12.5T0 192t12.5-30.5t30-12.5zm256 0q17.5 0 30 12.5T341 192t-12.5 30.5t-30 12.5t-30-12.5T256 192t12.5-30.5t30-12.5zm-128 0q17.5 0 30 12.5T213 192t-12.5 30.5t-30 12.5t-30-12.5T128 192t12.5-30.5t30-12.5z"/></svg>
-);
-
-const discoverIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 20.8a8.8 8.8 0 1 0 0-17.6a8.8 8.8 0 0 0 0 17.6m0 1.2C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-.877-10.877l-1.856 3.61l3.61-1.856l1.856-3.61zm-.89-.89l5.891-3.03a.5.5 0 0 1 .674.673l-3.03 5.892l-5.892 3.03a.5.5 0 0 1-.674-.674l3.03-5.892z"/></svg>
-);
-
-const discoverIconActive = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10s-4.477 10-10 10m-1.396-11.396l-2.957 5.749l5.75-2.957l2.956-5.749l-5.75 2.957z"/></svg>
-);
-
-const uploadIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-6-6h12"/></svg>
-);
-
-const uploadIconActive = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill="currentColor" d="M8 7V3.5a.5.5 0 0 0-1 0V7H3.5a.5.5 0 0 0 0 1H7v3.5a.5.5 0 1 0 1 0V8h3.5a.5.5 0 1 0 0-1zm-.5 8a7.5 7.5 0 1 1 0-15a7.5 7.5 0 0 1 0 15"/></svg>
-);
-
-const feedIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 21 21"><g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m1.5 10.5l9-9l9 9"/><path d="M3.5 8.5v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></g></svg>
-);
-
-const feedIconActive = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="M24 0v24H0V0h24ZM12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035c-.01-.004-.019-.001-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427c-.002-.01-.009-.017-.017-.018Zm.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093c.012.004.023 0 .029-.008l.004-.014l-.034-.614c-.003-.012-.01-.02-.02-.022Zm-.715.002a.023.023 0 0 0-.027.006l-.006.014l-.034.614c0 .012.007.02.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01l-.184-.092Z"/><path fill="currentColor" d="M10.772 2.688a2 2 0 0 1 2.456 0l8.384 6.52c.753.587.337 1.792-.615 1.792H20v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8h-.997c-.953 0-1.367-1.206-.615-1.791l8.384-6.52Z"/></g></svg>
-);
-
-function NavItem({ to, label, ActiveIcon, DefaultIcon }) {
+function NavItem({ to, label }) {
   return (
-    <NavLink to={to} className="flex flex-col items-center justify-center" end>
-      {({ isActive }) => (isActive ? <ActiveIcon /> : <DefaultIcon />)}
+    <NavLink
+      to={to}
+      end
+      className={`px-3 py-1 text-sm tracking-wide transition`}
+    >
+      {label}
     </NavLink>
   );
 }
 
-function Navbar() {
-  return (
-    <motion.nav 
-      className="w-4/5 sm:w-2/3 md:w-1/2 lg:w-1/3 
-            fixed bottom-5 left-1/2 transform -translate-x-1/2 
-            flex justify-around items-center 
-            space-x-4 sm:space-x-6 p-4 outline-2
-            rounded-[60px]  bg-white/30 backdrop-blur-lg  scrollbar-hide
-            z-50"
-      whileHover={{ scale: 1.05 }} 
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      <NavItem to="/feed" label="Feed" ActiveIcon={feedIconActive} DefaultIcon={feedIcon} />
-      <NavItem to="/discover" label="Discover" ActiveIcon={discoverIconActive} DefaultIcon={discoverIcon} />
-      <NavItem to="/upload" label="Upload" ActiveIcon={uploadIconActive} DefaultIcon={uploadIcon} />
-      <NavItem to="/more" label="More" ActiveIcon={moreIconActive} DefaultIcon={moreIcon} />
-    </motion.nav>
-  );
-}
+export default function Navbar() {
 
-export default Navbar;
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const [ showSignInUpPage, setShowSignInUpPage ] = useState(false);
+  const [ showProfilePage, setShowProfilePage ] = useState(false);
+  const [profilePos, setProfilePos] = useState({ top: 0, left: 0 });
+  const userButtonRef = useRef(null);
+
+  const openProfile = () => {
+    if (userButtonRef.current) {
+      const rect = userButtonRef.current.getBoundingClientRect();
+      // Position the red div slightly below and to the right of the button
+      setProfilePos({
+        top: rect.bottom + 5,   // 5px below button
+        left: rect.right - 300, // align right edge with button (300px div width)
+      });
+      setShowProfilePage(true);
+    }
+  };
+
+  useEffect(() => {
+    if (showSignInUpPage || showProfilePage) {
+      // Disable scrolling
+      document.body.style.overflow = "hidden";
+    } else {
+      // Re-enable scrolling
+      document.body.style.overflow = "auto";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [showSignInUpPage, showProfilePage]);
+
+  return (
+    <>
+
+      <div className="fixed md:top-5 top-auto left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-5xl">
+
+        <div className="relative flex items-center justify-between">
+
+          <NavLink to="/" className="flex items-center">
+            <img
+              src="/gomeal.png"
+              className="w-14 h-14 object-contain"
+              alt="GoMeal"
+            />
+          </NavLink>
+
+          <div className="flex items-center gap-6">
+
+            {user ? (
+              <div 
+                ref={userButtonRef}
+                className={`absolute w-7 h-7 rounded-full overflow-hidden shadow cursor-pointer relative group cursor-pointer z-[999]`}
+                onClick={openProfile}
+              >
+                <img 
+                    src={user.profile_img_url}
+                    alt="profile"
+                    className="absolute w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <button
+                onClick={() => {setShowSignInUpPage(true)}}
+                className="cursor-pointer"
+              >
+                <svg viewBox="0 0 1664 1664" className="w-5 h-5">
+                  <path
+                    fill="currentColor"
+                    d="M832 0Q673 0 560.5 112.5T448 384t112.5 271.5T832 768t271.5-112.5T1216 384t-112.5-271.5T832 0zm0 896q112 0 227 22t224 69.5t193.5 114t136 162.5t51.5 208q0 75-57 133.5t-135 58.5H192q-78 0-135-58.5T0 1472q0-112 51.5-208t136-162.5t193.5-114T605 918t227-22z"
+                  />
+                </svg>
+              </button>
+            )}
+
+            <NavLink to="/settings">
+              <svg viewBox="0 0 42 42" className="w-6 h-6">
+                <path
+                  fill="currentColor"
+                  d="M6.62 24.5c.4 1.62 1.06 3.13 1.93 4.49l-2.43 2.44c-1.09 1.09-1.08 1.74-.12 2.7l2.37 2.37c.97.971 1.63.95 2.7-.12l2.55-2.56c1.2.688 2.5 1.22 3.88 1.56v3.12c0 1.55.47 2 1.82 2h3.36c1.37 0 1.82-.48 1.82-2v-3.12c1.38-.34 2.68-.87 3.88-1.56l2.61 2.619c1.08 1.068 1.729 1.09 2.699.131l2.381-2.381c.949-.949.97-1.602-.131-2.699l-2.5-2.5a14.665 14.665 0 0 0 1.938-4.49h3.302c1.368 0 1.818-.48 1.818-2v-3c0-1.48-.393-2-1.818-2h-3.302c-.34-1.38-.87-2.68-1.562-3.88l2.382-2.37c1.05-1.05 1.14-1.7.13-2.7l-2.38-2.38c-.95-.95-1.632-.94-2.7.13l-2.26 2.25A14.946 14.946 0 0 0 24.5 6.62V3.5c0-1.48-.391-2-1.82-2h-3.36c-1.35 0-1.82.49-1.82 2v3.12c-1.62.4-3.13 1.06-4.49 1.93L10.75 6.3C9.68 5.23 9 5.22 8.05 6.17L5.67 8.55c-1.01 1-.92 1.65.13 2.7l2.37 2.37c-.68 1.2-1.21 2.5-1.55 3.88h-3.3c-1.35 0-1.82.49-1.82 2v3c0 1.55.47 2 1.82 2h3.3zm8.66-3.5c0-3.16 2.56-5.72 5.72-5.72s5.721 2.56 5.721 5.72a5.72 5.72 0 1 1-11.441 0z"
+                />
+              </svg>
+            </NavLink>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* CENTER — NAV */}
+      <div className="fixed bottom-5 md:top-5 lg:top-5 md:bottom-auto left-1/2 -translate-x-1/2 flex gap-6 p-2 bg-white/30 backdrop-blur-lg
+                rounded-[30px] shadow-md z-50">
+        <NavItem to="/feed" label="Home" />
+        <NavItem to="/discover" label="Discover" />
+        <NavItem to="/upload" label="Upload" />
+      </div>
+
+
+    {showSignInUpPage &&  (
+      <>
+        <div
+          className="fixed inset-0 backdrop-blur-sm z-40"
+          onClick={() => setShowSignInUpPage(false)}
+        />
+        <div
+          className="fixed top-1/2 left-1/2 isolate w-full md:w-2/3 lg:w-2/3
+                    -translate-x-1/2 -translate-y-1/2 z-50
+                    flex flex-col justify-center items-center gap-4 p-5 font-thin"
+        >
+          <span className="tracking-wider">You’re almost there</span>
+          <h1 className="text-center text-sm">Sign in to save recipes, upload dishes, and personalize your feed.</h1>
+          <motion.button 
+            whileHover={{ scale: 1.05 }} 
+            transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+            className="w-11/12 md:w-1/3 lg:w-1/3 p-3 rounded-[30px] bg-black outline-2 outline-black text-white text-start cursor-pointer tracking-wider rounded-l-none"
+            onClick={() => navigate("/auth?mode=signin")}
+          >sign In
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.05 }} 
+            transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+            className="w-11/12 md:w-1/3 lg:w-1/3 p-3 rounded-[30px] bg-white outline-2 cursor-pointer tracking-wider text-start rounded-l-none"
+            onClick={() => navigate("/auth?mode=signup")}
+          >sign Up
+          </motion.button>
+        </div>
+      </>
+    )}
+
+      {showProfilePage && (
+        <>
+          <div
+            className="fixed inset-0 bg-white/5 backdrop-blur-xs z-50"
+            onClick={() => setShowProfilePage(false)}
+          />
+          <div
+            className="fixed w-[300px] z-70 flex flex-col justify-start items-end py-3 relative"
+            style={{
+              top: profilePos.top,
+              left: profilePos.left,
+            }}
+          >
+            {/* Top arrow */}
+            <div className="absolute top-0 w-0 h-0
+                            border-l-[15px] border-l-transparent
+                            border-r-[15px] border-r-transparent
+                            border-b-[15px] border-b-blue-400 shadow-2xl"></div>
+                            
+            <div className="w-[500px] h-full shadow-lg -mr-12 rounded-[30px]">
+              <Profile />
+            </div>
+          </div>
+        </>
+      )}
+
+
+
+    
+    </>
+
+    
+  )
+  }
+

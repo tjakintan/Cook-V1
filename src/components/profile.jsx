@@ -15,7 +15,7 @@ function MenuButton({ label, icon, onClick }) {
       onClick={onClick}
       className="flex flex-row items-center justify-center space-x-2 
                  px-4 py-2 bg-white rounded-[20px]
-                 font-thin tracking-wide text-black
+                 font-thin tracking-wide text-black shadow-xl
                 hover:bg-gray-50 transition cursor-pointer"
     >
       {icon}
@@ -55,7 +55,6 @@ export default function Profile() {
         { id: "year", maxLength: 4, placeholder: "YYYY" },
     ];
 
-
     const dob_handleChange = (e, i) => {
         // Allow only digits
         const value = e.target.value.replace(/\D/, "");
@@ -70,18 +69,14 @@ export default function Profile() {
     const dob_handleKeyDown = (e, i) => {
         const value = e.target.value;
 
-        // Backspace navigation
         if (e.key === "Backspace") {
-            // If current input is empty, move to previous input
             if (!value && i > 0) {
             const prevInput = date_inputRefs.current[i - 1];
             prevInput.focus();
-            // Optional: remove last character from previous field
             prevInput.value = prevInput.value.slice(0, prevInput.value.length - 1);
             }
         }
     };
-
 
     if (!user) return (
         <div className="h-screen w-screen flex justify-center items-center">
@@ -96,11 +91,10 @@ export default function Profile() {
 
     const callAction = async (actionName, payload = {}) => {
 
-        const sub = getUserSub();
+        const sub = getUserSub(user);
 
         if (!sub) {
             console.error("No use sub speciied")
-
         }
 
         try {
@@ -138,8 +132,6 @@ export default function Profile() {
         }
     };
 
-    
-
     const handleGetLikedPosts = async () => {
         console.log("get_user_liked_post");
 
@@ -164,7 +156,7 @@ export default function Profile() {
 
     const handleLogout = () => {
         logout();
-        window.location.reload();
+        // window.location.reload();
     };
 
     const openFilePicker = () => fileInputRef.current.click();
@@ -223,7 +215,7 @@ export default function Profile() {
             <div className="w-full h-full flex flex-col justify-end items-center">
 
                 {/* Headers section */}
-                <div className="w-full h-1/3 flex flex-row items-center justify-center mb-15">
+                <div className="w-full h-1/3 flex flex-row items-center justify-start px-5 py-2">
 
                     <div className="flex items-center gap-4">
                         <div className="w-17 h-17 rounded-full overflow-hidden shadow cursor-pointer relative group">
@@ -248,7 +240,7 @@ export default function Profile() {
                             <span className="text-[20px] font-light tracking-wide">
                                 Welcome
                             </span>
-                            <span className="text-[18px] font-extralight opacity-80">
+                            <span className="text-[18px] font-extralight text-black">
                                 {user.profile_name}
                             </span>
                         </div>
@@ -431,7 +423,7 @@ export default function Profile() {
                                                     name="user_first_name"
                                                     type="text"
                                                     ref={upload_inputRefs.user_first_name}
-                                                    placeholder={user.first_name}
+                                                    placeholder={user.first_name || "first name"}
                                                     className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
                                                             text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
                                                             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
@@ -447,7 +439,7 @@ export default function Profile() {
                                                     name="user_last_name"
                                                     type="text"
                                                     ref={upload_inputRefs.user_last_name}
-                                                    placeholder={user.last_name}
+                                                    placeholder={user.last_name || "last name"}
                                                     className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
                                                                 text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
                                                                 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
@@ -503,7 +495,7 @@ export default function Profile() {
                                                     name="user_last_name"
                                                     type="text"
                                                     ref={upload_inputRefs.user_name}
-                                                    placeholder={user.profile_name}
+                                                    placeholder={user.profile_name || "user name"}
                                                     className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
                                                                 text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
                                                                 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
@@ -538,7 +530,6 @@ export default function Profile() {
                 </> 
 
             ) }
-
 
             {showPostSection && posts && (
                  <>
@@ -745,8 +736,7 @@ export default function Profile() {
                     </div>
                 </>
             )}
-
-        {/* Inbox Section */}    
+   
             {showInboxSection && (
             <>
                 <div

@@ -4,20 +4,19 @@ import "../styles/pages_style.css";
 import "../styles/component_style.css";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { useUser } from "../utils/user.jsx";
+import { getUserSub } from "../utils/auth.js";
 
 export default function Feed() {
 
-    const navigate = useNavigate();
+    const { user } = useUser();
+
     const [posts, setPosts] = useState([]);
-    const [like, setLike] = useState(false);
     const [more, setMore] = useState(false);
     const [loading, setLoading] = useState(true);
     const [ showFullDesc, setShowFullDesc] = useState(false);
-
-    const [selectedPost, setSelectedPost] = useState(null);
     const [showMessageSection, setShowMessageSection ] = useState(false);
     const [showOtherUserSub, setShowOtherUserSub] = useState(null);
-    const messageTimeoutRef = useRef(null);
     const [messageText, setMessageText] = useState("");
     const [messages, setMessages] = useState([]);
     const [conversation_id, setConversation_id] = useState(null);
@@ -27,31 +26,9 @@ export default function Feed() {
     const accessToken = localStorage.getItem("accessToken");
 
     
-    if (!accessToken) return (
-         <div className="fixed inset-0 w-screen h-screen overflow-hidden flex justify-center items-center bg-black/30 backdrop-blur-sm">
-            <div className="w-[50%] md:w-[25%] lg:w-[25%] h-[20%] flex flex-col justify-center items-center  py-5 px-2">
-                    
-                <button 
-                    className="flex w-15 h-15 justify-center items-center rounded-full bg-black px-3 py-1.5 text-sm font-light text-white tracking-widest 
-                    cursor-pointer hover:border-[2px] hover:border-blue-600"
-                    onClick={() => navigate("/more")}>
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            viewBox="0 0 32 32" 
-                            preserveAspectRatio="none"
-                            className="w-8 h-8 text-blue-400"
-                        >
-                            <path fill="currentColor" d="m18.72 6.78l-1.44 1.44L24.063 15H4v2h20.063l-6.782 6.78l1.44 1.44l8.5-8.5l.686-.72l-.687-.72l-8.5-8.5z"/>
-                        </svg> 
-                </button>
-
-            </div>
-        </div>
-
-    );
-
-    const decoded = jwtDecode(accessToken); 
-    const sub = decoded.sub;
+    if (!user) return;
+ 
+    const sub = getUserSub(user);
 
 
     useEffect(() => {
@@ -462,7 +439,6 @@ export default function Feed() {
 
             {showFullDesc && (
                 <>
-                    {/* Dimmed background */}
                     <div
                     className="fixed inset-0 bg-black/10 backdrop-blur-sm z-40"
                     onClick={() => setShowFullDesc(null)} 
@@ -478,9 +454,8 @@ export default function Feed() {
                             <text className="font-thin text-md tracking-wide text-black">{showFullDesc.description}</text>
                         </div>
 
-                        {/* Close */}
                         <motion.div 
-                            className="flex w-full items-center mt-5 rounded-[30px] hover:bg-gray-50 justify-center p-2"
+                            className="flex w-full items-center mt-5 rounded-[30px] hover:bg-gray-50 justify-center p-5"
                             onClick={() => setShowFullDesc(null)}
                             whileHover={{ scale: 1.07 }}
                             whileTap={{ scale: 0.95 }}

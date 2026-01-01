@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import "../styles/component_style.css";
-import { useUser } from "../utils/user.jsx"
-
+import { useUser } from "../utils/user.jsx";
+import { getUserSub } from "../utils/auth.js";
 
 export default function Messages() {
     const { user } = useUser();
@@ -11,12 +10,10 @@ export default function Messages() {
     const [groupedInbox, setGroupedInbox] = useState({});
     const [openConversation, setOpenConversation] = useState({});
     const [messageText, setMessageText] = useState("");
-    const [activeUserSub, setActiveUserSub] = useState(null); // current open conversation
+    const [activeUserSub, setActiveUserSub] = useState(null); 
     const [messages, setMessages] = useState([]);
     const messagesEndRef = useRef(null);
-
-    const accessToken = localStorage.getItem("accessToken");
-    const sub = accessToken ? jwtDecode(accessToken).sub : null;
+    const sub = getUserSub(user);
 
     const callAction = async (actionName, payload = {}) => {
         try {

@@ -1,58 +1,18 @@
-import { jwtDecode } from "jwt-decode";
+import { useUser } from "../utils/user.jsx";
 
-export function getUserSub() {
-  const raw = localStorage.getItem("accessToken");
-  if (!raw) return null;
-
-  let parsed;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    localStorage.removeItem("accessToken");
-    return null;
-  }
-
-  if (!parsed.value) return null;
-
-  try {
-    const decoded = jwtDecode(parsed.value);
-    return decoded.sub || null;
-  } catch (err) {
-    console.error("Failed to decode accessToken", err);
-    return null;
-  }
-}
-
-export function getValidAccessToken() {
-  const raw = localStorage.getItem("accessToken");
-  if (!raw) return null;
-
-  let parsed;
-
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("idToken");
-    return null;
-  }
-
-  if (!parsed.value || !parsed.expiry) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("idToken");
-    return null;
-  }
-
-  if (Date.now() > parsed.expiry) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("idToken");
-    return null;
-  }
-
-  return parsed.value;
+export function getUserSub(user) {
+  return user?.sub || null;
 }
 
 export function logout() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("idToken");
+  
+  const { setUser } = useUser();
+
+  fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/signout", {
+    method: "POST",
+    credentials: "include"  
+  }).finally(() => {
+    setUser(null);
+    window.location.href = "/auth";
+  });
 }
