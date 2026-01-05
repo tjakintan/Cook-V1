@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 import "../styles/component_style.css";
-import Placeholder from "../components/placeholder.jsx";
-
 
 export default function Home() {
 
