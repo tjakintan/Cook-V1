@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# Vite / build output
+dist/
+.vite/
+
+# macOS
+.DS_Store
