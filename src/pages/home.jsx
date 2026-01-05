@@ -35,25 +35,14 @@ export default function Home() {
 
             <div className="w-screen h-screen relative">
                 <div className="absolute inset-0 flex flex-col justify-center items-center pointer-events-none">
-                    <div className="w-full h-1/5 relative">
-
-                        {/* Background */}
-                        <div className="absolute inset-0">
-                            <Placeholder />
-                        </div>
-
-                        {/* Foreground content */}
-                        <div className="relative z-10 flex justify-center items-center h-full">
-                            <p className="text-outline-white  font-bold text-xl tracking-widest text-center">
-                            
-                            </p>
-                        </div>
-
-                    </div>
+                    <img 
+                        src="/gomeal.png"
+                        className="w-[100px] h-[100px]"
+                    />
                 </div>
             </div>
 
-            <div className="w-screen h-screen flex items-center justify-center p-5">
+            <div className="w-screen h-[3000px] md:h-screen lg:h-screen flex items-center justify-center p-5">
                 <div className="w-full h-full flex flex-col md:flex-row lg:flex-row p-5 gap-5">
 
                     <div className="w-full md:w-1/2 lg:w-1/2 h-full rounded-[30px] bg-gray-100 flex flex-col p-1 md:p-5 lg:p-5 gap-5">

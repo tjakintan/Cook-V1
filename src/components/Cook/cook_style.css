@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+  
+.scrollbar-hide {
+-ms-overflow-style: none;  
+scrollbar-width: none;  
+}
+
+.section {
+  @apply w-full h-[900px] py-30;
+}
+.section-sub {
+    @apply w-full h-full py-10 text-black;
+}
+.next-button {
+    @apply w-1/2 flex items-center justify-center p-3 rounded-[30px] bg-black text-[17px] text-white outline-2 
+    font-thin outline-black cursor-pointer tracking-widest;
+}
+.section-info-question {
+    @apply font-light tracking-widest text-[15px] text-center italic opacity-50;
+}

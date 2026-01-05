@@ -10,18 +10,20 @@ import {
 } from "../utils/cognito.js";
 import { useUser } from "../utils/user.jsx";
 import { jwtDecode } from "jwt-decode";
+import { tr } from "framer-motion/client";
 
 const REDIRECT_URI = "http://localhost:3000/auth?mode=fallback" || "http://gomeal.org/auth?mode=fallback";
 
 
-export const SignIn = () => {
+export const SignIn = ({ email }) => {
 
-    const [searchParams] = useSearchParams();
+    const [emailValue, setEmailValue] = useState(email || "");
     const { setUser, refreshUser } = useUser();
     const navigate = useNavigate();
     const payload_inputRefs = {
         signIn_user_email: useRef({})
     };
+    const [isLoading, setIsLoading] = useState(false);
     const passcode_inputRefs = useRef([]);
     const [showSignUp, setShowSignUp] = useState(false);
     const [passcodeIncorrect, setPasscodeIncorrect] = useState(false);
@@ -30,9 +32,8 @@ export const SignIn = () => {
     const [confirmForgotPasswordSent, setConfirmForgotPasswordSent] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
 
-    const handleUserLogin = async (user) => {
-      await refreshUser(); 
-      setUser(user);
+    const handleUserLogin = async () => {
+      await refreshUser();
       navigate("/");   
     };
 
@@ -63,34 +64,46 @@ export const SignIn = () => {
 
     };
 
-    const handleSignIn = async (e) => {
+    const handleSignIn = async () => {
 
-      const payload = sign_in_payload();
-      if (!payload) return;;
+        if (isLoading)  return;
+        const payload = sign_in_payload();
+        if (!payload) return;
+        setIsLoading(true);
 
-      try {
-          const response = await fetch(
-              "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/signin",
-              {
-                  method: "POST",
-                  credentials: "include",
-                  headers: { "content-type": "application/json" },
-                  body: JSON.stringify(payload),
-              }
-          );
-          const data = await response.json(); 
+        try {
+            const response = await fetch(
+                "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/signin",
+                {
+                    method: "POST",
+                    credentials: "include", 
+                    headers: { "content-type": "application/json" },
+                    body: JSON.stringify(payload),
+                }
+            );
 
-          if (response.status === 200 && data.status === "success") {
-              await handleUserLogin(data.user); 
-          } else if (response.status === 404 || data.status === "not_found") {
-              setShowSignUp(true);
-          } else if (response.status === 400 || data.status === "unauthorized") {
-              setPasscodeIncorrect(true);
-              setTimeout(() => setPasscodeIncorrect(false), 500);
-          }
-      } catch (err) {
-          console.error("Network error during handleSignIn:", err);
-      }
+            const data = await response.json();
+
+            switch (data.status) {
+                case "success":
+                    await handleUserLogin();
+                    break;
+                case "not_found":
+                    setShowSignUp(true);
+                    break;
+                case "unauthorized":
+                    setPasscodeIncorrect(true);
+                    setTimeout(() => setPasscodeIncorrect(false), 500);
+                    break;
+                default:
+                    console.warn("Sign-in failed:", data.message);
+                    break;
+            }
+        } catch (err) {
+            console.error("Network error during sign-in:", err);
+        }  finally {
+            setIsLoading(false);
+        }
     };
 
     const passcode_handleChange = (e, index, refArray) => {
@@ -102,9 +115,6 @@ export const SignIn = () => {
         e.target.value = value.slice(-1);
         if (value && index < refArray.current.length - 1) {
             refArray.current[index + 1]?.focus();
-        }
-        if (value && index === refArray.current.length - 1) {
-            handleSignIn();
         }
     };
 
@@ -118,31 +128,13 @@ export const SignIn = () => {
 
   return (
       <>
-          <div className="fixed inset-0 backdrop-blur-sm z-10 pointer-events-none"/>
+          <div className="fixed inset-0 backdrop-blur-sm z-10"/>
   
-          <div className="fixed inset-0 z-0">
-              <video
-              className="w-full h-full object-cover"
-              autoPlay
-              muted
-              playsInline
-              preload="auto"
-              onClick={() => navigate("/")}
-              >
-              <source src="/signin.mp4" type="video/mp4" />
-              </video>
-          </div>
-  
-          <div className="fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto">
-  
+          <div className="fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
+
             <motion.div 
-              className={`w-full md:w-2/3 lg:w-2/3 p-5 flex flex-col items-center justify-center gap-5 backdrop-blur-xs`}
-              initial={{ y: -500, opacity: 0 }} 
-              animate={{ y: 0, opacity: 1 }}  
-              transition={{
-                duration: 1.5,
-                ease: "easeOut"
-              }}
+              className={` w-full md:w-2/3 lg:w-2/3 p-5 flex flex-col items-center justify-center gap-5 bg-red-300`}
+              onClick={(e) => e.stopPropagation()}
             >
               <motion.div 
                   className={`w-full flex flex-col justify-start gap-1`}
@@ -160,7 +152,9 @@ export const SignIn = () => {
                           ref={payload_inputRefs.signIn_user_email}
                           name="email"
                           type="text"
+                          value={emailValue || ""} 
                           placeholder="email"
+                          onChange={(e) => setEmailValue(e.target.value)}
                           className="w-full rounded-md bg-white px-3 py-1.5 text-base placeholder:text-xs text-sm
                                       text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
                                       focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
@@ -174,7 +168,7 @@ export const SignIn = () => {
                   animate={passcodeIncorrect ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                   transition={{ duration: 0.4 }}
               >
-                  <span className={`block text-md font-light text-white tracking-widest`}>
+                  <span className={`block text-[20px] font-light text-white tracking-widest`}>
                       Password
                   </span>
                   <div className="flex gap-2 mt-2">
@@ -202,31 +196,55 @@ export const SignIn = () => {
                   </a>
               </motion.div>   
 
-              <div className="w-full h-[40px] flex flex-row gap-5">
+              <div className="w-full flex flex-col gap-5">
 
                 <motion.div 
-                  className={`w-1/2 h-full flex items-center justify-start outline-2 outline-black 
-                              py-1 px-2 tracking-widest font-extralight bg-white
-                              ${showSignUp ? "opacity-25 cursor-not-allowed" : "cursor-pointer"}`}
+                  className={`w-2/3 h-[40px] flex items-center justify-start 
+                              py-1 px-2 tracking-widest font-extralight  
+                              ${showSignUp || isLoading ? "opacity-75 cursor-not-allowed pointer-events-none" : "cursor-pointer"}
+                              ${isLoading ? "rounded-none outline-none" : "outline-2 bg-white outline-black rounded-r-[30px]"}`}
                   whileHover={{ scale: showSignUp ? 1 : 1.04 }} 
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  onClick={() => {
-                    if (!showSignUp) handleSignIn();
-                  }}
+                  onClick={() => {if (!showSignUp && !isLoading) handleSignIn();}}
                 >
-                  Sign In
+                  {isLoading ? (
+                    <div className="h-full w-full flex justify-center items-center">
+                      <svg width="24" height="24" viewBox="0 0 24 24">
+                        <circle cx="12" cy="2" r="0" fill="#000">
+                          <animate attributeName="r" begin="0s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(90 12 12)">
+                          <animate attributeName="r" begin="0.25s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(180 12 12)">
+                          <animate attributeName="r" begin="0.5s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(270 12 12)">
+                          <animate attributeName="r" begin="0.75s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        </circle>
+                      </svg>
+                    </div>
+                  ) : (
+                    "sign in"
+                  )}
                 </motion.div>
 
-                <motion.div 
-                  className={`w-1/2 h-full flex items-center outline-2 outline-black rounded-r-[30px]
-                              cursor-pointer bg-black text-white tracking-widest font-extralight py-1 px-2 
-                              ${showSignUp ? "justify-center" : "justify-start"}`}
-                  whileHover={{ scale: 1.04 }} 
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  onClick={() => navigate("/auth?mode=signup")}
+                <div 
+                  className={`w-11/12 md:w-2/3 h-[45px] flex items-end border-t-2 border-r-2 border-b-2 border-black rounded-r-[30px]
+                              cursor-pointer tracking-widest font-extralight 
+                              overflow-hidden ${email ? "hidden" : ""} `}
                 >
-                  Sign Up
-                </motion.div>
+                  <h1 className="w-2/3 h-full flex items-end justify-start px-1 pb-1 text-[12px] bg-transparent">
+                    Need to create one ?
+                  </h1>
+                  <div 
+                    className="w-1/2 h-full flex items-center border-l-2 border-black justify-start px-2 bg-white"
+                    onClick={() => navigate("/auth?mode=signup")}
+                  >
+                    sign up
+                  </div>
+                </div>
+                
 
               </div>
 

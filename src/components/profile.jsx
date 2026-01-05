@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/component_style.css";
 import Messages  from "./messages.jsx";
 import { useUser } from "../utils/user.jsx";
-import { logout, getUserSub } from "../utils/auth.js";
+import { useSignOut, getUserSub } from "../utils/auth.js";
 
 function MenuButton({ label, icon, onClick }) {
 
@@ -14,12 +14,11 @@ function MenuButton({ label, icon, onClick }) {
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
       className="flex flex-row items-center justify-center space-x-2 
-                 px-4 py-2 bg-white rounded-[20px]
+                 px-5 py-2 backdrop-blur-xl rounded-[20px]
                  font-thin tracking-wide text-black shadow-xl
                 hover:bg-gray-50 transition cursor-pointer"
     >
       {icon}
-      <span className="text-[11px] font-light tracking-wide">{label}</span>
     </motion.button>
   );
 }
@@ -27,12 +26,14 @@ function MenuButton({ label, icon, onClick }) {
 export default function Profile() {
 
     const { user, setUser, loading } = useUser();
+    const signout = useSignOut();
 
     const [posts, setPosts] = useState([]);
     const [likedPosts, setLikedPosts] = useState([]);
     const [showPostSection, setShowPostSection] = useState(false);
     const [showLikeSection, setShowLikeSection] = useState(false);
     const [showInboxSection, setShowInboxSection] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [showMessageSection, setShowMessageSection] = useState(false);
     const [showAccountSection, setShowAccountSection] = useState(false);
     const [showAccountUpdateSection, setShowAccountUpdateSection] = useState(false);
@@ -91,6 +92,9 @@ export default function Profile() {
 
     const callAction = async (actionName, payload = {}) => {
 
+        if (isLoading) return;
+        setIsLoading(true);
+
         const sub = getUserSub(user);
 
         if (!sub) {
@@ -118,15 +122,21 @@ export default function Profile() {
         } catch (err) {
             console.error("API error:", err);
             return null;
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    const handleSignOut = () => {
+        signout();
+    }
 
     const handleDeleteAccount = async() => {
 
         const result = await callAction("delete_user_account");
 
         if (result?.status === "success") {
-            handleLogout();
+            handleSignOut();
         } else {
             console.error("Failed to delete account:", result);
         }
@@ -154,11 +164,6 @@ export default function Profile() {
         }
     };
 
-    const handleLogout = () => {
-        logout();
-        // window.location.reload();
-    };
-
     const openFilePicker = () => fileInputRef.current.click();
 
     const handleImageSelect = (e) => {
@@ -181,20 +186,17 @@ export default function Profile() {
     };
 
     const handleUpdateAccount = async () => {
+
         const first_name = upload_inputRefs.user_first_name.current?.value || user.first_name;
         const last_name = upload_inputRefs.user_last_name.current?.value || user.last_name;
         const profile_name = upload_inputRefs.user_name.current?.value || user.profile_name;
         const profile_img_base64 = profile_img.current || null;
-
-        const [month, day, year] = date_inputRefs.current.map(input => input.value);
-        const dob = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 
         const result = await callAction("update_user_account", {
             first_name,
             last_name,
             profile_name,
             profile_img_base64,
-            dob
         });
 
         if (result?.status === "success") {
@@ -212,30 +214,24 @@ export default function Profile() {
 
     return (
         <>            
-            <div className="w-full h-full flex flex-col justify-end items-center">
+            <div className="w-full h-full flex flex-col justify-end items-center p-10 gap-5">
 
                 {/* Headers section */}
-                <div className="w-full h-1/3 flex flex-row items-center justify-start px-5 py-2">
+                <div className="w-full h-1/3 flex flex-row items-center justify-start">
 
-                    <div className="flex items-center gap-4">
-                        <div className="w-17 h-17 rounded-full overflow-hidden shadow cursor-pointer relative group">
-                            <img 
-                                src={user.profile_img_url}
-                                alt="profile"
-                                className="absolute w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
-                            />
-                            <div 
-                                className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                onClick={() => setShowAccountSection(true)}
+                    <div className="flex items-center gap-4 ">
+                        <motion.div 
+                            whileHover={{ scale: 1.07 }}
+                            className="p-4 rounded-full shadow-xl flex items-center justify-center cursor-pointer hover:bg-gray-50"
+                            onClick={() => setShowAccountSection(true)}
+                        >
+                            <svg 
+                                viewBox="0 0 24 24"
+                                className="w-10 h-10"
                             >
-                                <svg 
-                                    viewBox="0 0 24 24"
-                                    className="w-10 h-10"
-                                >
-                                    <path fill="#000000" d="M14.5 23q-.625 0-1.063-.438T13 21.5v-7q0-.625.438-1.063T14.5 13h7q.625 0 1.063.438T23 14.5v7q0 .625-.438 1.063T21.5 23h-7Zm0-1.5h7v-.8q-.625-.775-1.525-1.238T18 19q-1.075 0-1.975.463T14.5 20.7v.8ZM18 18q.625 0 1.063-.438T19.5 16.5q0-.625-.438-1.063T18 15q-.625 0-1.063.438T16.5 16.5q0 .625.438 1.063T18 18Zm-6-6Zm.05-3.5q-1.45 0-2.475 1.025T8.55 12q0 1.2.675 2.1T11 15.35V13.1q-.2-.2-.325-.513T10.55 12q0-.625.438-1.063t1.062-.437q.35 0 .625.138t.475.362h2.25q-.325-1.1-1.238-1.8t-2.112-.7ZM9.25 22l-.4-3.2q-.325-.125-.613-.3t-.562-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.337v-.674q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75L19.925 11H17.4q-.025-.125-.05-.263t-.075-.262l2.15-1.625l-.975-1.7l-2.475 1.05q-.55-.575-1.213-.962t-1.437-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7l2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625l.975 1.7l2.475-1.05q.6.625 1.35 1.05T11 17.4V22H9.25Z"/>
-                                </svg>
-                            </div>
-                        </div>
+                                <path fill="#000000" d="M14.5 23q-.625 0-1.063-.438T13 21.5v-7q0-.625.438-1.063T14.5 13h7q.625 0 1.063.438T23 14.5v7q0 .625-.438 1.063T21.5 23h-7Zm0-1.5h7v-.8q-.625-.775-1.525-1.238T18 19q-1.075 0-1.975.463T14.5 20.7v.8ZM18 18q.625 0 1.063-.438T19.5 16.5q0-.625-.438-1.063T18 15q-.625 0-1.063.438T16.5 16.5q0 .625.438 1.063T18 18Zm-6-6Zm.05-3.5q-1.45 0-2.475 1.025T8.55 12q0 1.2.675 2.1T11 15.35V13.1q-.2-.2-.325-.513T10.55 12q0-.625.438-1.063t1.062-.437q.35 0 .625.138t.475.362h2.25q-.325-1.1-1.238-1.8t-2.112-.7ZM9.25 22l-.4-3.2q-.325-.125-.613-.3t-.562-.375L4.7 19.375l-2.75-4.75l2.575-1.95Q4.5 12.5 4.5 12.337v-.674q0-.163.025-.338L1.95 9.375l2.75-4.75l2.975 1.25q.275-.2.575-.375t.6-.3l.4-3.2h5.5l.4 3.2q.325.125.613.3t.562.375l2.975-1.25l2.75 4.75L19.925 11H17.4q-.025-.125-.05-.263t-.075-.262l2.15-1.625l-.975-1.7l-2.475 1.05q-.55-.575-1.213-.962t-1.437-.588L13 4h-1.975l-.35 2.65q-.775.2-1.437.588t-1.213.937L5.55 7.15l-.975 1.7l2.15 1.6q-.125.375-.175.75t-.05.8q0 .4.05.775t.175.75l-2.15 1.625l.975 1.7l2.475-1.05q.6.625 1.35 1.05T11 17.4V22H9.25Z"/>
+                            </svg>
+                        </motion.div>
                         <div className="flex flex-col">
                             <span className="text-[20px] font-light tracking-wide">
                                 Welcome
@@ -249,12 +245,12 @@ export default function Profile() {
                 </div>
 
                 {/* Functionality section */}
-                <div className="w-full h-[20%] flex items-center justify-center py-5">
+                <div className="w-full h-[20%] flex items-center justify-center">
 
-                    <div className="w-full h-full flex items-center justify-around">
+                    <div className="w-full h-full flex items-center justify-around space-x-15">
 
                         <MenuButton
-                            label="My Post"
+                            label="Post"
                             icon={
                                 <svg
                                     viewBox="0 0 24 24" 
@@ -268,7 +264,7 @@ export default function Profile() {
                         />
 
                         <MenuButton
-                            label="My Like"
+                            label="Like"
                             icon={
                                 <svg
                                     viewBox="0 0 24 24"
@@ -298,7 +294,6 @@ export default function Profile() {
                 
                 </div>
                 
-
             </div>
 
             {showAccountSection && user && (
@@ -370,9 +365,9 @@ export default function Profile() {
                                                 whileHover={{ scale: 1.05 }} 
                                                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                                                 className={`w-full h-full rounded-[30px] flex flex-row justify-center items-center space-x-1 hover:bg-yellow-300 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
-                                                onClick={handleLogout}
+                                                onClick={handleSignOut}
                                             >
-                                                <span className="text-md font-light text-center tracking-widest">Log out</span>
+                                                <span className="text-md font-light text-center tracking-widest">signout</span>
                                             </motion.div>
 
                                         </div>
@@ -383,7 +378,7 @@ export default function Profile() {
                                     
                                      </div>
 
-                                      {/* Update Account Section */}
+                                    {/* Update Account Section */}
                                     <div className={`w-full md:w-2/3 lg:w-2/3 h-full ${showAccountUpdateSection ? "" : "hidden"} flex flex-col justify-center items-center p-10 gap-5 bg-white rounded-[30px]`}>
 
                                         {/* EDIT profile image */}                         
@@ -401,13 +396,12 @@ export default function Profile() {
                                                 onChange={handleImageSelect}
                                             />
                                             <span htmlFor="email" className={`mt-1 block text-[12px] font-light text-black text-center tracking-widest`}>
-                                                Change your a profile picture
+                                                Choose a new profile picture
                                             </span>
                                         </div>
 
                                         <div className="w-full border-t border-gray-300"></div>
                                         
-
                                         <div className="w-full h-full flex flex-col justify-center items-center bg-white gap-5 rounded-[30px]">
                                                  
                                             <span className={`block text-[15px] font-light text-black text-center tracking-widest`}>
@@ -446,45 +440,24 @@ export default function Profile() {
                                                 />
                                             </motion.div> 
 
-                                            {/* EDIT dob */}
-                                            <motion.div 
-                                                className="w-full flex flex-col justify-start"
-                                            >
-                                                <div className="w-full flex items-center justify-start gap-2">
-                                                    {date_inputs.map((date_input, i) => {
-                                                        
-                                                       const dobDate = user?.dob ? new Date(user.dob) : null;
+                                            {/* Show dob */}
+                                            <div className="w-full flex flex-col justify-start">
+                                                <div className="w-full flex items-center justify-center font-thin gap-2 tracking-widest">
+                                                    {(() => {
+                                                    if (!user?.dob) return "-- / -- / ----";
 
-                                                        // Extract parts in order: MM / DD / YYYY
-                                                        const dobParts = dobDate
-                                                        ? [
-                                                            String(dobDate.getMonth() + 1).padStart(2, "0"), // Month (0-based, so +1)
-                                                            String(dobDate.getDate()).padStart(2, "0"),      // Day
-                                                            String(dobDate.getFullYear())                    // Year
-                                                            ]
-                                                        : ["", "", ""];
+                                                    const dobDate = new Date(user.dob);
 
-                                                        // For your input
-                                                        const placeholderValue = dobParts[i] || date_input.placeholder
+                                                    const formattedDob = [
+                                                        String(dobDate.getMonth() + 1).padStart(2, "0"),
+                                                        String(dobDate.getDate()).padStart(2, "0"),
+                                                        String(dobDate.getFullYear())
+                                                    ].join(" / ");
 
-                                                        return (
-                                                            <React.Fragment key={date_input.id}>
-                                                                <input
-                                                                    id={date_input.id}
-                                                                    ref={(el) => (date_inputRefs.current[i] = el)}
-                                                                    maxLength={date_input.maxLength}
-                                                                    placeholder={placeholderValue}
-                                                                    onChange={(e) => dob_handleChange(e, i)}
-                                                                    onKeyDown={(e) => dob_handleKeyDown(e, i)}
-                                                                    className="w-12 h-8 flex items-center justify-center rounded-md bg-white text-center text-black 
-                                                                            text-sm outline-1 outline-black focus:outline-2 focus:outline-indigo-500 cursor-text"
-                                                                />
-                                                                {i < date_inputs.length - 1 && <span className="text-black text-sm">/</span>}
-                                                            </React.Fragment>
-                                                        );
-                                                    })}
+                                                    return formattedDob;
+                                                    })()}
                                                 </div>
-                                            </motion.div>
+                                            </div>
 
                                             {/* EDIT user_name*/}
                                             <motion.div 
@@ -507,10 +480,31 @@ export default function Profile() {
                                         <motion.div 
                                             whileHover={{ scale: 1.05 }} 
                                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                            className={`w-full h-full flex flex-col justify-center items-center space-x-1 cursor-pointer `}
-                                            onClick={handleUpdateAccount}
-                                        >
-                                            <span className="w-full text-md rounded-[30px] font-light text-center tracking-widest hover:bg-gray-50 px-3 py-2">Update</span>                                      
+                                            className={`w-full h-[50px] flex justify-start items-center space-x-1 cursor-pointer 
+                                                        text-md rounded-[30px] rounded-l-none text-white font-light tracking-widest px-3 py-3
+                                                        ${isLoading ? "" : "bg-black"}`}
+                                            onClick={() => {if (!isLoading) handleUpdateAccount();}}
+                                        >            
+                                            {isLoading ? (
+                                                <div className="h-full w-full flex justify-center items-center">
+                                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                                                        <circle cx="12" cy="2" r="0" fill="#000">
+                                                        <animate attributeName="r" begin="0s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                                                        </circle>
+                                                        <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(90 12 12)">
+                                                        <animate attributeName="r" begin="0.25s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                                                        </circle>
+                                                        <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(180 12 12)">
+                                                        <animate attributeName="r" begin="0.5s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                                                        </circle>
+                                                        <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(270 12 12)">
+                                                        <animate attributeName="r" begin="0.75s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                                                        </circle>
+                                                    </svg>
+                                                </div>
+                                            ) : (
+                                                "update"
+                                            )}                                      
                                         </motion.div>
 
                                         <span className={`text-[10px] font-thin text-center text-black tracking-widest`}>
@@ -518,8 +512,6 @@ export default function Profile() {
                                         </span> 
 
                                     </div>
-
-                          
                             
                             </div>
 

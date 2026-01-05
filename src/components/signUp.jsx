@@ -92,8 +92,7 @@ export const SignUp = () => {
                     state: { payload: payload },
                 });
             } else if (error === "Email already in use") {
-                setEmailInUse(true);
-                setTimeout(() => setEmailInUse(false), 5000);
+                navigate("/auth?mode=signin", {state: { email: payload.email}});
             } 
         } catch (err) {
             console.error("Network error:", err);
@@ -172,38 +171,13 @@ export const SignUp = () => {
 
             <div className="fixed inset-0 backdrop-blur-sm z-10"/>
 
-            <div className={`fixed inset-0 z-20`}>
+            <div className={`fixed inset-0 z-20`} onClick={() => navigate("/")}>
 
-                <div className="fixed inset-0 z-0 ">
-                    <video
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        playsInline
-                        preload="auto"
-                    >
-                        <source src="/signup.mp4" type="video/mp4" />
-                    </video>
-                </div>
-
-                <button 
-                    className="fixed top-5 md:top-10 lg:top-10 left-5 flex flex-row text-blue-300 underline font-thin tracking-widest cursor-pointer z-30" 
-                    onClick={() => navigate("/")}
-                >
-                    go back
-                </button>
-            
                 <motion.div 
-                    className="flex items-center justify-center h-full pt-10 md:pt-0 lg:top-0"
-                    initial={{ x: "100%", opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{
-                        duration: 1.5,
-                        ease: "easeOut",
-                        delay: 1
-                    }}
+                    className="pointer-events-auto flex items-center justify-center h-full pt-10 md:pt-0 lg:top-0"
+
                 >
-                    <div className={`w-11/12 md:w-2/3 lg:w-2/3 overflow-y-auto backdrop-blur-xs p-3 flex flex-col gap-3 scrollbar-hide`}>
+                    <div className={`w-11/12 md:w-2/3 lg:w-2/3 overflow-y-auto backdrop-blur-xs p-3 flex flex-col gap-3 bg-red-300 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
                         
                         <div className=" flex flex-col items-center justify-center">
                             <motion.div 
@@ -523,30 +497,30 @@ export const ConfirmSignUp = ({ payload }) => {
 
     return (
         <>
-            <div className="fixed inset-0 backdrop-blur-sm z-10" />
-
-            <div className="fixed inset-0 z-0">
-                <video
-                className="w-full h-full object-cover"
-                autoPlay
-                muted
-                playsInline
-                preload="auto"
-                >
-                <source src="/signup.mp4" type="video/mp4" />
-                </video>
-            </div>
+            <div className="fixed inset-0 backdrop-blur-sm z-10"/>
 
             <div className="fixed inset-0 z-20 flex items-center justify-center">
 
-                <div className={`p-5 flex flex-col items-center justify-center gap-5 backdrop-blur-xs`}>
+                <div className="fixed inset-0 z-0">
+                    <video
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        muted
+                        playsInline
+                        preload="auto"
+                    >
+                        <source src="/signup.mp4" type="video/mp4" />
+                    </video>
+                </div>
+
+                <div className={`p-5 flex flex-col items-center justify-center gap-5 backdrop-blur-xs`} onClick={(e) => e.stopPropagation()}>
 
                     <span className={`block mt-2 text-[17px] font-extralight text-white text-center tracking-widest`}>
                         Please enter the code sent to {payload.email}.
                     </span>     
 
                     <motion.div 
-                        className={`flex flex-col justify-between mt-5 `}
+                        className={`flex flex-col justify-between mt-5`}
                         animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                     >
                         <div className="flex gap-2">

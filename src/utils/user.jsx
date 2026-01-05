@@ -7,7 +7,6 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
 
-  // 🔑 Fetch user with optional retry for token refresh
   const fetchUser = async (retry = true) => {
     setLoading(true);
 
@@ -23,21 +22,17 @@ export function UserProvider({ children }) {
 
       const data = await res.json();
 
-      // ✅ User authenticated
       if (res.ok && data.authenticated) {
         setUser(data.user);
         return;
       }
 
-      // 🔁 Token expired → try refresh ONCE
       if (
         res.status === 401 &&
         data.reason === "expired" &&
         retry &&
         data.shouldRefresh
       ) {
-        console.warn("🔁 Token expired. Attempting refresh...");
-
         const refreshRes = await fetch(
           "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/refresh",
           {
@@ -47,18 +42,14 @@ export function UserProvider({ children }) {
         );
 
         if (refreshRes.ok) {
-          console.log("✅ Token refreshed. Retrying user fetch...");
-          return fetchUser(false); // retry once
+          return fetchUser(false); 
         } else {
-          console.warn("❌ Refresh failed. Logging out...");
           setUser(null);
         }
       } else {
-        // ❌ Auth failed for other reasons
         setUser(null);
       }
-    } catch (err) {
-      console.error("❌ Failed to fetch user:", err);
+    } catch {
       setUser(null);
     } finally {
       setLoading(false);
@@ -66,7 +57,6 @@ export function UserProvider({ children }) {
     }
   };
 
-  // ✅ Fetch user on app load
   useEffect(() => {
     fetchUser();
   }, []);

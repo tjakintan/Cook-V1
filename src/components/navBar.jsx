@@ -1,38 +1,39 @@
 import React, { useEffect, useState, useRef } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useUser } from "../utils/user";
 import "../styles/component_style.css";
 import Profile from "./profile";
 
-function NavItem({ to, label }) {
-  return (
-    <NavLink
-      to={to}
-      end
-      className={`px-3 py-1 text-sm tracking-wide transition`}
-    >
-      {label}
-    </NavLink>
-  );
-}
-
 export default function Navbar() {
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUser();
   const [ showSignInUpPage, setShowSignInUpPage ] = useState(false);
   const [ showProfilePage, setShowProfilePage ] = useState(false);
   const [profilePos, setProfilePos] = useState({ top: 0, left: 0 });
   const userButtonRef = useRef(null);
+  const containerRef = useRef(null);
+  const homeRef = useRef(null);
+  const discoverRef = useRef(null);
+  const uploadRef = useRef(null);
+  const navRefs = [homeRef, discoverRef, uploadRef];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hoverIndex, setHoverIndex] = useState(null);
+
+  const [positions, setPositions] = useState([
+    { left: 0, width: 0 },
+    { left: 0, width: 0 },
+    { left: 0, width: 0 },
+  ]);
 
   const openProfile = () => {
     if (userButtonRef.current) {
       const rect = userButtonRef.current.getBoundingClientRect();
-      // Position the red div slightly below and to the right of the button
       setProfilePos({
-        top: rect.bottom + 5,   // 5px below button
-        left: rect.right - 300, // align right edge with button (300px div width)
+        top: rect.bottom + 5, 
+        left: rect.right - 300, 
       });
       setShowProfilePage(true);
     }
@@ -40,30 +41,62 @@ export default function Navbar() {
 
   useEffect(() => {
     if (showSignInUpPage || showProfilePage) {
-      // Disable scrolling
       document.body.style.overflow = "hidden";
     } else {
-      // Re-enable scrolling
       document.body.style.overflow = "auto";
     }
-
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [showSignInUpPage, showProfilePage]);
 
+  const measurePositions = () => {
+    if (!containerRef.current) return;
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    const newPositions = navRefs.map((ref) => {
+      const rect = ref.current?.getBoundingClientRect();
+      if (!rect) return { width: 0, left: 0 };
+
+      // Calculate position **relative to container left including container scroll/padding**
+      const left = rect.left - containerRect.left; 
+      const width = rect.width;
+
+      return { width, left };
+    });
+
+    setPositions(newPositions);
+  };
+
+  useEffect(() => {
+    measurePositions();
+    window.addEventListener("resize", measurePositions);
+    return () => window.removeEventListener("resize", measurePositions);
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname === "/feed") setActiveIndex(0);
+    else if (location.pathname === "/discover") setActiveIndex(1);
+    else if (location.pathname === "/upload") setActiveIndex(2);
+  }, [location.pathname]);
+
+  const displayIndex = hoverIndex !== null ? hoverIndex : activeIndex;
+
   return (
     <>
 
-      <div className="fixed md:top-5 top-auto left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-5xl">
+      <div className="fixed md:top-5 top-auto left-1/2 -translate-x-1/2 w-[90%] max-w-5xl z-50">
 
-        <div className="relative flex items-center justify-between">
+        <div 
+          className="relative flex items-center justify-between px-5 py-2 md:py-0 lg:py-0 bg-white/30 backdrop-blur-lg rounded-[30px] 
+          shadow-md mt-5 md:mt-0 lg:mt-0 md:shadow-none lg:shadow-none md:backdrop-blur-none lg:backdrop-blur-none md:rounded-none lg:rounded-none md:bg-transparent
+          lg:bg-transparent">
 
           <NavLink to="/" className="flex items-center">
             <img
               src="/gomeal.png"
-              className="w-14 h-14 object-contain"
+              className="w-8 h-8 object-contain"
               alt="GoMeal"
             />
           </NavLink>
@@ -73,13 +106,13 @@ export default function Navbar() {
             {user ? (
               <div 
                 ref={userButtonRef}
-                className={`absolute w-7 h-7 rounded-full overflow-hidden shadow cursor-pointer relative group cursor-pointer z-[999]`}
+                className={`relative isolate w-8 h-8 rounded-full flex items-center justify-center z-10 cursor-pointer overflow-hidden`}
                 onClick={openProfile}
               >
-                <img 
-                    src={user.profile_img_url}
-                    alt="profile"
-                    className="absolute w-full h-full object-cover"
+                <img
+                  src={user.profile_img_url}
+                  alt="profile"
+                  className={`object-cover cursor-pointer `}
                 />
               </div>
             ) : (
@@ -111,50 +144,86 @@ export default function Navbar() {
 
       </div>
 
-      {/* CENTER — NAV */}
-      <div className="fixed bottom-5 md:top-5 lg:top-5 md:bottom-auto left-1/2 -translate-x-1/2 flex gap-6 p-2 bg-white/30 backdrop-blur-lg
-                rounded-[30px] shadow-md z-50">
-        <NavItem to="/feed" label="Home" />
-        <NavItem to="/discover" label="Discover" />
-        <NavItem to="/upload" label="Upload" />
+      <div ref={containerRef} className={`z-50 fixed bottom-5 md:top-3 lg:top-3 md:bottom-auto left-1/2 -translate-x-1/2 flex py-3 gap-5 bg-white/30 backdrop-blur-lg
+                rounded-[30px] shadow-md overflow-hidden ${user ? "pointer-events-auto opacity-100" : "opacity-50 pointer-event-none"}`}>
+
+          {user && positions[displayIndex]?.width > 0 && (
+            <motion.div
+              className={`absolute inset-0 bg-black rounded-full`}
+              animate={{
+                width: positions[displayIndex].width,
+                x: positions[displayIndex].left,
+              }}
+              transition={{ type: "spring", stiffness: 500, damping: 35 }}
+            />
+          )}
+            {[
+              { label: "Home", to: "/feed", ref: homeRef, index: 0 },
+              { label: "Discover", to: "/discover", ref: discoverRef, index: 1 },
+              { label: "Post", to: "/upload", ref: uploadRef, index: 2 },
+            ].map((item) => (
+              <div key={item.to} className={`${user ? (displayIndex === item.index ? "text-white" : "text-black") : "text-black"}`}>
+                {user ? (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    ref={item.ref}
+                    className={`relative z-10 text-sm px-4 font-extralight tracking-wider`}
+                    onMouseEnter={() => setHoverIndex(item.index)}
+                    onMouseLeave={() => setHoverIndex(null)}
+                  >
+                    {item.label}
+                  </NavLink>
+                ) : (
+                  <div
+                    key={item.to}
+                    ref={item.ref}
+                    className={`relative z-10 text-sm px-4 font-extralight tracking-wider opacity-50 cursor-default`}
+                    onClick={() => setShowSignInUpPage(true)}
+                  >
+                    {item.label}
+                </div>
+                )}
+              </div>
+            ))}
+        
       </div>
 
-
-    {showSignInUpPage &&  (
-      <>
-        <div
-          className="fixed inset-0 backdrop-blur-sm z-40"
-          onClick={() => setShowSignInUpPage(false)}
-        />
-        <div
-          className="fixed top-1/2 left-1/2 isolate w-full md:w-2/3 lg:w-2/3
-                    -translate-x-1/2 -translate-y-1/2 z-50
-                    flex flex-col justify-center items-center gap-4 p-5 font-thin"
-        >
-          <span className="tracking-wider">You’re almost there</span>
-          <h1 className="text-center text-sm">Sign in to save recipes, upload dishes, and personalize your feed.</h1>
-          <motion.button 
-            whileHover={{ scale: 1.05 }} 
-            transition={{ type: "spring", stiffness: 300, damping: 20 }} 
-            className="w-11/12 md:w-1/3 lg:w-1/3 p-3 rounded-[30px] bg-black outline-2 outline-black text-white text-start cursor-pointer tracking-wider rounded-l-none"
-            onClick={() => navigate("/auth?mode=signin")}
-          >sign In
-          </motion.button>
-          <motion.button 
-            whileHover={{ scale: 1.05 }} 
-            transition={{ type: "spring", stiffness: 300, damping: 20 }} 
-            className="w-11/12 md:w-1/3 lg:w-1/3 p-3 rounded-[30px] bg-white outline-2 cursor-pointer tracking-wider text-start rounded-l-none"
-            onClick={() => navigate("/auth?mode=signup")}
-          >sign Up
-          </motion.button>
-        </div>
-      </>
-    )}
-
-      {showProfilePage && (
+      {showSignInUpPage &&  (
         <>
           <div
-            className="fixed inset-0 bg-white/5 backdrop-blur-xs z-50"
+            className="fixed inset-0 backdrop-blur-sm z-40"
+            onClick={() => setShowSignInUpPage(false)}
+          />
+          <div
+            className="fixed top-1/2 left-1/2 isolate w-full md:w-2/3 lg:w-2/3
+                      -translate-x-1/2 -translate-y-1/2 z-50
+                      flex flex-col justify-center items-center gap-4 p-5 font-thin"
+          >
+            <span className="tracking-wider">You’re almost there</span>
+            <h1 className="text-center text-sm">Get to save recipes, upload dishes, and personalize your feed</h1>
+            <motion.button 
+              whileHover={{ scale: 1.05 }} 
+              transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+              className="w-11/12 md:w-1/3 lg:w-1/3 p-3 rounded-[30px] bg-black outline-2 outline-black text-white text-start cursor-pointer tracking-wider rounded-l-none"
+              onClick={() => navigate("/auth?mode=signup")}
+            >sign Up
+            </motion.button>
+            <motion.button 
+              whileHover={{ scale: 1.05 }} 
+              transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+              className="w-11/12 md:w-1/3 lg:w-1/3 p-3 rounded-[30px] bg-white outline-2 cursor-pointer tracking-wider text-start rounded-l-none"
+              onClick={() => navigate("/auth?mode=signin")}
+            >sign In
+            </motion.button>
+          </div>
+        </>
+      )}
+
+      {showProfilePage && user && (
+        <>
+          <div
+            className="fixed inset-0 bg-white/5 backdrop-blur-xs z-40"
             onClick={() => setShowProfilePage(false)}
           />
           <div
@@ -165,23 +234,19 @@ export default function Navbar() {
             }}
           >
             {/* Top arrow */}
-            <div className="absolute top-0 w-0 h-0
+            <div className="absolute top-0 w-0 h-0 mr-1
                             border-l-[15px] border-l-transparent
                             border-r-[15px] border-r-transparent
-                            border-b-[15px] border-b-blue-400 shadow-2xl"></div>
+                            border-b-[15px] border-b-[#00ffff] shadow-2xl"></div>
                             
-            <div className="w-[500px] h-full shadow-lg -mr-12 rounded-[30px]">
+            <div className="flex shadow-lg -mr-20 rounded-[30px] bg-gradient-to-b from-[#00ffff] via-[#7dd3fc] to-[#c4b5fd]">
               <Profile />
             </div>
           </div>
         </>
       )}
 
-
-
-    
     </>
-
     
   )
   }

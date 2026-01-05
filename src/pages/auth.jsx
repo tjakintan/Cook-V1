@@ -9,10 +9,11 @@ const Auth = () => {
     const query = new URLSearchParams(location.search);
     const mode = query.get("mode"); 
     const payload = location.state?.payload || "";
+    const email = location.state?.email || "";
 
     switch (mode) {
         case "signin":
-            return <SignIn />;
+            return <SignIn email={email}/>;
         case "signup":
             return <SignUp />;
         case "confirm":
