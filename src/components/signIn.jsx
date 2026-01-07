@@ -189,7 +189,7 @@ export const SignIn = ({ email }) => {
                                   onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs)}
                                   onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)} 
                                   className="w-8 h-8 flex items-center justify-center rounded-md bg-white
-                                              text-center text-black text-md font-thin outline-[0.25px]
+                                              text-center text-black text-md font-thin outline-2
                                               focus:outline-2 focus:outline-indigo-500 cursor-text"
                                   tabIndex={0} 
                               />
