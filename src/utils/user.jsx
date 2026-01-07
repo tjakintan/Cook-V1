@@ -8,8 +8,10 @@ export function UserProvider({ children }) {
   const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
 
   const fetchUser = async (retry = true) => {
-    setLoading(true);
-
+    
+    if (!hasAttemptedAuth) {
+      setLoading(true);
+    }
     try {
       const res = await fetch(
         "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user",
