@@ -59,7 +59,6 @@ export default function Navbar() {
       const rect = ref.current?.getBoundingClientRect();
       if (!rect) return { width: 0, left: 0 };
 
-      // Calculate position **relative to container left including container scroll/padding**
       const left = rect.left - containerRect.left; 
       const width = rect.width;
 
@@ -95,8 +94,8 @@ export default function Navbar() {
 
           <NavLink to="/" className="flex items-center">
             <img
-              src="/gomeal.png"
-              className="w-8 h-8 object-contain"
+              src="/gomeal1.png"
+              className="w-12 h-12 object-contain"
               alt="GoMeal"
             />
           </NavLink>

@@ -6,6 +6,7 @@ import {
     handleConfirmUser as cognitoConfirmUser,
     handleResendConfirmationCode as resendConfirmUser
 } from "../utils/cognito.js";
+import AuthHeader from "../hooks/auth_header.jsx";
 
 export const SignUp = () => {
 
@@ -173,16 +174,19 @@ export const SignUp = () => {
 
             <div className={`fixed inset-0 z-20`} onClick={() => navigate("/")}>
 
-                <motion.div 
-                    className="pointer-events-auto flex items-center justify-center h-full pt-10 md:pt-0 lg:top-0"
-
-                >
-                    <div className={`w-11/12 md:w-2/3 lg:w-2/3 overflow-y-auto backdrop-blur-xs p-3 flex flex-col gap-3 bg-red-300 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
+                <motion.div className="pointer-events-auto flex h-full items-center justify-center pt-10 md:pt-0 lg:top-0">
+                    
+                    <form className={`w-11/12 md:w-2/3 lg:w-2/3 overflow-y-auto backdrop-blur-xs p-3 flex flex-col gap-3 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
                         
-                        <div className=" flex flex-col items-center justify-center">
+                        <div className="flex items-center justify-center">
+                            <AuthHeader />  
+                            <h1 className="text-[20px] font-thin tracking-wider text-center">Let’s get you started</h1>
+                        </div>
+                        
+                        {/* SIGN UP pfp*/}
+                        <div className="flex items-center justify-center mt-10">
                             <motion.div 
-                                className="w-20 h-20 bg-white border-1 rounded-full flex
-                                        items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
+                                className="w-20 h-20 bg-white border-1 rounded-full flex items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
                                 animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                             >
                                 <input
@@ -212,187 +216,185 @@ export const SignUp = () => {
                                     </svg>
                                 )}
                             </motion.div>
-                            <span className={`mb-2 block text-[11px] font-light text-white text-center tracking-widest`}>
-                                Choose a profile picture
-                            </span>
                         </div>
 
-                        <div className="flex flex-col gap-3">
+                        {/* SIGN UP pfp text */}
+                        <span className={`mb-2 block text-[11px] font-light text-center tracking-widest`}>
+                            Choose a profile picture
+                        </span>
 
-                            {/* SIGN UP first name & last name*/}
-                            <div className="flex flex-row gap-5">
-                                {/* SIGN UP first name*/}
-                                <motion.div 
-                                    className="flex-1"
-                                    animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                                >
-                                    <input
-                                        id="user_first_name"
-                                        ref={payload_inputRefs.user_first_name}
-                                        name="user_first_name"
-                                        type="text"
-                                        placeholder="first name"
-                                        className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
-                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                                    />
-                                </motion.div>
-
-                                {/* SIGN UP last name*/}
-                                <motion.div 
-                                    className="flex-1"
-                                    animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                                >
-                                    <input
-                                        id="user_last_name"
-                                        ref={payload_inputRefs.user_last_name}
-                                        name="user_last_name"
-                                        placeholder="last name"
-                                        className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                                    text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
-                                                    focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                                    />
-                                </motion.div> 
-
-                            </div>
-
-                            {/* SIGN UP dob */}
+                        {/* SIGN UP first name & last name*/}
+                        <div className="flex flex-row gap-5">
+                            {/* SIGN UP first name*/}
                             <motion.div 
-                                className="w-full flex flex-col justify-start"
+                                className="flex-1"
                                 animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                             >
-                                <div className="w-full flex items-center justify-start gap-2">
-                                    {date_inputs.map((date_input, i) => (
-                                        <React.Fragment key={date_input.id}>
-                                        <input
-                                            id={date_input.id}
-                                            ref={(el) => (date_inputRefs.current[i] = el)}
-                                            maxLength={date_input.maxLength}
-                                            placeholder={date_input.placeholder}
-                                            inputMode="numeric"
-                                            pattern="[0-9]*"
-                                            onChange={(e) => date_handleChange(e, i)}
-                                            onKeyDown={(e) => date_handleKeyDown(e, i)}
-                                            className="w-12 h-8 flex items-center justify-center rounded-md bg-white text-center text-black 
-                                                        text-sm outline-1 outline-black focus:outline-2 focus:outline-indigo-500 cursor-text"
-                                        />
-                                        {/* Add / separators */}
-                                        {i < date_inputs.length - 1 && <span className="text-black text-sm">/</span>}
-                                        </React.Fragment>
-                                    ))}
-                                </div>
+                                <input
+                                    id="user_first_name"
+                                    ref={payload_inputRefs.user_first_name}
+                                    name="user_first_name"
+                                    type="text"
+                                    placeholder="first name"
+                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                />
+                            </motion.div>
+
+                            {/* SIGN UP last name*/}
+                            <motion.div 
+                                className="flex-1"
+                                animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                            >
+                                <input
+                                    id="user_last_name"
+                                    ref={payload_inputRefs.user_last_name}
+                                    name="user_last_name"
+                                    placeholder="last name"
+                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
+                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                />
                             </motion.div> 
 
-                            {/* SIGN UP email */}
-                            <motion.div 
-                                className="w-full flex flex-col justify-start"
-                                animate={invalidEmail || emailInUse ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                            >
-                                <div className="mb-1">
+                        </div>
+
+                        {/* SIGN UP dob */}
+                        <motion.div 
+                            className="w-full flex flex-col justify-start"
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="w-full flex items-center justify-start gap-2">
+                                {date_inputs.map((date_input, i) => (
+                                    <React.Fragment key={date_input.id}>
                                     <input
-                                        id="user_email"
-                                        ref={payload_inputRefs.signUp_user_email}
-                                        name="user_email"
-                                        type="email"
-                                        placeholder="email"
-                                        className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
-                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
-                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                        id={date_input.id}
+                                        ref={(el) => (date_inputRefs.current[i] = el)}
+                                        maxLength={date_input.maxLength}
+                                        placeholder={date_input.placeholder}
+                                        inputMode="numeric"
+                                        pattern="[0-9]*"
+                                        onChange={(e) => date_handleChange(e, i)}
+                                        onKeyDown={(e) => date_handleKeyDown(e, i)}
+                                        className="w-12 h-8 flex items-center justify-center rounded-md bg-white text-center text-black 
+                                                    text-sm outline-1 outline-black focus:outline-2 focus:outline-indigo-500 cursor-text"
                                     />
-                                </div>
-                            </motion.div>
+                                    {/* Add / separators */}
+                                    {i < date_inputs.length - 1 && <span className="text-black text-sm">/</span>}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        </motion.div> 
 
-                            {/* SIGN UP confirm email */}
-                            <motion.div 
-                                className="w-full flex flex-col justify-start"
-                                animate={invalidEmail || emailNotMatch || emailInUse ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                            >
-                                <div className="mb-1">
-                                    <input
-                                        id="user_email"
-                                        ref={payload_inputRefs.signUp_confirm_user_email}
-                                        name="user_email"
-                                        type="email"
-                                        placeholder="confirm email"
-                                        className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
-                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
-                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                                    />
-                                </div>
-                                <span htmlFor="email" className={`block text-[11px] font-light text-white text-left tracking-widest ${emailInUse ? "" : "hidden"}`}>
-                                    Email is already in use
-                                </span>
-                            </motion.div>
+                        {/* SIGN UP email */}
+                        <motion.div 
+                            className="w-full flex flex-col justify-start"
+                            animate={invalidEmail || emailInUse ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="mb-1">
+                                <input
+                                    id="user_email"
+                                    ref={payload_inputRefs.signUp_user_email}
+                                    name="user_email"
+                                    type="email"
+                                    placeholder="email"
+                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
+                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                />
+                            </div>
+                        </motion.div>
 
-                            {/* SIGN Up username */}
-                            <motion.div 
-                                className={`w-2/3 flex flex-col justify-start`}
-                                animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                            >
-                                <div className="mb-1">
-                                    <input
-                                        id="user_name"
-                                        ref={payload_inputRefs.user_name}
-                                        name="user_email"
-                                        type="text"
-                                        placeholder="choose user name"
-                                        className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
-                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
-                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                                    />
-                                </div>
-                            </motion.div>
+                        {/* SIGN UP confirm email */}
+                        <motion.div 
+                            className="w-full flex flex-col justify-start"
+                            animate={invalidEmail || emailNotMatch || emailInUse ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="mb-1">
+                                <input
+                                    id="user_email"
+                                    ref={payload_inputRefs.signUp_confirm_user_email}
+                                    name="user_email"
+                                    type="email"
+                                    placeholder="confirm email"
+                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
+                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                />
+                            </div>
+                            <span htmlFor="email" className={`block text-[11px] font-light text-white text-left tracking-widest ${emailInUse ? "" : "hidden"}`}>
+                                Email is already in use
+                            </span>
+                        </motion.div>
 
-                            {/* SIGN UP Password */}
-                            <motion.div 
-                                className={`w-full h-full flex mt-4 flex-col justify-between`}
-                                animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                            >
-                                <div className="flex gap-2 w-full h-full">
-                                    {[0, 1, 2, 3, 4, 5].map((i) => (
-                                            <input
-                                                key={i}
-                                                ref={(el) => (passcode_inputRefs.current[i] = el)}
-                                                maxLength={1}
-                                                type="tel"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                                onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs)}
-                                                onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)}
-                                                onTouchStart={(e) => {
-                                                    e.target.focus();
-                                                }} 
-                                            className="w-10 h-10 flex items-center justify-center rounded-md bg-white
-                                                        text-center text-black text-md font-thin outline-1
-                                                        focus:outline-2 focus:outline-indigo-500 cursor-text"
-                                            tabIndex={0} 
-                                            />
-                                    ))}
-                                </div>
-                                <span htmlFor="email" className={`block mt-2 text-[11px] font-light text-white tracking-widest`}>
-                                    Choose a 6 digit password
-                                </span>
-                            </motion.div>
+                        {/* SIGN Up username */}
+                        <motion.div 
+                            className={`w-2/3 flex flex-col justify-start`}
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="mb-1">
+                                <input
+                                    id="user_name"
+                                    ref={payload_inputRefs.user_name}
+                                    name="user_email"
+                                    type="text"
+                                    placeholder="choose user name"
+                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
+                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                            focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                                />
+                            </div>
+                        </motion.div>
 
-                            {/* SIGN UP button */}
-                            <motion.div
-                                whileHover={{ scale: 1.04 }} 
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                className="w-11/12 flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light tracking-widest
-                                            cursor-pointer hover:bg-gray-100 bg-gray-50 outline-2 rounded-l-none"
-                                onClick={handleSignUp}
-                            >
-                                sign Up
-                            </motion.div>  
+                        {/* SIGN UP Password */}
+                        <motion.div 
+                            className={`w-full h-full flex mt-4 flex-col justify-between`}
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <div className="flex gap-2 w-full h-full">
+                                {[0, 1, 2, 3, 4, 5].map((i) => (
+                                        <input
+                                            key={i}
+                                            ref={(el) => (passcode_inputRefs.current[i] = el)}
+                                            maxLength={1}
+                                            type="tel"
+                                            inputMode="numeric"
+                                            pattern="[0-9]*"
+                                            onChange={(e) => passcode_handleChange(e, i, passcode_inputRefs)}
+                                            onKeyDown={(e) => passcode_handleKeyDown(e, i, passcode_inputRefs)}
+                                            onTouchStart={(e) => {
+                                                e.target.focus();
+                                            }} 
+                                        className="w-10 h-10 flex items-center justify-center rounded-md bg-white
+                                                    text-center text-black text-md font-thin outline-1
+                                                    focus:outline-2 focus:outline-indigo-500 cursor-text"
+                                        tabIndex={0} 
+                                        />
+                                ))}
+                            </div>
+                            <span htmlFor="email" className={`block mt-2 text-[11px] font-light  tracking-widest`}>
+                                Choose a 6 digit password
+                            </span>
+                        </motion.div>
 
-                            {/* SIGN UP text */}
-                            <span className={`text-[9px] font-thin text-white tracking-widest mt-2`}>
-                                Sign up with your email to use GoMeal. We respect your privacy and use your email only for account management.
-                            </span>   
+                        {/* SIGN UP button */}
+                        <motion.div
+                            whileHover={{ scale: 1.03 }} 
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                            className="w-2/3 flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light tracking-widest
+                                        cursor-pointer bg-white outline-2 rounded-l-none"
+                            onClick={handleSignUp}
+                        >
+                            sign Up
+                        </motion.div>  
 
-                        </div> 
+                        {/* SIGN UP text */}
+                        <span className={`text-[9px] font-thin tracking-widest mt-2`}>
+                            Sign up with your email to use GoMeal. We respect your privacy and use your email only for account management.
+                        </span>   
 
-                    </div>
+                    </form>
 
                 </motion.div>
 

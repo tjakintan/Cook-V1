@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import {
   Routes,
   Route,
@@ -13,8 +12,7 @@ import Auth from './pages/auth.jsx';
 import { useUser } from './utils/user.jsx';
 import { Navigate, Outlet } from "react-router-dom";
 
-
-function ProtectedRoute() {
+function ProtectedRouteAppLayout() {
   const { user, loading } = useUser();
 
   if (loading) return null; 
@@ -37,7 +35,7 @@ function AppLayout() {
 
         <Route path="/" element={<Home />} />
 
-        <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRouteAppLayout />}>
 
           <Route path="/feed" element={<Feed />} />
           <Route path="/discover" element={<Discover />} />
@@ -51,6 +49,7 @@ function AppLayout() {
 }
 
 export default function App() {
+
   return (
     <Routes>
 
@@ -59,4 +58,5 @@ export default function App() {
       
     </Routes>
   );
+  
 }

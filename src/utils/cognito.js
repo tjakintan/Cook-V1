@@ -11,7 +11,7 @@ export const cognitoClient = new CognitoIdentityProviderClient({
   region: "us-east-2",
 });
 
-const CLIENT_ID = "4uau22bthur4fir2o6tj19b23r";
+const CLIENT_ID = import.meta.env.VITE_COGNITO_CLIENT_ID;
 
 export const signUpUser = async (email, password, profile_name) => {
   try {

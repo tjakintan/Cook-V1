@@ -17,9 +17,9 @@ export default function Home() {
     useEffect(() => {
         const updateX = () => {
         if (window.innerWidth < 640) {
-            setSlideX("-80%"); // mobile
+            setSlideX("-80%"); 
         } else {
-            setSlideX("-40%"); // tablet + desktop
+            setSlideX("-40%"); 
         }
         };
 
@@ -34,7 +34,7 @@ export default function Home() {
             <div className="w-screen h-screen relative">
                 <div className="absolute inset-0 flex flex-col justify-center items-center pointer-events-none">
                     <img 
-                        src="/gomeal.png"
+                        src="/gomeal1.png"
                         className="w-[100px] h-[100px]"
                     />
                 </div>

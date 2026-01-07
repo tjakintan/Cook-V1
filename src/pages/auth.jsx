@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { SignUp, ConfirmSignUp } from "../components/signUp.jsx";
-import { SignIn, FallBack } from "../components/signIn.jsx";
+import { SignIn, ForgotPassword } from "../components/signIn.jsx";
 
 const Auth = () => {
 
@@ -10,6 +10,7 @@ const Auth = () => {
     const mode = query.get("mode"); 
     const payload = location.state?.payload || "";
     const email = location.state?.email || "";
+    const fromSignIn = location.state?.fromSignIn || false;
 
     switch (mode) {
         case "signin":
@@ -19,8 +20,12 @@ const Auth = () => {
         case "confirm":
             if (!payload) {navigate("/auth?mode=signup", { replace: true }); return null;}
             return <ConfirmSignUp payload={payload}/>;
-        case "fallback":
-            return <FallBack />;
+        case "forgot":
+            if (!fromSignIn) {
+                navigate("/auth?mode=signin", { replace: true });
+                return null;
+            }
+            return <ForgotPassword email={email} />;
         default:
             return <SignIn />;
     }
