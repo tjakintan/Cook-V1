@@ -14,7 +14,7 @@ const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 export const SignIn = ({ email }) => {
 
     const [emailValue, setEmailValue] = useState(email || "");
-    const { setUser, refreshUser } = useUser();
+    const { setUser } = useUser();
     const navigate = useNavigate();
     const payload_inputRefs = {
         signIn_user_email: useRef({})
@@ -28,8 +28,8 @@ export const SignIn = ({ email }) => {
     const [confirmForgotPasswordSent, setConfirmForgotPasswordSent] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
 
-    const handleUserLogin = async () => {
-      await refreshUser();
+    const handleUserLogin = async (user) => {
+      await setUser(user);
       navigate("/");   
     };
 
@@ -82,7 +82,7 @@ export const SignIn = ({ email }) => {
 
             switch (data.status) {
                 case "success":
-                    await handleUserLogin();
+                    await handleUserLogin(data.user);
                     break;
                 case "not_found":
                     setShowSignUp(true);
