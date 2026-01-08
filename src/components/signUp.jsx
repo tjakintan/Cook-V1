@@ -174,17 +174,19 @@ export const SignUp = () => {
 
             <div className={`fixed inset-0 z-20`} onClick={() => navigate("/")}>
 
-                <motion.div className="pointer-events-auto flex h-full items-center justify-center pt-10 md:pt-0 lg:top-0">
+                <motion.div className="pointer-events-auto flex h-full items-center justify-center pt-0 md:pt-10 lg:top-10">
                     
                     <form className={`w-11/12 md:w-2/3 lg:w-2/3 overflow-y-auto backdrop-blur-xs p-3 flex flex-col gap-3 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
                         
                         <div className="flex items-center justify-center">
-                            <AuthHeader />  
-                            <h1 className="text-[20px] font-thin tracking-wider text-center">Let’s get you started</h1>
+                                <div className="w-[100px] h-[50px] flex items-center justify-center overflow-hidden">
+                                    <AuthHeader />
+                                </div>
+                            <h1 className="text-[25px] font-thin tracking-wider text-center">Lets get started</h1>
                         </div>
                         
                         {/* SIGN UP pfp*/}
-                        <div className="flex items-center justify-center mt-10">
+                        <div className="flex items-center justify-center">
                             <motion.div 
                                 className="w-20 h-20 bg-white border-1 rounded-full flex items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
                                 animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
@@ -349,7 +351,7 @@ export const SignUp = () => {
 
                         {/* SIGN UP Password */}
                         <motion.div 
-                            className={`w-full h-full flex mt-4 flex-col justify-between`}
+                            className={`w-full h-full flex flex-col justify-between`}
                             animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
                             <div className="flex gap-2 w-full h-full">
@@ -382,15 +384,15 @@ export const SignUp = () => {
                         <motion.div
                             whileHover={{ scale: 1.03 }} 
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                            className="w-2/3 flex flex-col mt-5 justify-center rounded-[30px] px-5 py-3 text-sm font-light tracking-widest
-                                        cursor-pointer bg-white outline-2 rounded-l-none"
+                            className="w-2/3 flex flex-col justify-center rounded-[30px] px-5 py-3 text-sm font-light tracking-widest
+                                        cursor-pointer bg-white outline-1 rounded-l-none"
                             onClick={handleSignUp}
                         >
                             sign Up
                         </motion.div>  
 
                         {/* SIGN UP text */}
-                        <span className={`text-[9px] font-thin tracking-widest mt-2`}>
+                        <span className={`text-[9px] font-thin tracking-widest mt-1`}>
                             Sign up with your email to use GoMeal. We respect your privacy and use your email only for account management.
                         </span>   
 

@@ -8,13 +8,13 @@ export function UserProvider({ children }) {
   const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
 
   const fetchUser = async (retry = true) => {
-    
+
     if (!hasAttemptedAuth) {
       setLoading(true);
     }
     try {
       const res = await fetch(
-        "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/user",
+        "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/user",
         {
           method: "GET",
           credentials: "include",
@@ -36,7 +36,7 @@ export function UserProvider({ children }) {
         data.shouldRefresh
       ) {
         const refreshRes = await fetch(
-          "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/refresh",
+          "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/refresh",
           {
             method: "POST",
             credentials: "include",

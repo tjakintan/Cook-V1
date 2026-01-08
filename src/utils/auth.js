@@ -10,14 +10,13 @@ export function useSignOut() {
   const signout = async () => {
     try {
       await fetch(
-        "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/signout",
+        "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/signout",
         {
           method: "POST",
           credentials: "include",
         }
       );
       setUser(null);
-      // window.location.reload();
     } catch (err) {
       console.error(err);
     }

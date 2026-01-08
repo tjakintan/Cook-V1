@@ -11,7 +11,7 @@ export default function AuthHeader() {
             whileHover={{ scale: 1.07 }}
             whileTap={{ scale: 0.95 }}
             src="/gomeal1.png"
-            className="w-[120px] h-[120px] cursor-pointer"
+            className="w-[100px] h-[100px] cursor-pointer"
             onClick={() => {navigate("/")}}
         />
 

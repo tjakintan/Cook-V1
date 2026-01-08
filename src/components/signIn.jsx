@@ -69,7 +69,7 @@ export const SignIn = ({ email }) => {
 
         try {
             const response = await fetch(
-                "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/signin",
+                "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/signin",
                 {
                     method: "POST",
                     credentials: "include", 
@@ -133,13 +133,15 @@ export const SignIn = ({ email }) => {
           <div className="fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
 
             <motion.div 
-              className={`w-full md:w-2/3 lg:w-2/3 p-5 flex flex-col items-center justify-center gap-5 text-black`}
+              className={`w-full md:w-2/3 lg:w-2/3 flex flex-col items-center justify-center gap-5 p-5 text-black`}
               onClick={(e) => e.stopPropagation()}
             >
 
               <div className="flex items-center justify-center">
-                  <AuthHeader />  
-                  <h1 className="text-[20px] font-thin tracking-wider text-center">Welcome back</h1>
+                    <div className="w-[100px] h-[60px] flex items-center justify-center overflow-hidden">
+                        <AuthHeader />
+                    </div>
+                  <h1 className="text-[25px] font-thin tracking-wider text-center">Welcome back</h1>
               </div>
 
               <motion.div 
@@ -203,58 +205,55 @@ export const SignIn = ({ email }) => {
               </motion.div>   
 
               <div className="w-full flex flex-col gap-5">
-
                 <motion.div 
-                  className={`w-2/3 h-[40px] flex items-center justify-start 
-                              py-1 px-2 tracking-widest font-extralight  
-                              ${showSignUp || isLoading ? "opacity-75 cursor-not-allowed pointer-events-none" : "cursor-pointer"}
-                              ${isLoading ? "rounded-none outline-none" : "outline-2 bg-white outline-black rounded-r-[30px]"}`}
-                  whileHover={{ scale: showSignUp ? 1 : 1.04 }} 
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  onClick={() => {if (!showSignUp && !isLoading) handleSignIn();}}
+                className={`w-2/3 h-[40px] flex items-center justify-start 
+                            py-1 px-2 tracking-widest font-extralight  
+                            ${showSignUp || isLoading ? "opacity-75 cursor-not-allowed pointer-events-none" : "cursor-pointer"}
+                            ${isLoading ? "rounded-none outline-none" : "outline-1 bg-white outline-black rounded-r-[30px]"}`}
+                whileHover={{ scale: showSignUp ? 1 : 1.04 }} 
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                onClick={() => {if (!showSignUp && !isLoading) handleSignIn();}}
                 >
-                  {isLoading ? (
+                {isLoading ? (
                     <div className="h-full w-full flex justify-center items-center">
-                      <svg width="24" height="24" viewBox="0 0 24 24">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
                         <circle cx="12" cy="2" r="0" fill="#000">
-                          <animate attributeName="r" begin="0s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        <animate attributeName="r" begin="0s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
                         </circle>
                         <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(90 12 12)">
-                          <animate attributeName="r" begin="0.25s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        <animate attributeName="r" begin="0.25s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
                         </circle>
                         <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(180 12 12)">
-                          <animate attributeName="r" begin="0.5s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        <animate attributeName="r" begin="0.5s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
                         </circle>
                         <circle cx="12" cy="2" r="0" fill="#000" transform="rotate(270 12 12)">
-                          <animate attributeName="r" begin="0.75s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
+                        <animate attributeName="r" begin="0.75s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
                         </circle>
-                      </svg>
+                    </svg>
                     </div>
-                  ) : (
+                ) : (
                     "sign in"
-                  )}
+                )}
                 </motion.div>
 
                 <div 
-                  className={`w-11/12 md:w-2/3 h-[45px] flex items-end border-r-2 border-b-2 border-black rounded-r-[30px]
-                              cursor-pointer tracking-widest font-extralight bg-white
-                              overflow-hidden ${email ? "hidden" : ""} `}
+                className={`w-11/12 md:w-2/3 h-[45px] flex items-end border-r-1 border-b-1 border-black rounded-r-[30px]
+                            cursor-pointer tracking-widest font-extralight bg-white
+                            overflow-hidden ${email ? "hidden" : ""} `}
                 >
-                  <h1 className="w-2/3 h-full flex items-end justify-start px-1 pb-1 text-[12px] bg-transparent">
+                <h1 className="w-2/3 h-full flex items-end justify-start px-1 pb-1 text-[12px] bg-transparent">
                     Need to create one ?
-                  </h1>
-                  <div 
-                    className="w-1/2 h-full flex items-center border-l-2 border-black justify-start px-2"
+                </h1>
+                <div 
+                    className="w-1/2 h-full flex items-center border-l-1 border-black justify-start px-2"
                     onClick={() => navigate("/auth?mode=signup")}
-                  >
+                >
                     sign up
-                  </div>
                 </div>
-                
-
+                </div>
               </div>
 
-              <div className="w-11/12 flex items-center justify-center mt-15">
+              <div className="w-11/12 flex items-center justify-center">
                 <div className="flex-1 border-t"></div>
                 <span className="mx-3 font-thin tracking-widest">
                   Social Logins
@@ -262,7 +261,7 @@ export const SignIn = ({ email }) => {
                 <div className="flex-1 border-t"></div>
               </div>
 
-              <div className="w-full h-full flex flex-row justify-center space-x-4">
+              <div className="w-full flex flex-row justify-center space-x-4">
 
                 <svg className="w-10 h-10 cursor-pointer" viewBox="0 0 16 16" onClick={handleGoogleSignIn}>
                   <g fill="none" fill-rule="evenodd" clip-rule="evenodd"><path fill="#F44336" d="M7.209 1.061c.725-.081 1.154-.081 1.933 0a6.57 6.57 0 0 1 3.65 1.82a100 100 0 0 0-1.986 1.93q-1.876-1.59-4.188-.734q-1.696.78-2.362 2.528a78 78 0 0 1-2.148-1.658a.26.26 0 0 0-.16-.027q1.683-3.245 5.26-3.86" opacity=".987"/><path fill="#FFC107" d="M1.946 4.92q.085-.013.161.027a78 78 0 0 0 2.148 1.658A7.6 7.6 0 0 0 4.04 7.99q.037.678.215 1.331L2 11.116Q.527 8.038 1.946 4.92" opacity=".997"/><path fill="#448AFF" d="M12.685 13.29a26 26 0 0 0-2.202-1.74q1.15-.812 1.396-2.228H8.122V6.713q3.25-.027 6.497.055q.616 3.345-1.423 6.032a7 7 0 0 1-.51.49" opacity=".999"/><path fill="#43A047" d="M4.255 9.322q1.23 3.057 4.51 2.854a3.94 3.94 0 0 0 1.718-.626q1.148.812 2.202 1.74a6.62 6.62 0 0 1-4.027 1.684a6.4 6.4 0 0 1-1.02 0Q3.82 14.524 2 11.116z" opacity=".993"/></g>
@@ -270,7 +269,7 @@ export const SignIn = ({ email }) => {
 
                 <span className="mt-2 font-light tracking-wide text-[15px]"> or </span>
 
-                <svg className="w-10 h-10 cursor-pointer" viewBox="0 0 16 16" onClick={handleTwitterSignIn}>
+                <svg className="w-9 h-9 cursor-pointer" viewBox="0 0 16 16" onClick={handleTwitterSignIn}>
                   <path fill="#000000" d="M9.294 6.928L14.357 1h-1.2L8.762 6.147L5.25 1H1.2l5.31 7.784L1.2 15h1.2l4.642-5.436L10.751 15h4.05L9.294 6.928ZM7.651 8.852l-.538-.775L2.832 1.91h1.843l3.454 4.977l.538.775l4.491 6.47h-1.843l-3.664-5.28Z"/>
                 </svg>
 
