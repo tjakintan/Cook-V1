@@ -26,7 +26,7 @@ export function UserProvider({ children }) {
 
       if (res.ok && data.authenticated) {
         setUser(data.user);
-        return;
+        return data.user;
       }
 
       if (
@@ -42,17 +42,15 @@ export function UserProvider({ children }) {
             credentials: "include",
           }
         );
-
         if (refreshRes.ok) {
-          return fetchUser(false); 
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
-      }
+          return refreshRes(false); 
+        } 
+      } 
+      setUser(null);
+      return null;
     } catch {
       setUser(null);
+      return null;
     } finally {
       setLoading(false);
       setHasAttemptedAuth(true);
@@ -69,7 +67,7 @@ export function UserProvider({ children }) {
         user,
         setUser,
         loading,
-        refreshUser: fetchUser,
+        refreshUser,
         hasAttemptedAuth,
       }}
     >
