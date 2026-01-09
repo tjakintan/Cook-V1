@@ -35,13 +35,11 @@ function AppLayout() {
 
         <Route path="/" element={<Home />} />
 
-        <Route element={<ProtectedRouteAppLayout />}>
 
           <Route path="/feed" element={<Feed />} />
           <Route path="/discover" element={<Discover />} />
           <Route path="/upload" element={<Upload />} />
 
-        </Route>
 
       </Routes>
     </>

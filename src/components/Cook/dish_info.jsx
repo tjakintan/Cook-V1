@@ -77,10 +77,17 @@ const DishInfo = ({ value, onPassToHead }) => {
 
     const passToHead = () => {
 
+        console.log("Passing Dish Info to Head:", {
+            dish_image_url,
+            dish_name,
+            dish_description,
+            dish_difficulty,
+        });
+
         const check = validateInputs();
         
         if (!check.valid) {
-            let stepBack = pageIndex - check.page;
+            const stepBack = pageIndex - check.page;
             if (stepBack < 0) {stepBack = 4 + stepBack}
             for (let i = 0; i < stepBack; i++) {prevPage()}
             return;
@@ -96,7 +103,7 @@ const DishInfo = ({ value, onPassToHead }) => {
     }
 
     return (
-        <div className="section-sub overflow-auto scrollbar-hide">
+        <div className="w-full h-full flex items-center justify-center overflow-auto scrollbar-hide">
 
             <div className="w-full h-full">
 
@@ -113,12 +120,12 @@ const DishInfo = ({ value, onPassToHead }) => {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }} 
                 >
                     {/* Page 1: Image Upload */}
-                    <div className="w-full h-full p-5 flex flex-shrink-0 items-center justify-center">
+                    <div className="w-full min-h-[600px] p-5 flex flex-shrink-0 items-center justify-center">
                         <div 
                             {...getRootProps()}
-                            className={`w-full h-full flex flex-col cursor-pointer 
+                            className={`w-full h-full flex flex-col cursor-pointer hover:bg-white
                                         flex items-center justify-center gap-10 rounded-[30px] hover:border-4 hover:border-dashed hover:border-indigo-500
-                                        ${isDragActive ? "border-4 border-dashed border-indigo-500" : ""}`}>
+                                        ${isDragActive ? "border-4 border-dashed bg-white border-indigo-500" : ""}`}>
 
                             <input {...getInputProps()} />
 
@@ -151,14 +158,17 @@ const DishInfo = ({ value, onPassToHead }) => {
                                 <WobblyText text="name"/>
                             </h1>
                             <motion.div 
-                                className="h-full bg-yellow-300 rounded-[30px] p-5"
+                                className="h-full bg-yellow-300 shadow-xl rounded-[30px] p-5"
                                 whileHover={{ scale: 1.05 }} 
                                 transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                             >
-                                <textarea 
+                                <input 
                                     value={dish_name}
                                     onChange={(e) => {setDish_name(e.target.value)}}
-                                    className="w-full h-[40px] bg-white rounded-md"
+                                    className="w-full h-[40px] bg-gray-200 rounded-[25px] 
+                                            px-3 cursor-pointer text-center 
+                                            placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
+                                            "
                                 />
                             </motion.div>
                             <h1 className="section-info-question">
@@ -191,6 +201,10 @@ const DishInfo = ({ value, onPassToHead }) => {
                                 <textarea 
                                     value={dish_description}
                                     onChange={(e) => {setDish_description(e.target.value);}}
+                                    className="w-full h-[40px] bg-gray-200 rounded-[25px] 
+                                            px-3 cursor-pointer text-center 
+                                            placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
+                                            "
                                 />
                             </motion.div>
                             <h1 className="section-info-question">

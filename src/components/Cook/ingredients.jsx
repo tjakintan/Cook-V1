@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import "./cook_style.css";
 import { motion } from "framer-motion";
 import WobblyText from "../../hooks/wobbly_text";
-import { on } from "process";
 
 const UnitDropDownMenu = ({ onSelectUnit }) => {
 
@@ -19,7 +18,7 @@ const UnitDropDownMenu = ({ onSelectUnit }) => {
                     <motion.div
                         whileHover={{ scale: 1.07 }}
                         whileTap={{ scale: 0.95 }} 
-                        className={`py-2 cursor-pointer w-full text-center font-light tracking-wider italic
+                        className={`py-2  cursor-pointer w-full text-center font-light tracking-wider italic
                             ${unit === "empty" 
                                 ? "bg-red-500 text-transparent rounded-[10px] hover:bg-red-600 " 
                                 : "hover:bg-gray-50"}
@@ -128,7 +127,7 @@ const Ingredients = ({ value, onPassToHead }) => {
     };
 
     return (
-        <div className="w-full flex items-center justify-start flex-col gap-4 p-5 bg-red-100">
+        <div className="w-full flex items-center justify-start flex-col gap-5 p-5">
             
             <h1 className="text-center tracking-widest font-bold text-[50px]">
                 <WobblyText text="ingredients"/>
@@ -152,9 +151,15 @@ const Ingredients = ({ value, onPassToHead }) => {
                                             placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
                                             "
                                 type="text"
+                                min="0"
                                 value={ing.quantity}
                                 placeholder="quantity, e.g 400g"
-                                onChange={(e) => updateIngredient(idx, "quantity", e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (/^\d*\.?\d*$/.test(val)) {
+                                        updateIngredient(idx, "quantity", val);
+                                    }
+                                }}
                             />
 
                             <motion.div 
