@@ -9,8 +9,8 @@ function DifficultyButton({ label, active, onClick, color }) {
     <div className="flex flex-col items-center cursor-pointer">
       <motion.div
         onClick={onClick}
-        className={`w-[70px] h-[40px] rounded-lg  mb-2 ${
-          active ? "bg-black scale-120" : color
+        className={`w-[70px] h-[40px] rounded-lg ${color} mb-2 ${
+          active ? "scale-120" : ""
         }`}
         whileHover={{ scale: 1.05 }}
         animate={{
@@ -190,7 +190,7 @@ const DishInfo = ({ value, onPassToHead }) => {
                     {/* Page 3: Dish Description */}
                     <div className={`w-full h-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
                         <div className="w-full h-full flex flex-col overflow-hidden p-5 gap-5">
-                            <h1 className="text-center tracking-widest font-bold text-[50px]">
+                            <h1 className="text-center tracking-widest font-bold text-[45px]">
                                 <WobblyText text="description" />
                             </h1>
                             <motion.div 

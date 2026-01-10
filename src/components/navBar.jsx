@@ -85,12 +85,10 @@ export default function Navbar() {
   return (
     <>
 
-      <div className="fixed md:top-5 top-auto left-1/2 -translate-x-1/2 w-[90%] max-w-5xl z-50">
+      <div className="fixed top-5 top-auto left-1/2 -translate-x-1/2 w-[90%] max-w-5xl z-50">
 
         <div 
-          className="relative flex items-center justify-between px-5 py-2 md:py-0 lg:py-0 bg-white/30 backdrop-blur-lg rounded-[30px] 
-          shadow-md mt-5 md:mt-0 lg:mt-0 md:shadow-none lg:shadow-none md:backdrop-blur-none lg:backdrop-blur-none md:rounded-none lg:rounded-none md:bg-transparent
-          lg:bg-transparent">
+          className="relative flex items-center justify-between bg-transparent">
 
           <NavLink to="/" className="flex items-center">
             <img

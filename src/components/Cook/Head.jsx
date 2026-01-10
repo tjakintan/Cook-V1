@@ -6,6 +6,7 @@ import "./cook_style.css";
 export default function Head() {
 
     const [step, setStep] = useState(0);
+    const isActive = (index) => step === index;
     const [dishInfoData, setDishInfoData] = useState({
         dish_image_url: "",
         dish_name: "",
@@ -27,14 +28,16 @@ export default function Head() {
     return (
         <div className="w-screen h-screen flex items-center justify-center">
 
-            <div className="w-full h-screen overflow-auto flex flex-col gap-1 scrollbar-hide py-30">
+            <div className="w-full h-screen overflow-auto flex flex-col gap-1 scrollbar-hide pb-20 pt-20">
 
                 <AnimatePresence mode="wait">
 
                     {step >= 0 && (
                         <motion.div
                             key="dish-info"
-                            className="w-full flex items-center justify-center bg-red-300"
+                            className={`w-full flex items-center justify-center ${
+                                isActive(0) ? "pointer-events-auto" : "pointer-events-none"
+                            }`}
                         >
                             <DishInfo
                                 value={dishInfoData}
@@ -46,12 +49,13 @@ export default function Head() {
                     {step >= 1 && (
                         <motion.div
                             key="ingredients"
-                            className="w-full flex items-center justify-center bg-orange-300"
+                            className={`w-full flex items-center justify-center ${
+                                isActive(1) ? "pointer-events-auto" : "pointer-events-none"
+                            }`}
                             variants={slideVariants}
                             initial="initial"
                             animate="animate"
                             exit="exit"
-                            transition={{ duration: 0.6, ease: "easeInOut" }}
                         >
                             <Ingredients
                                 value={dishIngredientsData}
@@ -63,7 +67,9 @@ export default function Head() {
                     {step >= 2 && (
                         <motion.div
                             key="steps"
-                            className="w-full flex items-center justify-center bg-blue-300"
+                            className={`w-full flex items-center justify-center ${
+                                isActive(2) ? "pointer-events-auto" : "pointer-events-none"
+                            }`}
                             variants={slideVariants}
                             initial="initial"
                             animate="animate"
@@ -76,7 +82,9 @@ export default function Head() {
                     {step >= 3 && (
                         <motion.div
                             key="nutrition"
-                            className="w-full min-h-[600px] flex items-center justify-center"
+                            className={`w-full flex items-center justify-center ${
+                                isActive(3) ? "pointer-events-auto" : "pointer-events-none"
+                            }`}
                             variants={slideVariants}
                             initial="initial"
                             animate="animate"
@@ -89,7 +97,9 @@ export default function Head() {
                     {step >= 4 && (
                         <motion.div
                             key="dietary"
-                            className="w-full min-h-[600px] flex items-center justify-center"
+                            className={`w-full flex items-center justify-center ${
+                                isActive(4) ? "pointer-events-auto" : "pointer-events-none"
+                            }`}
                             variants={slideVariants}
                             initial="initial"
                             animate="animate"
