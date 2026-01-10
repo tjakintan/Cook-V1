@@ -87,7 +87,7 @@ const DishInfo = ({ value, onPassToHead }) => {
         const check = validateInputs();
         
         if (!check.valid) {
-            const stepBack = pageIndex - check.page;
+            let stepBack = pageIndex - check.page;
             if (stepBack < 0) {stepBack = 4 + stepBack}
             for (let i = 0; i < stepBack; i++) {prevPage()}
             return;

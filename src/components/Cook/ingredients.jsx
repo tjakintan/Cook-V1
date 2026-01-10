@@ -137,8 +137,7 @@ const Ingredients = ({ value, onPassToHead }) => {
 
                 <motion.div 
                     key={idx} 
-                    className={`w-full md:w-1/2 rounded-[40px] bg-white shadow-lg flex flex-col 
-                                md:flex-row items-end md:items-center justify-center px-3 py-2 gap-2`}
+                    className={`rounded-[40px] bg-white shadow-lg flex items-center justify-center px-3 py-2 gap-2`}
                     animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
                 >
                     <div className="w-full h-full flex items-center justify-center gap-10">
@@ -211,9 +210,9 @@ const Ingredients = ({ value, onPassToHead }) => {
                         </div>
                         
                         {/* Ingredient name input */}
-                        <div className="w-full flex items-center justify-center">
+                        <div className="flex items-center justify-center">
                             <input 
-                                className="w-full h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
+                                className="w-[150px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
                                             px-3 cursor-pointer 
                                             placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
                                             "
