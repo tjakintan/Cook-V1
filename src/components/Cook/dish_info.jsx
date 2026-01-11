@@ -9,7 +9,7 @@ function DifficultyButton({ label, active, onClick, color }) {
     <div className="flex flex-col items-center cursor-pointer">
       <motion.div
         onClick={onClick}
-        className={`w-[70px] h-[40px] rounded-lg ${color} mb-2 ${
+        className={`w-[70px] h-[40px] rounded-lg ${color.bg} mb-2 ${
           active ? "scale-120" : ""
         }`}
         whileHover={{ scale: 1.05 }}
@@ -20,8 +20,8 @@ function DifficultyButton({ label, active, onClick, color }) {
       />
 
       <h1
-        className={`font-light tracking-wider text-xl text-center ${
-          active ? "font-bold text-black" : "opacity-50"
+        className={`font-light tracking-wider text-xl ${color.text} text-center ${
+          active ? "font-bold" : "opacity-50"
         }`}
       >
         {label}
@@ -47,11 +47,20 @@ const DishInfo = ({ value, onPassToHead }) => {
     const fileInputRef = useRef(null);
     const [pageIndex, setPageIndex] = useState(0); 
     const pageWidth = window.innerWidth;
-    const options = ["hard", "medium", "easy"];
+    const options = ["easy", "medium", "hard"];
     const difficultyColors = {
-        easy: "bg-green-400",
-        medium: "bg-yellow-400",
-        hard: "bg-red-400",
+        easy: {
+            bg: "bg-green-600",
+            text: "text-green-600",
+        },
+        medium: {
+            bg: "bg-yellow-400",
+            text: "text-yellow-400",
+        },
+        hard: {
+            bg: "bg-red-600",
+            text: "text-red-600",
+        },
     };
 
     const nextPage = () => { 
@@ -235,13 +244,13 @@ const DishInfo = ({ value, onPassToHead }) => {
                                     {/* medium */}
                                     {/* easy */}
                                     {options.map((level) => (
-                                    <DifficultyButton
-                                        key={level}
-                                        label={level}
-                                        active={dish_difficulty === level}
-                                        onClick={() => setDish_difficulty(level)}
-                                        color={difficultyColors[level]}
-                                    />
+                                        <DifficultyButton
+                                            key={level}
+                                            label={level}
+                                            active={dish_difficulty === level}
+                                            onClick={() => setDish_difficulty(level)}
+                                            color={difficultyColors[level]}
+                                        />
                                     ))}
                                 </div>
                                 <h1 className="section-info-question mt-5">

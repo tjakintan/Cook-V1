@@ -12,7 +12,7 @@ const UnitDropDownMenu = ({ onSelectUnit }) => {
     ];
 
     return (
-        <div onClick={(e) => e.stopPropagation()}className="absolute top-full mt-5 mr-5 -left-1/2 w-[60px] bg-white rounded-[10px] shadow-md z-50 overflow-y-auto max-h-60 scrollbar-hide">
+        <div onClick={(e) => e.stopPropagation()} className="absolute top-full mt-5 mr-5 -left-1/2 w-[60px] bg-white rounded-[10px] shadow-md z-50 overflow-y-auto max-h-60 scrollbar-hide">
             {UNITS.map((unit, index) => (
                 <div key={unit} className="flex flex-col items-center  bg-white hover:bg-gray-100 p-1">
                     <motion.div
@@ -140,10 +140,10 @@ const Ingredients = ({ value, onPassToHead }) => {
                     className={`rounded-[40px] bg-white shadow-lg flex items-center justify-center p-1`}
                     animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
                 >
-                    <div className="w-full h-full flex items-center justify-center gap-3">
+                    <div className="w-full h-full flex items-center justify-center gap-5">
 
                         {/* Ingredient quantity & unit input */}
-                        <div className="flex items-center justify-center space-x-1">
+                        <div className="flex items-center justify-center space-x-2">
                             <input 
                                 className="w-[60px] h-[40px] bg-gray-100 rounded-[25px] 
                                             px-3 cursor-pointer text-center
@@ -178,15 +178,12 @@ const Ingredients = ({ value, onPassToHead }) => {
                             >
 
                                 <svg 
-                                    width="40"
-                                    height="40"
-                                    viewBox="0 0 100 100"
-                                    className={`block ${showUnitDropdown[idx] ? "rotate-180" : ""} transition-transform duration-200 
-                                                ${ing.unit ? "hidden" : ""}`}
+                                    className={`w-4 h-4 ${ing.unit ? "hidden" : ""}`} viewBox="0 0 24 24" fill="#000000"
                                 >
-                                    <line x1="50" y1="30" x2="50" y2="65" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-                                    <line x1="35" y1="50" x2="50" y2="65" stroke="#000" stroke-width="4" stroke-linecap="round"/>
-                                    <line x1="65" y1="50" x2="50" y2="65" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+                                    <g fill="none" 
+                                    stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+                                        <path d="M9 17.25a3 3 0 1 0 6 0a3 3 0 0 0-6 0m3-3v2.25"/><path  d="M22.432 21.3A1.5 1.5 0 0 1 21 23.25H3a1.5 1.5 0 0 1-1.432-1.95l2.813-9a1.5 1.5 0 0 1 1.431-1.05h12.375a1.5 1.5 0 0 1 1.432 1.05zM3 .75a.75.75 0 0 0-.692 1.039a10.5 10.5 0 0 0 15.515 4.696a10.5 10.5 0 0 0 3.866-4.697A.75.75 0 0 0 21 .75zm6 7.065v3.435m6-3.435v3.435"/>
+                                    </g>
                                 </svg>
 
                                 <h1 className={`text-sm opacity-75 font-light italic tracking-widest ${ing.unit ? "" : "hidden"}`}>

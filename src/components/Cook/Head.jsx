@@ -36,7 +36,7 @@ export default function Head() {
                         <motion.div
                             key="dish-info"
                             className={`w-full flex items-center justify-center ${
-                                isActive(0) ? "pointer-events-auto" : "pointer-events-none"
+                                isActive(0) ? "pointer-events-auto" : ""
                             }`}
                         >
                             <DishInfo
@@ -50,7 +50,7 @@ export default function Head() {
                         <motion.div
                             key="ingredients"
                             className={`w-full flex items-center justify-center ${
-                                isActive(1) ? "pointer-events-auto" : "pointer-events-none"
+                                isActive(1) ? "pointer-events-auto" : ""
                             }`}
                             variants={slideVariants}
                             initial="initial"
@@ -68,7 +68,7 @@ export default function Head() {
                         <motion.div
                             key="steps"
                             className={`w-full flex items-center justify-center ${
-                                isActive(2) ? "pointer-events-auto" : "pointer-events-none"
+                                isActive(2) ? "pointer-events-auto" : ""
                             }`}
                             variants={slideVariants}
                             initial="initial"
@@ -83,7 +83,7 @@ export default function Head() {
                         <motion.div
                             key="nutrition"
                             className={`w-full flex items-center justify-center ${
-                                isActive(3) ? "pointer-events-auto" : "pointer-events-none"
+                                isActive(3) ? "pointer-events-auto" : ""
                             }`}
                             variants={slideVariants}
                             initial="initial"
@@ -98,7 +98,7 @@ export default function Head() {
                         <motion.div
                             key="dietary"
                             className={`w-full flex items-center justify-center ${
-                                isActive(4) ? "pointer-events-auto" : "pointer-events-none"
+                                isActive(4) ? "pointer-events-auto" : ""
                             }`}
                             variants={slideVariants}
                             initial="initial"
