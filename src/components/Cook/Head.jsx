@@ -14,6 +14,7 @@ export default function Head() {
         dish_difficulty: "",
     });
     const [dishIngredientsData, setDishIngredientsData] = useState([]);
+    const [dishStepsData, setDishStepsData] = useState([]);
 
     const handleDishInfoChange = (data) => {
         setDishInfoData(data);
@@ -25,10 +26,15 @@ export default function Head() {
         setStep(2);
     };
 
+    const handleDishStepsChange = (data) => {
+        setDishStepsData(data);
+        setStep(3);
+    }
+
     return (
         <div className="w-screen h-screen flex items-center justify-center">
 
-            <div className="w-full h-screen overflow-auto flex flex-col gap-1 scrollbar-hide pb-20 pt-20">
+            <div className="w-full h-screen overflow-auto flex flex-col gap-5 scrollbar-hide pb-20 pt-20">
 
                 <AnimatePresence mode="wait">
 
@@ -75,7 +81,10 @@ export default function Head() {
                             animate="animate"
                             exit="exit"
                         >
-                            <Steps />
+                            <Steps 
+                                value={dishStepsData}
+                                onPassToHead={handleDishStepsChange}
+                            />
                         </motion.div>
                     )}
 
@@ -90,7 +99,7 @@ export default function Head() {
                             animate="animate"
                             exit="exit"
                         >
-                            <Nutrition />
+                            <Dietary />
                         </motion.div>
                     )}
 
@@ -105,7 +114,7 @@ export default function Head() {
                             animate="animate"
                             exit="exit"
                         >
-                            <Dietary />
+                            <Nutrition />
                         </motion.div>
                     )}
                 </AnimatePresence>

@@ -311,6 +311,36 @@ const Steps = ({ value, onPassToHead }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    const triggerShake = (indices) => {
+        setShake(prev => {
+            const copy = [...prev];
+            indices.forEach(idx => copy[idx] = true);
+            return copy;
+        });
+
+        setTimeout(() => {
+            setShake(prev => {
+            const copy = [...prev];
+            indices.forEach(idx => copy[idx] = false);
+            return copy;
+            }, 500);
+        });
+    };
+
+    const passToHead = () => {
+
+        const invalid = dish_steps
+            .map((step, idx) => (!step.description.trim() ? idx : null))
+            .filter(idx => idx !== null);
+
+        if (invalid.length > 0) {
+            triggerShake(invalid); 
+            return;
+        }
+
+        onPassToHead({ dish_steps });
+    };
+
     return (
         <div className="flex items-center justify-start flex-col gap-5">
             
@@ -591,6 +621,7 @@ const Steps = ({ value, onPassToHead }) => {
                     whileHover={{ scale: 1.05 }} 
                     transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                     className="next-section-button"
+                    onClick={passToHead}
                 >
                     dietary
                 </motion.button>

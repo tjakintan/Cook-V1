@@ -243,7 +243,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                                                     "
                                     type="text"
                                     value={ing.name}
-                                    placeholder="ingredient name"
+                                    placeholder="rice"
                                     onChange={(e) => updateIngredient(idx, "name", e.target.value)}
                                 />
                             </div>
