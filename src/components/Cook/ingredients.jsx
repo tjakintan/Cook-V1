@@ -23,7 +23,7 @@ const UnitDropDownMenu = ({ onSelectUnit }) => {
     ];
 
     return (
-        <div onMouseDown={(e) => e.stopPropagation()} className="rounded-xl flex overflow-x-auto scrollbar-hide">
+        <div onTouchStart={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} className="rounded-xl flex overflow-x-auto scrollbar-hide touch-pan-x">
             {UNITS.map((unit, index) => (
                 <div key={unit} className="flex flex-col items-center p-1">
                     <motion.div

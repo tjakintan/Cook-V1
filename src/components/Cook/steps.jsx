@@ -183,7 +183,7 @@ const ToolsPicker = ({ onChange = () => {} }) =>  {
     };
 
     return (
-        <div className="flex flex-row gap-5 p-2 overflow-x-auto scrollbar-hide max-w-60 md:max-w-150">
+        <div onTouchStart={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} className="flex flex-row gap-5 p-2 overflow-x-auto scrollbar-hide max-w-60 md:max-w-150 touch-pan-x overscroll-x-contain">
             {tools.map((tool, index) => {
                 const isSelected = selected.includes(tool);
 

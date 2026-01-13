@@ -6,7 +6,7 @@ const Nutrition = ({ value, onPassToHead }) => {
     const [dish_nutrition, setDish_nutrition] = useState(value?.dish_nutrition || "");
 
     return (
-        <div className="section-sub">
+        <div className="section-sub bg-blue-300">
         </div>
     );
 };
