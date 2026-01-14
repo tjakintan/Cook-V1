@@ -18,14 +18,6 @@ function DifficultyButton({ label, active, onClick, color }) {
         }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       />
-
-      <h1
-        className={`font-light tracking-wider text-xl ${color.text} text-center ${
-          active ? "font-bold" : "opacity-50"
-        }`}
-      >
-        {label}
-      </h1>
     </div>
   );
 }
@@ -253,9 +245,6 @@ const DishInfo = ({ value, onPassToHead }) => {
                                         />
                                     ))}
                                 </div>
-                                <h1 className="section-info-question mt-5">
-                                    How difficult is it to prepare your dish ?
-                                </h1>
                             </div>
                             <div className="h-1/5 flex items-center justify-center">
                                 <motion.button 

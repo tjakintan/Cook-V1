@@ -23,7 +23,7 @@ const UnitDropDownMenu = ({ onSelectUnit }) => {
     ];
 
     return (
-        <div onTouchStart={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} className="rounded-xl flex overflow-x-auto scrollbar-hide touch-pan-x">
+        <div className="rounded-xl flex overflow-x-auto scrollbar-hide touch-pan-x">
             {UNITS.map((unit, index) => (
                 <div key={unit} className="flex flex-col items-center p-1">
                     <motion.div
@@ -151,9 +151,7 @@ const Ingredients = ({ value, onPassToHead }) => {
 
                 <motion.div 
                     key={idx} 
-                    whileHover={{ scale: 1.07 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`rounded-[40px] shadow-lg flex overflow-hidden flex-col items-center justify-center py-1 px-3`}
+                    className={`rounded-[40px]  flex overflow-hidden flex-col items-center justify-center py-1 px-3`}
                     animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
                 >
                     {showUnitDropdown[idx] && (

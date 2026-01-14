@@ -183,7 +183,7 @@ const ToolsPicker = ({ onChange = () => {} }) =>  {
     };
 
     return (
-        <div onTouchStart={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()} className="flex flex-row gap-5 p-2 overflow-x-auto scrollbar-hide max-w-60 md:max-w-150 touch-pan-x overscroll-x-contain">
+        <div className="flex flex-row gap-5 p-2 overflow-x-auto scrollbar-hide max-w-60 md:max-w-150 touch-pan-x overscroll-x-contain">
             {tools.map((tool, index) => {
                 const isSelected = selected.includes(tool);
 
@@ -352,9 +352,7 @@ const Steps = ({ value, onPassToHead }) => {
                 
                 <motion.div 
                     key={idx} 
-                    className={`rounded-[40px] shadow-xl flex flex-col p-2 overflow-hidden`}
-                    whileHover={{ scale: 1.07 }}
-                    whileTap={{ scale: 0.95 }}
+                    className={`rounded-[40px] ${showBoxOption[idx] ? "" : ""} flex flex-col p-2 overflow-hidden`}
                     initial={false}
                     style={{ transformOrigin: "top" }} 
                     animate={{
@@ -420,13 +418,9 @@ const Steps = ({ value, onPassToHead }) => {
                             onClick={(e) => e.stopPropagation()}
                             className={`flex`}
                         >
-                            <div className={`${showTimer[idx] ? "hidden" : ""} flex`}>
+                            <div className={`${showTimer[idx] ? "hidden" : ""} flex flex-col p-1`}>
 
-                                <div 
-                                    className={`gap-1 flex flex-col items-start 
-                                                justify-center px-5 py-2 bg-gray-200 rounded-[30px]`} 
-                                >
-                                    <div className="w-full flex items-center gap-2 p-2">
+                                    <div className="w-full flex items-center gap-2 p-2 pl-1">
                                         <svg className="w-8 h-8" viewBox="0 0 24 24">
                                             <path fill="#000000" d="M15.06 9.83a2.75 2.75 0 0 1 1.737 0c.368.123.672.338.967.596c.282.248.602.579.985.975q.686.713 1.374 1.424c.448.462.628.95.626 1.602c-.006 1.659-.041 2.797-.517 3.73a4.75 4.75 0 0 1-2.076 2.075c-1.345.686-3.065.518-4.523.518h-3.266c-1.092 0-1.958 0-2.655-.057c-.714-.058-1.317-.18-1.868-.46a4.75 4.75 0 0 1-2.076-2.076c-.295-.579-.41-1.209-.47-1.976c-.088-1.16.896-2.099 1.653-2.862c.307-.31.631-.57 1.033-.718a2.75 2.75 0 0 1 1.889 0c.402.148.726.408 1.033.718c.298.3.632.7 1.036 1.185c.035.043.09.083.141.03l3.025-3.133c.384-.396.703-.727.985-.975c.295-.258.6-.473.967-.596m.023 1.723c-.23.202-.507.488-.917.913l-3.004 3.11a1.58 1.58 0 0 1-2.351-.086c-.431-.516-.724-.867-.97-1.114c-.24-.243-.38-.328-.483-.366a1.25 1.25 0 0 0-.859 0c-.103.038-.242.123-.483.366c-.37.372-.697.787-1.032 1.19c-.161.193-.205.295-.187.54c.05.656.147 1.055.307 1.37a3.25 3.25 0 0 0 1.42 1.42c.305.155.69.251 1.31.302c.63.051 1.434.052 2.566.052h3.2c1.192 0 2.765.212 3.876-.354a3.25 3.25 0 0 0 1.42-1.42c.282-.555.346-1.303.353-3.054c.001-.274-.041-.386-.238-.589l-1.32-1.367c-.41-.425-.686-.71-.917-.913c-.515-.452-1.154-.472-1.691 0"/><path fill="#000000" d="M10.367 3.25h3.266c1.092 0 1.958 0 2.655.057c.714.058 1.317.18 1.869.46a4.75 4.75 0 0 1 2.075 2.077c.281.55.403 1.154.461 1.868c.057.697.057 1.563.057 2.655v3.266c0 1.092 0 1.958-.057 2.655c-.058.714-.18 1.317-.46 1.869a4.75 4.75 0 0 1-2.077 2.075c-.55.281-1.154.403-1.868.461c-.697.057-1.563.057-2.655.057h-3.266c-1.092 0-1.958 0-2.655-.057c-.714-.058-1.317-.18-1.868-.46a4.75 4.75 0 0 1-2.076-2.076c-.281-.552-.403-1.155-.461-1.869c-.057-.697-.057-1.563-.057-2.655v-3.266c0-1.092 0-1.958.057-2.655c.058-.714.18-1.317.46-1.868a4.75 4.75 0 0 1 2.077-2.076c.55-.281 1.154-.403 1.868-.461c.697-.057 1.563-.057 2.655-.057M7.834 4.802c-.62.05-1.005.147-1.31.302a3.25 3.25 0 0 0-1.42 1.42c-.155.305-.251.69-.302 1.31c-.051.63-.052 1.434-.052 2.566v3.2c0 1.133 0 1.937.052 2.566c.05.62.147 1.005.302 1.31a3.25 3.25 0 0 0 1.42 1.42c.305.155.69.251 1.31.302c.63.051 1.434.052 2.566.052h3.2c1.133 0 1.937 0 2.566-.052c.62-.05 1.005-.147 1.31-.302a3.25 3.25 0 0 0 1.42-1.42c.155-.305.251-.69.302-1.31c.051-.63.052-1.434.052-2.566v-3.2c0-1.132 0-1.937-.052-2.566c-.05-.62-.147-1.005-.302-1.31a3.25 3.25 0 0 0-1.42-1.42c-.305-.155-.69-.251-1.31-.302c-.63-.051-1.434-.052-2.566-.052h-3.2c-1.132 0-1.937 0-2.566.052"/><path fill="#000000" d="M10 7.75a1.25 1.25 0 1 0 0 2.5a1.25 1.25 0 0 0 0-2.5M7.25 9a2.75 2.75 0 1 1 5.5 0a2.75 2.75 0 0 1-5.5 0"/>
                                         </svg>
@@ -441,8 +435,6 @@ const Steps = ({ value, onPassToHead }) => {
                                             + picture
                                         </button>
                                     </div>
-
-                                    <div className="w-11/12 border-t border-gray-300"></div>
 
                                     <div className="w-full flex items-center gap-2 p-2">
                                         <svg 
@@ -473,7 +465,7 @@ const Steps = ({ value, onPassToHead }) => {
                                             />
                                         </svg>
                                         <button
-                                            className="px-5 py-2 tracking-widest font-thin rounded-[20px] bg-black text-white cursor-pointer"
+                                            className="ml-1 px-5 py-2 tracking-widest font-thin rounded-[20px] bg-black text-white cursor-pointer"
                                             onClick={() => setShowTimer(prev => {
                                                 const newShowTimer = [...prev];
                                                 newShowTimer[idx] = !newShowTimer[idx];
@@ -484,9 +476,7 @@ const Steps = ({ value, onPassToHead }) => {
                                         </button>
                                     </div>
 
-                                    <div className="w-11/12 border-t border-gray-300"></div>
-
-                                    <div className="w-full flex items-center gap-2">
+                                    <div className="w-full flex items-center gap-2 pl-2">
                                         <div className="flex">
                                             <svg className="w-6 h-6" viewBox="0 0 24 24">
                                                 <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
@@ -497,12 +487,10 @@ const Steps = ({ value, onPassToHead }) => {
                                         </div>
                                     </div>
 
-                                </div>                      
-
                             </div>
 
                             <div                                     
-                                className={`bg-gray-100 flex flex-col items-center md:items-start 
+                                className={`flex flex-col items-center md:items-start 
                                             justify-center rounded-[30px] overflow-hidden space-y-2 px-3 py-2
                                             ${showTimer[idx] ? "" : "hidden"}`}
                             >

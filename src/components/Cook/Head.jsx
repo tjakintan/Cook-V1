@@ -15,6 +15,7 @@ export default function Head() {
     });
     const [dishIngredientsData, setDishIngredientsData] = useState([]);
     const [dishStepsData, setDishStepsData] = useState([]);
+    const [dishDietaryData, setDishDietaryData] = useState([]);
 
     const handleDishInfoChange = (data) => {
         setDishInfoData(data);
@@ -30,6 +31,11 @@ export default function Head() {
         setDishStepsData(data);
         setStep(3);
     }
+
+    const handleDishDietaryChange = (selectedOptions) => {
+        setDishDietaryData(selectedOptions); // this will be an array of strings e.g., ["vegetarian", "gluten_free"]
+        setStep(4);
+    };
 
     return (
         <div className="w-screen h-screen flex items-center justify-center">
@@ -99,7 +105,9 @@ export default function Head() {
                             animate="animate"
                             exit="exit"
                         >
-                            <Dietary />
+                            <Dietary 
+                                value={dishDietaryData}
+                                onPassToHead={handleDishDietaryChange}/>
                         </motion.div>
                     )}
 
