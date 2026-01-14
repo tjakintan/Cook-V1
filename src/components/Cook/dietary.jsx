@@ -54,7 +54,6 @@ const Dietary = ({ value, onPassToHead }) => {
     const [invalidCombination6, setInvalidCombination6] = useState([]);
     const dietaryKeys = Object.keys(dish_dietary);
     const rowConfig = [4, 3, 3];
-    const rows = getRows();
 
     const toggleDiet = (key) => {
         setDish_dietary(prev => {
@@ -109,6 +108,8 @@ const Dietary = ({ value, onPassToHead }) => {
 
         onPassToHead(selectedDietary);
     };
+
+    const rows = getRows();
 
     return (
         <div className="flex flex-col gap-5 p-5 items-center justify-start  text-white">
