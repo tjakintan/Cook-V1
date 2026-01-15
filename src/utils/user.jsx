@@ -7,17 +7,17 @@ export function UserProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
 
-  const refreshUser = async (retry = true) => {
+  const refreshUser = async () => {
     if (!hasAttemptedAuth) setLoading(true);
 
     try {
-      // Fetch current user
+      // First, try to fetch current user
       const res = await fetch(
         "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/user",
         {
           method: "GET",
           credentials: "include",
-          headers: { "content-type": "application/json" },
+          headers: { "Content-Type": "application/json" },
         }
       );
 
@@ -29,12 +29,7 @@ export function UserProvider({ children }) {
       }
 
       // If token expired, attempt refresh
-      if (
-        res.status === 401 &&
-        data.reason === "expired" &&
-        retry &&
-        data.shouldRefresh
-      ) {
+      if (res.status === 401 && data.reason === "expired" && data.shouldRefresh) {
         const refreshRes = await fetch(
           "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/refresh",
           {
@@ -44,16 +39,18 @@ export function UserProvider({ children }) {
         );
 
         if (refreshRes.ok) {
-          // Wait a tiny moment for browser to set new cookie before retrying
-          await new Promise((resolve) => setTimeout(resolve, 50));
+          const refreshData = await refreshRes.json();
 
-          // Retry fetching the user after refresh
-          return refreshUser(false);
-        } else {
-          // Refresh failed
-          setUser(null);
-          return null;
+          // Set user directly from refresh response
+          if (refreshData.user) {
+            setUser(refreshData.user);
+            return refreshData.user;
+          }
         }
+
+        // Refresh failed
+        setUser(null);
+        return null;
       }
 
       // Any other unauthorized case
