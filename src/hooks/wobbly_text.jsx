@@ -18,7 +18,7 @@ export default function WobblyText({ text }) {
       {text.split("").map((char, i) => (
         <motion.span
           key={i}
-          className="inline-block "
+          className="inline-block"
           animate={{
             rotate: [
               letters[i].rotate,

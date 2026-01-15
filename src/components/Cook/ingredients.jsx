@@ -289,11 +289,26 @@ const Ingredients = ({ value, onPassToHead }) => {
 
             <div className="w-full h-1/5 flex items-center justify-center">
                 <motion.button 
+                    animate={!dish_ingredients.some(ing => !ing.quantity.trim() || !ing.name.trim()) 
+                        ? { y: [-5, 5] } 
+                        : { y: 0 }}  
+                    transition={{ 
+                        duration: 1, 
+                        repeat: Infinity, 
+                        repeatType: "reverse",  
+                        ease: "easeInOut" 
+                    }}
                     whileHover={{ scale: 1.05 }} 
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                     className="next-section-button"
                     onClick={passToHead}
-                >steps
+                >
+                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                        <g id="evaArrowIosDownwardFill0">
+                            <g id="evaArrowIosDownwardFill1">
+                                <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                            </g>
+                        </g>
+                    </svg>
                 </motion.button>
             </div>
 

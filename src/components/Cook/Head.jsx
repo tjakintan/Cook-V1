@@ -83,7 +83,7 @@ export default function Head() {
     return (
         <div className="w-screen h-screen flex items-center justify-center">
 
-            <div className={`w-full h-screen overflow-auto flex flex-col  scrollbar-hide ${step === 5 ? "" : "pb-20"} pt-20`}>
+            <div className={`w-full h-screen overflow-auto flex flex-col scrollbar-hide ${step === 5 ? "" : "gap-10 pb-20"} pt-20`}>
 
                 <AnimatePresence mode="wait">
 
@@ -140,7 +140,7 @@ export default function Head() {
                     {step >= 3 && (
                         <motion.div
                             key="nutrition"
-                            className={`w-full flex items-center justify-center ${
+                            className={`flex items-center justify-center bg-gradient-to-b from-white to-white/80 ${
                                 isActive(3) ? "pointer-events-auto" : ""
                             }`}
                             variants={slideVariants}
@@ -158,7 +158,7 @@ export default function Head() {
                     {step >= 4 && (
                         <motion.div
                             key="dietary"
-                            className={`w-full flex items-center justify-center ${
+                            className={`w-full flex items-center justify-center bg-gradient-to-b from-white/80 to-black/90 ${
                                 isActive(4) ? "pointer-events-auto" : ""
                             }`}
                             variants={slideVariants}
@@ -172,11 +172,15 @@ export default function Head() {
                             />
                         </motion.div>
                     )}
+
                     {step >= 5 && (
-                        <motion.div className="bg-black w-screen h-screen">
-                                jdj
+                        <motion.div className="w-full flex bg-gradient-to-b from-black/90 to-black">
+                            <div className="w-screen h-screen flex flex-col items-center justify-center gap-5">
+
+                            </div>
                         </motion.div>
                     )}
+
                 </AnimatePresence>
 
             </div>
@@ -185,7 +189,7 @@ export default function Head() {
 }
 
 const slideVariants = {
-  initial: { y: "100vh", opacity: 0 },
-  animate: { y: 0, opacity: 1 },
-  exit: { y: "-100vh", opacity: 0 },
+    initial: { y: "100vh", opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: "-100vh", opacity: 0 },
 };

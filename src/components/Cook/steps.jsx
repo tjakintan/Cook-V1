@@ -556,7 +556,7 @@ const Steps = ({ value, onPassToHead }) => {
 
                             <div className={`${showBoxOption[idx] ? "hidden" : ""} flex`}>
                                 <input 
-                                    className="w-[150px] md:w-[300px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
+                                    className="w-[200px] md:w-[300px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
                                                 px-3 cursor-pointer text-sm font-light tracking-wide
                                                 placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
                                                 "
@@ -606,12 +606,28 @@ const Steps = ({ value, onPassToHead }) => {
 
             <div className="h-1/5 flex items-center justify-center">
                 <motion.button 
+                    animate={
+                        !dish_steps.some(step => !step.description.trim())
+                            ? { y: [-5, 5] } 
+                            : { y: 0 }       
+                    }
+                    transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                    }}
                     whileHover={{ scale: 1.05 }} 
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                     className="next-section-button"
                     onClick={passToHead}
                 >
-                    dietary
+                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                        <g id="evaArrowIosDownwardFill0">
+                            <g id="evaArrowIosDownwardFill1">
+                                <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                            </g>
+                        </g>
+                    </svg>
                 </motion.button>
             </div>
 

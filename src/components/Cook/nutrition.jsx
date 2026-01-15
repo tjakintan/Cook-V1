@@ -94,9 +94,9 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
     );
 
     return (
-        <div className="w-screen h-screen flex flex-col items-center justify-center gap-5 bg-gradient-to-b from-white/80 to-black/90">
+        <div className="w-screen h-screen flex flex-col items-center justify-center gap-5">
 
-            <div className="flex p-2 flex flex-col gap-1 outline-2 bg-white">
+            <div className="md:w-1/3 p-2 flex flex-col gap-1 outline-2 bg-white">
 
                 <h1 className="tracking-widest font-bold text-[50px]">
                     <WobblyText text="nutrition"/>

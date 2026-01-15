@@ -153,84 +153,88 @@ const DishInfo = ({ value, onPassToHead }) => {
                     </div>
 
                     {/* Page 2: Dish Name */}
-                    <div className={`w-full h-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
-                        <div className="w-full h-full flex flex-col overflow-hidden p-5 gap-5">
+                    <div className={`w-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
+                        <div className="flex flex-col overflow-hidden p-5 gap-10">
                             <h1 className="text-center tracking-widest font-bold text-[50px]">
                                 <WobblyText text="name"/>
                             </h1>
                             <motion.div 
-                                className="h-full bg-yellow-300 shadow-xl rounded-[30px] p-5"
+                                className="bg-yellow-300 rounded-[40px] p-5"
                                 whileHover={{ scale: 1.05 }} 
                                 transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                             >
                                 <input 
                                     value={dish_name}
                                     onChange={(e) => {setDish_name(e.target.value)}}
-                                    className="w-full h-[40px] bg-gray-200 rounded-[25px] 
-                                            px-3 cursor-pointer text-center 
+                                    className="w-full h-[40px] bg-yellow-100 rounded-[25px] hover:bg-white
+                                            px-3 cursor-pointer text-center font-light tracking-wide text-[20px]
                                             placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
                                             "
+                                    placeholder="rigatoni"
                                 />
                             </motion.div>
-                            <h1 className="section-info-question">
-                                Your dish has a name ?
-                            </h1>
-                            <div className="h-1/5 flex items-center justify-center">
+                            <div className="w-full h-1/5 flex items-center justify-center">
                                 <motion.button 
+                                    animate={{ x: [-5, 5] }}
+                                    transition={{ duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
                                     whileHover={{ scale: 1.05 }} 
-                                    transition={{ type: "spring", stiffness: 300, damping: 20 }} 
-                                    className={`next-button ${dish_name.trim() ? "bg-black text-white cursor-pointer" : "text-black cursor-not-allowed"}`}
+                                    className={`flex items-center justify-center cursor-pointer ${dish_name.trim() ? "" : "opacity-30 pointer-events-none"}`}
                                     onClick={() => nextPage()}
                                     disabled={!dish_name.trim()}
-                                >next
+                                >
+                                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="#000000" stroke-width="2" d="m7 2l10 10L7 22"/>
+                                    </svg>
                                 </motion.button>
                             </div>
                         </div>
                     </div>
 
                     {/* Page 3: Dish Description */}
-                    <div className={`w-full h-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
-                        <div className="w-full h-full flex flex-col overflow-hidden p-5 gap-5">
+                    <div className={`w-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
+                        <div className="flex flex-col overflow-hidden p-5 gap-10">
                             <h1 className="text-center tracking-widest font-bold text-[45px]">
                                 <WobblyText text="description" />
                             </h1>
                             <motion.div 
-                                className="h-full bg-blue-300 rounded-[30px] p-5"
+                                className="bg-blue-300 rounded-[40px] p-5"
                                 whileHover={{ scale: 1.05 }} 
                                 transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                             >
-                                <textarea 
+                                <input 
                                     value={dish_description}
                                     onChange={(e) => {setDish_description(e.target.value);}}
-                                    className="w-full h-[40px] bg-gray-200 rounded-[25px] 
-                                            px-3 cursor-pointer text-center 
+                                    className="w-full h-[40px] bg-blue-200 rounded-[25px] hover:bg-white
+                                            px-3 cursor-pointer text-center font-light tracking-wide text-[20px]
                                             placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
                                             "
+                                    placeholder="italian pasta"
                                 />
                             </motion.div>
-                            <h1 className="section-info-question">
-                                what is your dish ?
-                            </h1>
-                            <div className="h-1/5 flex items-center justify-center">
+                            <div className="w-full h-1/5 flex items-center justify-center">
                                 <motion.button 
+                                    animate={{ x: [-5, 5] }}
+                                    transition={{ duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
                                     whileHover={{ scale: 1.05 }} 
-                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                    className={`next-button ${dish_description.trim() ? "bg-black text-white cursor-pointer" : "text-black cursor-not-allowed"}`}
+                                    className={`flex items-center justify-center cursor-pointer ${dish_description.trim() ? "" : "opacity-30 pointer-events-none"}`}
                                     onClick={() => nextPage()}
                                     disabled={!dish_description.trim()}
-                                >next
+                                >
+                                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="#000000" stroke-width="2" d="m7 2l10 10L7 22"/>
+                                    </svg>
                                 </motion.button>
                             </div>
                         </div>
                     </div>
 
                     {/* Page 4: Dish Difficulty */}
-                    <div className={`w-full h-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
-                        <div className="w-full flex flex-col overflow-hidden p-5 gap-5">
+                    <div className={`w-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
+                        <div className="flex flex-col overflow-hidden p-5 gap-10">
                             <h1 className="text-center tracking-widest font-bold text-[50px]">
                                 <WobblyText text="difficulty" />
                             </h1>
-                            <div className="h-full flex flex-col">
+                            <div className="flex flex-col">
                                 <div className="h-1/2 flex flex-row items-center justify-center space-x-5">
                                     {/* Hard */}
                                     {/* medium */}
@@ -248,11 +252,19 @@ const DishInfo = ({ value, onPassToHead }) => {
                             </div>
                             <div className="h-1/5 flex items-center justify-center">
                                 <motion.button 
+                                    animate={{ y: [-5, 5] }}
+                                    transition={{ duration: 1, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
                                     whileHover={{ scale: 1.05 }} 
-                                    transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                                     className="next-section-button"
                                     onClick={passToHead}
-                                >ingredient
+                                >
+                                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                        <g id="evaArrowIosDownwardFill0">
+                                            <g id="evaArrowIosDownwardFill1">
+                                                <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                                            </g>
+                                        </g>
+                                    </svg>
                                 </motion.button>
                             </div>
                         </div>

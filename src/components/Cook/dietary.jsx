@@ -5,7 +5,7 @@ import WobblyText from "../../hooks/wobbly_text";
 
 const colors = [
     "bg-green-600", "bg-teal-600", "bg-cyan-600", "bg-blue-600",
-    "bg-indigo-600", "bg-purple-600", "bg-pink-600", "bg-rose-600",
+    "bg-orange-600", "bg-purple-600", "bg-pink-600", "bg-rose-600",
     "bg-lime-600", "bg-emerald-600"
 ];
 
@@ -112,82 +112,94 @@ const Dietary = ({ value, onPassToHead }) => {
     const rows = getRows();
 
     return (
-        <div className="flex flex-col gap-5 p-5 items-center justify-start  text-white">
+        <div className="flex flex-col p-5 gap-2 items-center justify-start text-white">
 
             <h1 className="text-center tracking-widest font-bold text-[50px] text-black">
                 <WobblyText text="dietary"/>
             </h1>
 
-            <div className="flex flex-col gap-2 p-2 w-full max-w-[1200px]">
-                {rows.map((rowKeys, rowIdx) => (
-                    <div key={rowIdx} className="flex justify-center gap-4 p-3 flex-wrap ">
-                        {rowKeys.map((key, idx) => (
-                            <div 
-                                key={key} 
-                                className={`relative flex bg-red-300 shadow-xl
-                                            overflow-hidden flex flex-col rounded-[25px]
-                                                
-                                            ${invalidCombination6.includes(key) ? "opacity-50 pointer-events-none" : ""}`}
-                            >      
+            <div className="flex flex-col pb-5 max-h-[500px] overflow-y-auto scrollbar-hide">
 
-                                <div className={`absolute w-full h-full z-0 ${colors[idx]} blur`}></div>
+                <div className="flex flex-col gap-2 p-2 w-full max-w-[1200px]">
+                    {rows.map((rowKeys, rowIdx) => (
+                        <div key={rowIdx} className="flex justify-center gap-4 p-3 flex-wrap ">
+                            {rowKeys.map((key, idx) => (
+                                <div 
+                                    key={key} 
+                                    className={`relative flex bg-red-300 shadow-xl
+                                                overflow-hidden flex flex-col rounded-[25px]
+                                                    
+                                                ${invalidCombination6.includes(key) ? "opacity-50 pointer-events-none" : ""}`}
+                                >      
 
-                                <div className={`m-4 z-10`}>
+                                    <div className={`absolute w-full h-full z-0 ${colors[idx]} blur`}></div>
 
-                                    {/* input checked box toggle */}
-                                    <div className="w-full h-1/2 flex justify-between space-x-15">
-                                        
-                                        <div className="flex space-x-3">
-                                            {key != "other" && (
-                                                <img src={dietaryIcons[key]} alt={key} className="w-7 h-7"/>
-                                            )}
-                                            <span className="font-thin tracking-widest text-md capitalize">{key.replace("_", " ")}</span>
+                                    <div className={`m-4 z-10`}>
+
+                                        {/* input checked box toggle */}
+                                        <div className="w-full h-1/2 flex justify-between space-x-15">
+                                            
+                                            <div className="flex space-x-3">
+                                                {key != "other" && (
+                                                    <img src={dietaryIcons[key]} alt={key} className="w-7 h-7"/>
+                                                )}
+                                                <span className="font-thin tracking-widest text-md capitalize">{key.replace("_", " ")}</span>
+                                            </div>
+
+                                            <label className="relative inline-flex items-center cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    className="sr-only"
+                                                    checked={dish_dietary[key]}
+                                                    onChange={() => toggleDiet(key)}
+                                                    disabled={invalidCombination6.includes(key)}
+                                                />
+                                                {/* Track */}
+                                                <motion.div
+                                                    className="w-12 h-6 rounded-full bg-gray-300"
+                                                    animate={{ backgroundColor: dish_dietary[key] ? "#2563EB" : "#D1D5DB" }} 
+                                                    transition={{ duration: 0.2 }}
+                                                />
+                                                {/* Knob */}
+                                                <motion.div
+                                                    className="absolute top-.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md"
+                                                    animate={{ x: dish_dietary[key] ? 24 : 0 }} 
+                                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                />
+                                            </label>
                                         </div>
 
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only"
-                                                checked={dish_dietary[key]}
-                                                onChange={() => toggleDiet(key)}
-                                                disabled={invalidCombination6.includes(key)}
-                                            />
-                                            {/* Track */}
-                                            <motion.div
-                                                className="w-12 h-6 rounded-full bg-gray-300"
-                                                animate={{ backgroundColor: dish_dietary[key] ? "#2563EB" : "#D1D5DB" }} 
-                                                transition={{ duration: 0.2 }}
-                                            />
-                                            {/* Knob */}
-                                            <motion.div
-                                                className="absolute top-.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md"
-                                                animate={{ x: dish_dietary[key] ? 24 : 0 }} 
-                                                transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                            />
-                                        </label>
+                                        <div className="w-full border-t border-gray-300"></div>
+
+                                        {/* input box information */}
+                                        <div className={`mt-1 font-light text-[10px] tracking-widest text-start max-w-60`}>  
+                                            {dietaryDescriptions[key]}
+                                        </div>
                                     </div>
 
-                                    <div className="w-full border-t border-gray-300"></div>
-
-                                    {/* input box information */}
-                                    <div className={`mt-1 font-light text-[10px] tracking-widest text-start max-w-60`}>  
-                                        {dietaryDescriptions[key]}
-                                    </div>
                                 </div>
+                            ))}
+                        </div>
+                    ))}
+                </div>
 
-                            </div>
-                        ))}
-                    </div>
-                ))}
             </div>
 
             <div className="w-full h-1/5 flex items-center justify-center">
                 <motion.button 
+                    animate={{ y: [-5, 5] }}
+                    transition={{ duration: 1, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
                     whileHover={{ scale: 1.05 }} 
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }} 
                     className="next-section-button"
                     onClick={passToHead}
-                >Nutrition
+                >
+                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                        <g id="evaArrowIosDownwardFill0">
+                            <g id="evaArrowIosDownwardFill1">
+                                <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                            </g>
+                        </g>
+                    </svg>
                 </motion.button>
             </div>
 
