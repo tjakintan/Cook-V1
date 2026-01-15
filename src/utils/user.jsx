@@ -9,9 +9,11 @@ export function UserProvider({ children }) {
 
   const refreshUser = async () => {
     if (!hasAttemptedAuth) setLoading(true);
+    console.log("[UserProvider] refreshUser called");
 
     try {
-      // First, try to fetch current user
+      // 1️⃣ Try to fetch current user
+      console.log("[UserProvider] Fetching /user...");
       const res = await fetch(
         "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/user",
         {
@@ -22,14 +24,18 @@ export function UserProvider({ children }) {
       );
 
       const data = await res.json();
+      console.log("[UserProvider] /user response:", res.status, data);
 
+      // 2️⃣ If user is authenticated
       if (res.ok && data.authenticated) {
+        console.log("[UserProvider] User authenticated, setting state:", data.user);
         setUser(data.user);
         return data.user;
       }
 
-      // If token expired, attempt refresh
+      // 3️⃣ If token expired, call refresh endpoint
       if (res.status === 401 && data.reason === "expired" && data.shouldRefresh) {
+        console.log("[UserProvider] Token expired, calling /refresh...");
         const refreshRes = await fetch(
           "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/refresh",
           {
@@ -38,31 +44,32 @@ export function UserProvider({ children }) {
           }
         );
 
-        if (refreshRes.ok) {
-          const refreshData = await refreshRes.json();
+        const refreshData = await refreshRes.json();
+        console.log("[UserProvider] /refresh response:", refreshRes.status, refreshData);
 
-          // Set user directly from refresh response
-          if (refreshData.user) {
-            setUser(refreshData.user);
-            return refreshData.user;
-          }
+        if (refreshData.user) {
+          console.log("[UserProvider] Setting user from refresh:", refreshData.user);
+          setUser(refreshData.user);
+          return refreshData.user;
         }
 
-        // Refresh failed
+        console.log("[UserProvider] Refresh failed, setting user to null");
         setUser(null);
         return null;
       }
 
-      // Any other unauthorized case
+      // 4️⃣ Any other unauthorized case
+      console.log("[UserProvider] Unauthorized or other error, setting user to null");
       setUser(null);
       return null;
     } catch (err) {
-      console.error("Error fetching user:", err);
+      console.error("[UserProvider] Error fetching user:", err);
       setUser(null);
       return null;
     } finally {
       setLoading(false);
       setHasAttemptedAuth(true);
+      console.log("[UserProvider] refreshUser finished, loading=false, hasAttemptedAuth=true");
     }
   };
 
