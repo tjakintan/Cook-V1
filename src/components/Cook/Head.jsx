@@ -55,7 +55,7 @@ export default function Head() {
                     ingredients: dishIngredientsData || []
                 };
                 console.log("Sending ingredients:", payload);
-                const response = await fetch(" https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/upload", {
+                const response = await fetch("https://api.gomeal.org/upload", {
                     method: "POST",
                     headers: {
                         "content-type": "application/json",

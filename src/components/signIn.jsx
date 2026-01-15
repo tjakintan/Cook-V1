@@ -69,7 +69,7 @@ export const SignIn = ({ email }) => {
 
         try {
             const response = await fetch(
-                "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/signin",
+                "https://api.gomeal.org/auth/signin",
                 {
                     method: "POST",
                     credentials: "include", 

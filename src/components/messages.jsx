@@ -17,7 +17,7 @@ export default function Messages() {
 
     const callAction = async (actionName, payload = {}) => {
         try {
-            const res = await fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions", {
+            const res = await fetch("https://api.gomeal.org/actions", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({ action: actionName, user_sub: sub, ...payload }),
@@ -61,7 +61,7 @@ export default function Messages() {
     // Load all messages for a user pair
     const openOrLoadConversation = async (otherUserSub) => {
         try {
-            const res = await fetch("https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions", {
+            const res = await fetch("https://api.gomeal.org/actions", {
                 method: "POST",
                 headers: { "content-type": "application/json" },
                 body: JSON.stringify({
@@ -94,7 +94,7 @@ export default function Messages() {
 
         try {
             const res = await fetch(
-                "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
+                "https://api.gomeal.org/actions",
                 {
                     method: "POST",
                     headers: { "content-type": "application/json" },

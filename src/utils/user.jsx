@@ -15,7 +15,7 @@ export function UserProvider({ children }) {
       // 1️⃣ Try to fetch current user
       console.log("[UserProvider] Fetching /user...");
       const res = await fetch(
-        "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/user",
+        "https://api.gomeal.org/auth/user",
         {
           method: "GET",
           credentials: "include",
@@ -37,7 +37,7 @@ export function UserProvider({ children }) {
       if (res.status === 401 && data.reason === "expired" && data.shouldRefresh) {
         console.log("[UserProvider] Token expired, calling /refresh...");
         const refreshRes = await fetch(
-          "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/refresh",
+          "https://api.gomeal.org/auth/refresh",
           {
             method: "POST",
             credentials: "include",

@@ -10,7 +10,7 @@ export function useSignOut() {
   const signout = async () => {
     try {
       await fetch(
-        "https://tp3dtgesne.execute-api.us-east-2.amazonaws.com/prod/signout",
+        "https://api.gomeal.org/auth/signout",
         {
           method: "POST",
           credentials: "include",

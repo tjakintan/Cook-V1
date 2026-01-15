@@ -103,7 +103,7 @@ export default function Profile() {
 
         try {
             const res = await fetch(
-                "https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/actions",
+                "https://api.gomeal.org/actions",
                 {
                     method: "POST",
                     headers: { "content-type": "application/json" },

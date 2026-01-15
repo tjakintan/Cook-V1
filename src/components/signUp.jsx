@@ -458,7 +458,7 @@ export const ConfirmSignUp = ({ payload }) => {
 
             if (res.success) {
                 
-                const response = await fetch('https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/signup', {
+                const response = await fetch('https://api.gomeal.org/auth/signup', {
                     method: 'POST',
                     headers: { 'content-type': 'application/json' },
                     body: JSON.stringify(payload)
