@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { DishInfo, Ingredients, Steps, Nutrition, Dietary } from "./index.js";
 import { motion, AnimatePresence } from "framer-motion";
 import "./cook_style.css";
-import { useUser } from "../utils/user.jsx";
-import { getUserSub } from "../utils/auth.js";
+import { useUser } from "../../utils/user.jsx";
+import { getUserSub } from "../../utils/auth.js";
 
 export default function Head() {
 
