@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { DishInfo, Ingredients, Steps, Nutrition, Dietary } from "./index.js";
 import { motion, AnimatePresence } from "framer-motion";
 import "./cook_style.css";
+import { useUser } from "../utils/user.jsx";
+import { getUserSub } from "../utils/auth.js";
 
 export default function Head() {
 
+    const { user } = useUser();
+    const sub = getUserSub(user);
     const [step, setStep] = useState(0);
     const isActive = (index) => step === index;
     const [dishInfoData, setDishInfoData] = useState({
@@ -78,6 +82,21 @@ export default function Head() {
     const handleDishNutritionChange = (data) => {
         setStep(5);
         setDishNutritionData(data)
+    };
+
+    const payload = {
+        dish_name: dishInfoData.dish_name || "",
+        description: dishInfoData.dish_description || "",
+        difficulty: dishInfoData.dish_difficulty || "",
+        image_url: dishInfoData.dish_image_url || "",
+        created_at: new Date().toISOString(), 
+        user_sub: sub,
+        status: "active",
+        status_created_on: new Date().toISOString(),
+        ingredients: dishIngredientsData || [],  
+        steps: dishStepsData || [],              
+        nutrition: dishNutritionData || {},      
+        dietary: dishDietaryData || {}           
     };
 
     return (

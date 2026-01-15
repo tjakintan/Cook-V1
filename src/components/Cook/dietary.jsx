@@ -118,7 +118,7 @@ const Dietary = ({ value, onPassToHead }) => {
                 <WobblyText text="dietary"/>
             </h1>
 
-            <div className="flex flex-col pb-5 max-h-[500px] overflow-y-auto scrollbar-hide">
+            <div className="flex flex-col py-5 max-h-[500px] overflow-y-auto scrollbar-hide">
 
                 <div className="flex flex-col gap-2 p-2 w-full max-w-[1200px]">
                     {rows.map((rowKeys, rowIdx) => (

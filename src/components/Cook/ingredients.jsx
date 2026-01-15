@@ -146,146 +146,147 @@ const Ingredients = ({ value, onPassToHead }) => {
                 <WobblyText text="ingredients"/>
             </h1>
 
-            {dish_ingredients.map((ing, idx) => (
+            <div className="flex flex-col max-h-[500px] overflow-y-auto justify-end scrollbar-hide">
+                {dish_ingredients.map((ing, idx) => (
 
-                <motion.div 
-                    key={idx} 
-                    className={`rounded-[40px]  flex overflow-hidden flex-col items-center justify-center py-1 px-3`}
-                    animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
-                >
-                    {showUnitDropdown[idx] && (
-                        <div  
-                            ref={el => {dropdownRef.current[idx] = el || undefined;}}
-                            className={`flex p-1 overflow-x-auto max-w-70 md:max-w-150`}
-                        >
-                            <UnitDropDownMenu
-                                onSelectUnit={(unit) => {
-                                    updateIngredient(idx, "unit", unit);
-                                    setShowUnitDropdown(prev => {
-                                        const copy = [...prev]; 
-                                        copy[idx] = false; 
-                                        return copy;
-                                    });
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    <div className={`flex`}>
-
-                        <div className="flex items-center justify-center gap-5">
-
-                            {/* Ingredient quantity & unit input */}
-                            <div className="flex items-center justify-center space-x-2">
-                                <input 
-                                    className="w-[60px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
-                                                px-3 cursor-pointer text-center text-sm font-thin tracking-wide
-                                                placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
-                                                "
-                                    type="text"
-                                    min="0"
-                                    value={ing.quantity}
-                                    placeholder="3.5g"
-                                    onChange={(e) => {
-                                        const val = e.target.value;
-                                        if (/^\d*\.?\d*$/.test(val)) {
-                                            updateIngredient(idx, "quantity", val);
-                                        }
-                                    }}
-                                />
-
-                                <motion.div 
-                                    ref={el => {
-                                        dropdownRef.current[idx] = el || undefined;  
-                                    }}
-                                    className={`relative h-[40px] rounded-md 
-                                                flex flex-col items-center justify-center cursor-pointer 
-                                                ${ing.unit ? "" : ""}`}
-                                    onClick={() => {
+                    <motion.div 
+                        key={idx} 
+                        className={`rounded-[40px] flex flex-col items-center justify-center py-1 px-3`}
+                        animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
+                    >
+                        {showUnitDropdown[idx] && (
+                            <div  
+                                ref={el => {dropdownRef.current[idx] = el || undefined;}}
+                                className={`flex p-1 overflow-x-auto max-w-70 md:max-w-150`}
+                            >
+                                <UnitDropDownMenu
+                                    onSelectUnit={(unit) => {
+                                        updateIngredient(idx, "unit", unit);
                                         setShowUnitDropdown(prev => {
-                                            const copy = [...prev];
-                                            copy[idx] = !copy[idx];
+                                            const copy = [...prev]; 
+                                            copy[idx] = false; 
                                             return copy;
                                         });
                                     }}
-                                >
-
-                                    <svg 
-                                        className={`w-3 h-3 ${ing.unit ? "hidden" : ""}`} 
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <g
-                                            fill="none"
-                                            stroke="red"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                        >
-                                            <path d="M9 17.25a3 3 0 1 0 6 0a3 3 0 0 0-6 0m3-3v2.25" />
-                                            <path d="M22.432 21.3A1.5 1.5 0 0 1 21 23.25H3a1.5 1.5 0 0 1-1.432-1.95l2.813-9a1.5 1.5 0 0 1 1.431-1.05h12.375a1.5 1.5 0 0 1 1.432 1.05zM3 .75a.75.75 0 0 0-.692 1.039a10.5 10.5 0 0 0 15.515 4.696a10.5 10.5 0 0 0 3.866-4.697A.75.75 0 0 0 21 .75zm6 7.065v3.435m6-3.435v3.435" />
-                                        </g>
-                                    </svg>
-
-                                    <h1 className={`text-black text-sm font-thin tracking-widest ${ing.unit ? "" : "hidden"}`}>
-                                        {ing.unit}
-                                    </h1>
-
-                                </motion.div>
-
-                            </div>
-                            
-                            {/* Ingredient name input */}
-                            <div className="flex items-center justify-center">
-                                <input 
-                                    className="w-[100px] md:w-[150px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
-                                                px-3 cursor-pointer text-sm font-thin tracking-wide
-                                                placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
-                                                "
-                                    type="text"
-                                    value={ing.name}
-                                    placeholder="rice"
-                                    onChange={(e) => updateIngredient(idx, "name", e.target.value)}
                                 />
                             </div>
+                        )}
+
+                        <div className={`flex`}>
+
+                            <div className="flex items-center justify-center gap-5">
+
+                                {/* Ingredient quantity & unit input */}
+                                <div className="flex items-center justify-center space-x-2">
+                                    <input 
+                                        className="w-[60px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
+                                                    px-3 cursor-pointer text-center text-sm font-thin tracking-wide
+                                                    placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
+                                                    "
+                                        type="text"
+                                        min="0"
+                                        value={ing.quantity}
+                                        placeholder="3.5g"
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (/^\d*\.?\d*$/.test(val)) {
+                                                updateIngredient(idx, "quantity", val);
+                                            }
+                                        }}
+                                    />
+
+                                    <motion.div 
+                                        ref={el => {
+                                            dropdownRef.current[idx] = el || undefined;  
+                                        }}
+                                        className={`relative h-[40px] rounded-md 
+                                                    flex flex-col items-center justify-center cursor-pointer 
+                                                    ${ing.unit ? "" : ""}`}
+                                        onClick={() => {
+                                            setShowUnitDropdown(prev => {
+                                                const copy = [...prev];
+                                                copy[idx] = !copy[idx];
+                                                return copy;
+                                            });
+                                        }}
+                                    >
+
+                                        <svg 
+                                            className={`w-3 h-3 ${ing.unit ? "hidden" : ""}`} 
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <g
+                                                fill="none"
+                                                stroke="red"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                            >
+                                                <path d="M9 17.25a3 3 0 1 0 6 0a3 3 0 0 0-6 0m3-3v2.25" />
+                                                <path d="M22.432 21.3A1.5 1.5 0 0 1 21 23.25H3a1.5 1.5 0 0 1-1.432-1.95l2.813-9a1.5 1.5 0 0 1 1.431-1.05h12.375a1.5 1.5 0 0 1 1.432 1.05zM3 .75a.75.75 0 0 0-.692 1.039a10.5 10.5 0 0 0 15.515 4.696a10.5 10.5 0 0 0 3.866-4.697A.75.75 0 0 0 21 .75zm6 7.065v3.435m6-3.435v3.435" />
+                                            </g>
+                                        </svg>
+
+                                        <h1 className={`text-black text-sm font-thin tracking-widest ${ing.unit ? "" : "hidden"}`}>
+                                            {ing.unit}
+                                        </h1>
+
+                                    </motion.div>
+
+                                </div>
+                                
+                                {/* Ingredient name input */}
+                                <div className="flex items-center justify-center">
+                                    <input 
+                                        className="w-[100px] md:w-[150px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
+                                                    px-3 cursor-pointer text-sm font-thin tracking-wide
+                                                    placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
+                                                    "
+                                        type="text"
+                                        value={ing.name}
+                                        placeholder="rice"
+                                        onChange={(e) => updateIngredient(idx, "name", e.target.value)}
+                                    />
+                                </div>
+
+                            </div>
+
+                            {/* Add ingredient button */}
+                            {idx === dish_ingredients.length - 1  && (
+                                <motion.div
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="ingredient-button"
+                                    onClick={() => addIngredient(idx)}
+                                >
+                                    <img
+                                        src="/add_ingredient.svg"
+                                        className="w-12 h-12"
+                                        alt="Add ingredient"
+                                    />
+                                </motion.div>
+                            )}
+
+                            {/* remove ingredient button */}
+                            { showNextBox[idx] && ( 
+                                <motion.div 
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.90 }} 
+                                    className="ingredient-button"
+                                    onClick={() => removeIngredient(idx)}  
+                                >
+                                    <img 
+                                        src="/remove_ingredient.svg" 
+                                        className="w-12 h-12"
+                                    />
+                                </motion.div>
+                            )}
 
                         </div>
 
-                        {/* Add ingredient button */}
-                        {idx === dish_ingredients.length - 1  && (
-                            <motion.div
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="ingredient-button"
-                                onClick={() => addIngredient(idx)}
-                            >
-                                <img
-                                    src="/add_ingredient.svg"
-                                    className="w-12 h-12"
-                                    alt="Add ingredient"
-                                />
-                            </motion.div>
-                        )}
-
-                        {/* remove ingredient button */}
-                        { showNextBox[idx] && ( 
-                            <motion.div 
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.90 }} 
-                                className="ingredient-button"
-                                onClick={() => removeIngredient(idx)}  
-                            >
-                                <img 
-                                    src="/remove_ingredient.svg" 
-                                    className="w-12 h-12"
-                                />
-                            </motion.div>
-                        )}
-
-                    </div>
-
-                </motion.div>
-            
-            ))}
+                    </motion.div>
+                ))}
+            </div>
 
             <div className="w-full h-1/5 flex items-center justify-center">
                 <motion.button 
