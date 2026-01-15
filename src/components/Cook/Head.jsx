@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DishInfo, Ingredients, Steps, Nutrition, Dietary } from "./index.js";
 import { motion, AnimatePresence } from "framer-motion";
 import "./cook_style.css";
@@ -16,6 +16,8 @@ export default function Head() {
     const [dishIngredientsData, setDishIngredientsData] = useState([]);
     const [dishStepsData, setDishStepsData] = useState([]);
     const [dishDietaryData, setDishDietaryData] = useState([]);
+    const [nutritionResults, setNutritionResults] = useState([]);
+    const [dishNutritionData, setDishNutritionData] = useState([]);
 
     const handleDishInfoChange = (data) => {
         setDishInfoData(data);
@@ -23,24 +25,65 @@ export default function Head() {
     };
 
     const handleDishIngredientsChange = (data) => {
-        setDishIngredientsData(data);
+        setDishIngredientsData(data.dish_ingredients);
         setStep(2);
     };
 
     const handleDishStepsChange = (data) => {
-        setDishStepsData(data);
+        setDishStepsData(data.dish_steps);
         setStep(3);
     }
 
-    const handleDishDietaryChange = (selectedOptions) => {
-        setDishDietaryData(selectedOptions); // this will be an array of strings e.g., ["vegetarian", "gluten_free"]
+    const handleDishDietaryChange = (data) => {
+        setDishDietaryData(data.dish_dietary); 
         setStep(4);
+    };
+
+    useEffect(() => {
+
+        const handleAutoCalculateNutrition = async () => {
+
+            if (!dishIngredientsData || dishIngredientsData.length === 0) return;
+
+            try {
+                const payload = {
+                    autoCalculateNutrition: true,
+                    ingredients: dishIngredientsData || []
+                };
+                console.log("Sending ingredients:", payload);
+                const response = await fetch(" https://ihme27ex7d.execute-api.us-east-2.amazonaws.com/upload", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    console.log("Nutrition results:", data.autoCalculatedNutrition);
+                    setNutritionResults(data.autoCalculatedNutrition);
+                } else {
+                    console.log("Error calculating")
+                }
+            }   catch (err){
+                console.error("network");
+            }
+
+        };
+
+        handleAutoCalculateNutrition();
+  
+    }, [dishIngredientsData]);
+
+    const handleDishNutritionChange = (data) => {
+        setStep(5);
+        setDishNutritionData(data)
     };
 
     return (
         <div className="w-screen h-screen flex items-center justify-center">
 
-            <div className="w-full h-screen overflow-auto flex flex-col gap-5 scrollbar-hide pb-20 pt-20">
+            <div className={`w-full h-screen overflow-auto flex flex-col  scrollbar-hide ${step === 5 ? "" : "pb-20"} pt-20`}>
 
                 <AnimatePresence mode="wait">
 
@@ -107,7 +150,8 @@ export default function Head() {
                         >
                             <Dietary 
                                 value={dishDietaryData}
-                                onPassToHead={handleDishDietaryChange}/>
+                                onPassToHead={handleDishDietaryChange}
+                            />
                         </motion.div>
                     )}
 
@@ -122,7 +166,15 @@ export default function Head() {
                             animate="animate"
                             exit="exit"
                         >
-                            <Nutrition />
+                            <Nutrition 
+                                nutritionResults={nutritionResults} 
+                                onPassToHead={handleDishNutritionChange}
+                            />
+                        </motion.div>
+                    )}
+                    {step >= 5 && (
+                        <motion.div className="bg-black w-screen h-screen">
+                                jdj
                         </motion.div>
                     )}
                 </AnimatePresence>

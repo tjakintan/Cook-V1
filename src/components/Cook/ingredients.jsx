@@ -18,8 +18,7 @@ const UnitDropDownMenu = ({ onSelectUnit }) => {
 
     const UNITS = [
         "empty","gram", "kg", "oz", "lb",
-        "ml", "l", "tsp", "tbsp", "cup",
-        "whole", "clove", "slice", "pinch", "taste"
+        "ml", "l", "tsp", "tbsp", "cup"
     ];
 
     return (
@@ -137,7 +136,7 @@ const Ingredients = ({ value, onPassToHead }) => {
             return;
         }
 
-        onPassToHead({ dish_ingredients });
+        onPassToHead({ dish_ingredients, autoCalculateNutrition: true });
     };
 
     return (
@@ -155,7 +154,10 @@ const Ingredients = ({ value, onPassToHead }) => {
                     animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
                 >
                     {showUnitDropdown[idx] && (
-                        <div className={`flex p-1 overflow-x-auto max-w-70 md:max-w-150`}>
+                        <div  
+                            ref={el => {dropdownRef.current[idx] = el || undefined;}}
+                            className={`flex p-1 overflow-x-auto max-w-70 md:max-w-150`}
+                        >
                             <UnitDropDownMenu
                                 onSelectUnit={(unit) => {
                                     updateIngredient(idx, "unit", unit);
@@ -235,10 +237,10 @@ const Ingredients = ({ value, onPassToHead }) => {
                             {/* Ingredient name input */}
                             <div className="flex items-center justify-center">
                                 <input 
-                                    className="w-[70px] md:w-[100px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
-                                                    px-3 cursor-pointer text-sm font-thin tracking-wide
-                                                    placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
-                                                    "
+                                    className="w-[100px] md:w-[150px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
+                                                px-3 cursor-pointer text-sm font-thin tracking-wide
+                                                placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
+                                                "
                                     type="text"
                                     value={ing.name}
                                     placeholder="rice"
