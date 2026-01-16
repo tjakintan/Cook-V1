@@ -84,25 +84,32 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
     }, [servings, baseNutrition]);
 
     const displayRow = (label, value, unit = "g", index = 0) => (
-        <div className="flex justify-between items-center">
-            <div className={`font-medium py-1 px-2 rounded-lg ${colors[index % colors.length]}`}>{label}</div>
-            <span className="font-bold pr-5 tracking-wider">
-                {Number(value).toFixed(1)}
-                <span className="text-sm font-medium ml-[0.25px]">{unit}</span>
-            </span>
+        <div key={label} className="flex justify-between items-center p-2 space-x-20">
+            <div className={`font-medium py-1 px-2 rounded-lg ${colors[index % colors.length]}`}>
+                {label}
+            </div>
+            <div className="flex ">
+                <span className="font-bold pr-5 tracking-wider">
+                    {Number(value).toFixed(1)}
+                    <span className="text-sm font-medium ml-[0.25px]">{unit}</span>
+                </span>
+                <svg className="w-6 h-6" viewBox="0 0 512 512">
+                    <path fill="#000000" d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1L377.9 88L407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9l46.1 46.1l-134.3 134.2c-2.9 2.9-6.5 5-10.4 6.1L186.9 325l16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25c-28.1-28.1-73.7-28.1-101.8 0M88 64c-48.6 0-88 39.4-88 88v272c0 48.6 39.4 88 88 88h272c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24v112c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40h112c13.3 0 24-10.7 24-24s-10.7-24-24-24z"/>
+                </svg>
+            </div>
         </div>
     );
 
     return (
-        <div className="w-screen h-screen flex flex-col items-center justify-center gap-5">
+        <div className="flex flex-col items-center justify-center px-10 py-5 text-white">
 
-            <div className="md:w-1/3 p-2 flex flex-col gap-1 outline-2 bg-white">
+            <div className="p-2 flex flex-col gap-1 bg-transparent outline-2 outline-white">
 
-                <h1 className="tracking-widest font-bold text-[50px]">
+                <h1 className="tracking-widest font-bold text-[50px] text-center">
                     <WobblyText text="nutrition"/>
                 </h1>
 
-                <div className="h-[1px] bg-black"></div>
+                <div className="h-[1px] bg-white"></div>
 
                 <div className="flex justify-between p-1 items-center">
                     <div className="tracking-wider text-[20px] font-bold">
@@ -110,21 +117,21 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
                     </div>
                     <div className="gap-3 flex items-center">
                         <svg onClick={increaseServings} className="w-6 h-6 cursor-pointer" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1" fill="none"/>
-                            <line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-                            <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                            <circle cx="12" cy="12" r="11" stroke="currentColor" strokewidth="1" fill="none"/>
+                            <line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+                            <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
                         </svg>
                         <h1 className="font-bold text-center text-2xl">
                             {servings}
                         </h1>
                         <svg onClick={decreaseServings} className={`${servings === 1 ? "opacity-20 pointer-events-none" : "" } w-6 h-6 cursor-pointer`} viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1" fill="none"/>
-                            <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+                            <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1" fill="none"/>
+                            <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
                         </svg>
                     </div>
                 </div>
 
-                <div className="h-[10px] bg-black"></div>
+                <div className="h-[10px] bg-white"></div>
 
                 <div className="flex justify-between items-center text-[25px] font-extrabold mb-2">
                     <span>Calories</span>
@@ -134,7 +141,7 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
                     </span>
                 </div>
 
-                <div className="h-[5px] bg-black"></div>
+                <div className="h-[5px] bg-white"></div>
 
                 <div className="flex flex-col gap-3">
                     {[

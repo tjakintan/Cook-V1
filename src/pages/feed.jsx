@@ -248,7 +248,7 @@ export default function Feed() {
                                             height="20"
                                             xmlns="http://www.w3.org/2000/svg" 
                                             viewBox="0 0 24 24 ">
-                                            <path fill="transparent" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.5 6.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m6.5 11a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m-13 0a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" color="currentColor"/>
+                                            <path fill="transparent" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15.5 6.5a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m6.5 11a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0m-13 0a3.5 3.5 0 1 1-7 0a3.5 3.5 0 0 1 7 0" color="currentColor"/>
                                         </svg>
                                     </div>
 

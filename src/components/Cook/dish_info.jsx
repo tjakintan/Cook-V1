@@ -78,13 +78,6 @@ const DishInfo = ({ value, onPassToHead }) => {
 
     const passToHead = () => {
 
-        console.log("Passing Dish Info to Head:", {
-            dish_image_url,
-            dish_name,
-            dish_description,
-            dish_difficulty,
-        });
-
         const check = validateInputs();
         
         if (!check.valid) {
@@ -104,175 +97,173 @@ const DishInfo = ({ value, onPassToHead }) => {
     }
 
     return (
-        <div className="w-full h-full flex items-center justify-center overflow-auto scrollbar-hide">
+        <div className="h-full flex items-center justify-center overflow-auto scrollbar-hide ">
 
-            <div className="w-full h-full">
+            <motion.div 
+                className="h-full flex" 
+                drag="x" 
+                dragConstraints={{ left: -pageWidth * (3 - 1), right: 0 }} 
+                dragElastic={0.2} 
+                onDragEnd={(event, info) => { 
+                    if (info.offset.x < -20) nextPage(); 
+                    if (info.offset.x > 20) prevPage(); 
+                }} 
+                animate={{ x: -pageIndex * pageWidth }} 
+                transition={{ type: "spring", stiffness: 300, damping: 30 }} 
+            >
+                {/* Page 1: Image Upload */}
+                <div className="w-full flex flex-shrink-0 items-center justify-center">
+                    <div 
+                        {...getRootProps()}
+                        className={`p-10 flex flex-col cursor-pointer hover:bg-white
+                                    flex items-center justify-center gap-10 rounded-[30px] hover:border-4 hover:border-dashed hover:border-indigo-500
+                                    ${isDragActive ? "border-4 border-dashed bg-white border-indigo-500" : ""}`}>
 
-                <motion.div 
-                    className="flex w-full h-full" 
-                    drag="x" 
-                    dragConstraints={{ left: -pageWidth * (3 - 1), right: 0 }} 
-                    dragElastic={0.2} 
-                    onDragEnd={(event, info) => { 
-                        if (info.offset.x < -20) nextPage(); 
-                        if (info.offset.x > 20) prevPage(); 
-                    }} 
-                    animate={{ x: -pageIndex * pageWidth }} 
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }} 
-                >
-                    {/* Page 1: Image Upload */}
-                    <div className="w-full min-h-[600px] p-5 flex flex-shrink-0 items-center justify-center">
-                        <div 
-                            {...getRootProps()}
-                            className={`w-full h-full flex flex-col cursor-pointer hover:bg-white
-                                        flex items-center justify-center gap-10 rounded-[30px] hover:border-4 hover:border-dashed hover:border-indigo-500
-                                        ${isDragActive ? "border-4 border-dashed bg-white border-indigo-500" : ""}`}>
+                        <input {...getInputProps()} />
 
-                            <input {...getInputProps()} />
+                        <div className="flex flex-col font-thin items-center justify-center text-center">
+                            <h1 className="text-[27px] tracking-wider">
+                                Ready to post your meal ?
+                            </h1>
+                            <h2 className="tracking-widest text-[12px] text-center italic opacity-50">
+                                Drag your image or click the fry to get started
+                            </h2>
+                            <h3 className="tracking-widest text-[11px] text-center italic opacity-75">
+                                "This section you swipe left or right to navigate"
+                            </h3>
+                        </div>
+                        <div className="flex items-center justify-center">
+                            <svg 
+                                className="w-30 h-30"
+                                viewBox="0 0 24 24"
+                            >
+                                <g fill="none"><path fill="#ffef5e" d="m20.034 4.672l-.696-1.48a.48.48 0 0 0-.433-.275h-.772a.48.48 0 0 0-.459.344l-2.4 8.262h-.118l.787-9.842a.48.48 0 0 0-.436-.515L13.6 1.002a.48.48 0 0 0-.518.438l-.842 10.083h-.487L10.91 1.442a.476.476 0 0 0-.516-.44l-1.907.164a.48.48 0 0 0-.437.515l.793 9.842h-.122L6.317 3.26a.48.48 0 0 0-.459-.344h-.772a.48.48 0 0 0-.433.274l-.695 1.48A.48.48 0 0 0 3.93 5l1.792 6.522l1.735 5.117h9.114l1.7-5.117L20.066 5a.5.5 0 0 0-.031-.328"/><path fill="#fff9bf" d="m19.172 8.24l.89-3.238a.48.48 0 0 0-.027-.33l-.695-1.48a.48.48 0 0 0-.433-.275h-.772a.48.48 0 0 0-.46.344l-.982 3.384c.894.419 1.728.955 2.48 1.595M15.58 6.19l.362-4.51a.48.48 0 0 0-.436-.514L13.6 1.002a.48.48 0 0 0-.518.438l-.349 4.18c.97.063 1.927.255 2.847.57M4.82 8.242A11 11 0 0 1 7.3 6.645L6.317 3.26a.48.48 0 0 0-.459-.344h-.772a.48.48 0 0 0-.433.274l-.695 1.48A.48.48 0 0 0 3.93 5zm6.44-2.62l-.35-4.18a.47.47 0 0 0-.33-.419a.5.5 0 0 0-.187-.021l-1.906.164a.48.48 0 0 0-.437.515l.363 4.51c.92-.315 1.877-.506 2.847-.569"/><path stroke="#191919" strokeLinecap="round" strokeLinejoin="round" d="m20.034 4.672l-.696-1.48a.48.48 0 0 0-.433-.275h-.772a.48.48 0 0 0-.459.344l-2.4 8.262h-.118l.787-9.842a.48.48 0 0 0-.436-.515L13.6 1.002a.48.48 0 0 0-.518.438l-.842 10.083h-.487L10.91 1.442a.476.476 0 0 0-.516-.44l-1.907.164a.48.48 0 0 0-.437.515l.793 9.842h-.122L6.317 3.26a.48.48 0 0 0-.459-.344h-.772a.48.48 0 0 0-.433.274l-.695 1.48A.48.48 0 0 0 3.93 5l1.792 6.522l1.735 5.117h9.114l1.7-5.117L20.066 5a.5.5 0 0 0-.031-.328"/><path stroke="#191919" strokeLinecap="round" strokeLinejoin="round" d="m11.999 14.434l-1.09-12.992a.47.47 0 0 0-.33-.419a.5.5 0 0 0-.186-.021l-1.906.164a.48.48 0 0 0-.437.515l.984 12.186m2.965.567l1.085-12.992a.47.47 0 0 1 .167-.326a.48.48 0 0 1 .35-.114l1.905.162a.48.48 0 0 1 .437.515l-.979 12.188"/><path fill="#ffef5e" stroke="#191919" strokeLinecap="round" strokeLinejoin="round" d="m18.824 17.263l-.718 2.87H5.882l-.717-2.87z"/><path fill="#ff808c" stroke="#191919" strokeLinecap="round" strokeLinejoin="round" d="M5.877 20.13h12.229l-.536 2.143a.956.956 0 0 1-.929.727H7.346a.956.956 0 0 1-.93-.727zm14.238-8.012l-1.291 5.145H5.164l-1.28-5.145a.46.46 0 0 1 .085-.412a.48.48 0 0 1 .379-.183h2.439a.47.47 0 0 1 .467.392c.603 3.357 8.877 3.357 9.48 0a.47.47 0 0 1 .468-.392h2.449a.476.476 0 0 1 .469.593z"/></g>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
 
-                            <div className="flex flex-col font-thin items-center justify-center text-center">
-                                <h1 className="text-[27px] tracking-wider">
-                                    Ready to post your meal ?
-                                </h1>
-                                <h2 className="tracking-widest text-[12px] text-center italic opacity-50">
-                                    Drag your image or click the fry to get started
-                                </h2>
-                                <h3 className="tracking-widest text-[11px] text-center italic opacity-75">
-                                    "This section you swipe left or right to navigate"
-                                </h3>
-                            </div>
-                            <div className="flex items-center justify-center">
-                                <svg 
-                                    className="w-30 h-30"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <g fill="none"><path fill="#ffef5e" d="m20.034 4.672l-.696-1.48a.48.48 0 0 0-.433-.275h-.772a.48.48 0 0 0-.459.344l-2.4 8.262h-.118l.787-9.842a.48.48 0 0 0-.436-.515L13.6 1.002a.48.48 0 0 0-.518.438l-.842 10.083h-.487L10.91 1.442a.476.476 0 0 0-.516-.44l-1.907.164a.48.48 0 0 0-.437.515l.793 9.842h-.122L6.317 3.26a.48.48 0 0 0-.459-.344h-.772a.48.48 0 0 0-.433.274l-.695 1.48A.48.48 0 0 0 3.93 5l1.792 6.522l1.735 5.117h9.114l1.7-5.117L20.066 5a.5.5 0 0 0-.031-.328"/><path fill="#fff9bf" d="m19.172 8.24l.89-3.238a.48.48 0 0 0-.027-.33l-.695-1.48a.48.48 0 0 0-.433-.275h-.772a.48.48 0 0 0-.46.344l-.982 3.384c.894.419 1.728.955 2.48 1.595M15.58 6.19l.362-4.51a.48.48 0 0 0-.436-.514L13.6 1.002a.48.48 0 0 0-.518.438l-.349 4.18c.97.063 1.927.255 2.847.57M4.82 8.242A11 11 0 0 1 7.3 6.645L6.317 3.26a.48.48 0 0 0-.459-.344h-.772a.48.48 0 0 0-.433.274l-.695 1.48A.48.48 0 0 0 3.93 5zm6.44-2.62l-.35-4.18a.47.47 0 0 0-.33-.419a.5.5 0 0 0-.187-.021l-1.906.164a.48.48 0 0 0-.437.515l.363 4.51c.92-.315 1.877-.506 2.847-.569"/><path stroke="#191919" stroke-linecap="round" stroke-linejoin="round" d="m20.034 4.672l-.696-1.48a.48.48 0 0 0-.433-.275h-.772a.48.48 0 0 0-.459.344l-2.4 8.262h-.118l.787-9.842a.48.48 0 0 0-.436-.515L13.6 1.002a.48.48 0 0 0-.518.438l-.842 10.083h-.487L10.91 1.442a.476.476 0 0 0-.516-.44l-1.907.164a.48.48 0 0 0-.437.515l.793 9.842h-.122L6.317 3.26a.48.48 0 0 0-.459-.344h-.772a.48.48 0 0 0-.433.274l-.695 1.48A.48.48 0 0 0 3.93 5l1.792 6.522l1.735 5.117h9.114l1.7-5.117L20.066 5a.5.5 0 0 0-.031-.328"/><path stroke="#191919" stroke-linecap="round" stroke-linejoin="round" d="m11.999 14.434l-1.09-12.992a.47.47 0 0 0-.33-.419a.5.5 0 0 0-.186-.021l-1.906.164a.48.48 0 0 0-.437.515l.984 12.186m2.965.567l1.085-12.992a.47.47 0 0 1 .167-.326a.48.48 0 0 1 .35-.114l1.905.162a.48.48 0 0 1 .437.515l-.979 12.188"/><path fill="#ffef5e" stroke="#191919" stroke-linecap="round" stroke-linejoin="round" d="m18.824 17.263l-.718 2.87H5.882l-.717-2.87z"/><path fill="#ff808c" stroke="#191919" stroke-linecap="round" stroke-linejoin="round" d="M5.877 20.13h12.229l-.536 2.143a.956.956 0 0 1-.929.727H7.346a.956.956 0 0 1-.93-.727zm14.238-8.012l-1.291 5.145H5.164l-1.28-5.145a.46.46 0 0 1 .085-.412a.48.48 0 0 1 .379-.183h2.439a.47.47 0 0 1 .467.392c.603 3.357 8.877 3.357 9.48 0a.47.47 0 0 1 .468-.392h2.449a.476.476 0 0 1 .469.593z"/></g>
+                {/* Page 2: Dish Name */}
+                <div className={`w-full flex-shrink-0 flex items-center justify-center text-2xl`}>
+                    <div className="flex flex-col overflow-hidden p-5 gap-10">
+                        <h1 className="text-center tracking-widest font-bold text-[50px]">
+                            <WobblyText text="name"/>
+                        </h1>
+                        <motion.div 
+                            className="bg-yellow-300 rounded-[40px] p-5"
+                            whileHover={{ scale: 1.05 }} 
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+                        >
+                            <input 
+                                value={dish_name}
+                                onChange={(e) => {setDish_name(e.target.value)}}
+                                className="w-full h-[40px] bg-yellow-100 rounded-[25px] hover:bg-white
+                                        px-3 cursor-pointer text-center font-light tracking-wide text-[15px]
+                                        placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
+                                        "
+                                placeholder="rigatoni"
+                            />
+                        </motion.div>
+                        <div className="w-full h-1/5 flex items-center justify-center">
+                            <motion.button 
+                                animate={dish_name.trim() ? { x: [-5, 5] } : {}}
+                                transition={dish_name.trim() ? { duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" } : {}}
+                                whileHover={dish_name.trim() ? { scale: 1.05 } : {}}
+                                className={`next-button ${dish_name.trim() ? "" : "opacity-30 pointer-events-none"}`}
+                                onClick={() => nextPage()}
+                                disabled={!dish_name.trim()}
+                            >
+                                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="#000000" strokeWidth="2" d="m7 2l10 10L7 22"/>
                                 </svg>
-                            </div>
+                            </motion.button>
                         </div>
                     </div>
+                </div>
 
-                    {/* Page 2: Dish Name */}
-                    <div className={`w-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
-                        <div className="flex flex-col overflow-hidden p-5 gap-10">
-                            <h1 className="text-center tracking-widest font-bold text-[50px]">
-                                <WobblyText text="name"/>
-                            </h1>
-                            <motion.div 
-                                className="bg-yellow-300 rounded-[40px] p-5"
-                                whileHover={{ scale: 1.05 }} 
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+                {/* Page 3: Dish Description */}
+                <div className={`w-full flex-shrink-0 flex items-center justify-center text-2xl`}>
+                    <div className="flex flex-col overflow-hidden p-5 gap-10">
+                        <h1 className="text-center tracking-widest font-bold text-[45px]">
+                            <WobblyText text="description" />
+                        </h1>
+                        <motion.div 
+                            className="bg-blue-300 rounded-[40px] p-5"
+                            whileHover={{ scale: 1.05 }} 
+                            transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+                        >
+                            <input 
+                                value={dish_description}
+                                onChange={(e) => {setDish_description(e.target.value);}}
+                                className="w-full h-[40px] bg-blue-200 rounded-[25px] hover:bg-white
+                                        px-3 cursor-pointer text-center font-light tracking-wide text-[15px]
+                                        placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
+                                        "
+                                placeholder="italian pasta"
+                            />
+                        </motion.div>
+                        <div className="w-full h-1/5 flex items-center justify-center">
+                            <motion.button 
+                                animate={dish_description.trim() ? { x: [-5, 5] } : {}}
+                                transition={dish_description.trim() ? { duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" } : {}}
+                                whileHover={dish_description.trim() ? { scale: 1.05 } : {}}
+                                className={`next-button ${dish_description.trim() ? "" : "opacity-30 pointer-events-none"}`}
+                                onClick={() => nextPage()}
+                                disabled={!dish_description.trim()}
                             >
-                                <input 
-                                    value={dish_name}
-                                    onChange={(e) => {setDish_name(e.target.value)}}
-                                    className="w-full h-[40px] bg-yellow-100 rounded-[25px] hover:bg-white
-                                            px-3 cursor-pointer text-center font-light tracking-wide text-[20px]
-                                            placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
-                                            "
-                                    placeholder="rigatoni"
-                                />
-                            </motion.div>
-                            <div className="w-full h-1/5 flex items-center justify-center">
-                                <motion.button 
-                                    animate={{ x: [-5, 5] }}
-                                    transition={{ duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
-                                    whileHover={{ scale: 1.05 }} 
-                                    className={`flex items-center justify-center cursor-pointer ${dish_name.trim() ? "" : "opacity-30 pointer-events-none"}`}
-                                    onClick={() => nextPage()}
-                                    disabled={!dish_name.trim()}
-                                >
-                                    <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                        <path fill="none" stroke="#000000" stroke-width="2" d="m7 2l10 10L7 22"/>
-                                    </svg>
-                                </motion.button>
-                            </div>
+                                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                    <path fill="none" stroke="#000000" strokeWidth="2" d="m7 2l10 10L7 22"/>
+                                </svg>
+                            </motion.button>
                         </div>
                     </div>
+                </div>
 
-                    {/* Page 3: Dish Description */}
-                    <div className={`w-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
-                        <div className="flex flex-col overflow-hidden p-5 gap-10">
-                            <h1 className="text-center tracking-widest font-bold text-[45px]">
-                                <WobblyText text="description" />
-                            </h1>
-                            <motion.div 
-                                className="bg-blue-300 rounded-[40px] p-5"
-                                whileHover={{ scale: 1.05 }} 
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }} 
+                {/* Page 4: Dish Difficulty */}
+                <div className={`w-full flex-shrink-0 flex items-center justify-center text-2xl`}>
+                    <div className="flex flex-col overflow-hidden p-5 gap-10">
+                        <h1 className="text-center tracking-widest font-bold text-[50px]">
+                            <WobblyText text="difficulty" />
+                        </h1>
+                        <div className="flex flex-col">
+                            <div className="h-1/2 flex flex-row items-center justify-center space-x-5">
+                                {/* Hard */}
+                                {/* medium */}
+                                {/* easy */}
+                                {options.map((level) => (
+                                    <DifficultyButton
+                                        key={level}
+                                        label={level}
+                                        active={dish_difficulty === level}
+                                        onClick={() => setDish_difficulty(level)}
+                                        color={difficultyColors[level]}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="h-1/5 flex items-center justify-center">
+                            <motion.button
+                                animate={dish_image_url && dish_description.trim() && dish_name.trim() && dish_difficulty ? { y: [-5, 5] } : {}}
+                                transition={dish_image_url && dish_description.trim() && dish_name.trim() && dish_difficulty ? { duration: 1, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" } : {}}
+                                whileHover={dish_image_url && dish_description.trim() && dish_name.trim() && dish_difficulty ? { scale: 1.05 } : {}}
+                                className={`next-section-button ${dish_image_url && dish_description.trim() && dish_name.trim() && dish_difficulty ? "" : "opacity-30"}`}
+                                onClick={passToHead}
+                                disabled={!(dish_image_url && dish_description.trim() && dish_name.trim() && dish_difficulty)}
                             >
-                                <input 
-                                    value={dish_description}
-                                    onChange={(e) => {setDish_description(e.target.value);}}
-                                    className="w-full h-[40px] bg-blue-200 rounded-[25px] hover:bg-white
-                                            px-3 cursor-pointer text-center font-light tracking-wide text-[20px]
-                                            placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
-                                            "
-                                    placeholder="italian pasta"
-                                />
-                            </motion.div>
-                            <div className="w-full h-1/5 flex items-center justify-center">
-                                <motion.button 
-                                    animate={{ x: [-5, 5] }}
-                                    transition={{ duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
-                                    whileHover={{ scale: 1.05 }} 
-                                    className={`flex items-center justify-center cursor-pointer ${dish_description.trim() ? "" : "opacity-30 pointer-events-none"}`}
-                                    onClick={() => nextPage()}
-                                    disabled={!dish_description.trim()}
-                                >
-                                    <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                        <path fill="none" stroke="#000000" stroke-width="2" d="m7 2l10 10L7 22"/>
-                                    </svg>
-                                </motion.button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Page 4: Dish Difficulty */}
-                    <div className={`w-full flex-shrink-0 p-5 flex items-center justify-center text-2xl`}>
-                        <div className="flex flex-col overflow-hidden p-5 gap-10">
-                            <h1 className="text-center tracking-widest font-bold text-[50px]">
-                                <WobblyText text="difficulty" />
-                            </h1>
-                            <div className="flex flex-col">
-                                <div className="h-1/2 flex flex-row items-center justify-center space-x-5">
-                                    {/* Hard */}
-                                    {/* medium */}
-                                    {/* easy */}
-                                    {options.map((level) => (
-                                        <DifficultyButton
-                                            key={level}
-                                            label={level}
-                                            active={dish_difficulty === level}
-                                            onClick={() => setDish_difficulty(level)}
-                                            color={difficultyColors[level]}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="h-1/5 flex items-center justify-center">
-                                <motion.button 
-                                    animate={{ y: [-5, 5] }}
-                                    transition={{ duration: 1, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-                                    whileHover={{ scale: 1.05 }} 
-                                    className="next-section-button"
-                                    onClick={passToHead}
-                                >
-                                    <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                        <g id="evaArrowIosDownwardFill0">
-                                            <g id="evaArrowIosDownwardFill1">
-                                                <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
-                                            </g>
+                                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                    <g id="evaArrowIosDownwardFill0">
+                                        <g id="evaArrowIosDownwardFill1">
+                                            <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
                                         </g>
-                                    </svg>
-                                </motion.button>
-                            </div>
+                                    </g>
+                                </svg>
+                            </motion.button>
                         </div>
                     </div>
+                </div>
 
-                </motion.div>
+            </motion.div>
 
-            </div>
         </div>
     );
 };

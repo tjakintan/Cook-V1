@@ -14,7 +14,7 @@ const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 export const SignIn = ({ email }) => {
 
     const [emailValue, setEmailValue] = useState(email || "");
-    const { setUser } = useUser();
+    const { setUser, refreshUser } = useUser();
     const navigate = useNavigate();
     const payload_inputRefs = {
         signIn_user_email: useRef({})
@@ -23,13 +23,11 @@ export const SignIn = ({ email }) => {
     const passcode_inputRefs = useRef([]);
     const [showSignUp, setShowSignUp] = useState(false);
     const [passcodeIncorrect, setPasscodeIncorrect] = useState(false);
-    const [showForgotPasswordSection, setShowForgotPasswordSection] = useState(false);
-    const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-    const [confirmForgotPasswordSent, setConfirmForgotPasswordSent] = useState(false);
     const [invalidEmail, setInvalidEmail] = useState(false);
 
     const handleUserLogin = async (user) => {
-      await setUser(user);
+      setUser(user);
+      await refreshUser();
       navigate("/");   
     };
 
@@ -61,43 +59,42 @@ export const SignIn = ({ email }) => {
     };
 
     const handleSignIn = async () => {
-
-        if (isLoading)  return;
+        if (isLoading) return;
         const payload = sign_in_payload();
         if (!payload) return;
-        setIsLoading(true);
 
+        setIsLoading(true);
         try {
-            const response = await fetch(
-                "https://api.gomeal.org/auth/signin",
-                {
-                    method: "POST",
-                    credentials: "include", 
-                    headers: { "content-type": "application/json" },
-                    body: JSON.stringify(payload),
-                }
-            );
+            const response = await fetch("https://api.gomeal.org/auth/signin", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            });
 
             const data = await response.json();
 
             switch (data.status) {
-                case "success":
-                    await handleUserLogin(data.user);
-                    break;
-                case "not_found":
-                    setShowSignUp(true);
-                    break;
-                case "unauthorized":
-                    setPasscodeIncorrect(true);
-                    setTimeout(() => setPasscodeIncorrect(false), 500);
-                    break;
-                default:
-                    console.warn("Sign-in failed:", data.message);
-                    break;
+            case "success":
+                await handleUserLogin();
+                break;
+
+            case "not_found":
+                setShowSignUp(true);
+                break;
+
+            case "unauthorized":
+                setPasscodeIncorrect(true);
+                setTimeout(() => setPasscodeIncorrect(false), 500);
+                break;
+
+            default:
+                console.warn("Sign-in failed:", data.message);
+                break;
             }
         } catch (err) {
             console.error("Network error during sign-in:", err);
-        }  finally {
+        } finally {
             setIsLoading(false);
         }
     };

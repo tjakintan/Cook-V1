@@ -9,7 +9,7 @@ export default defineConfig({
     react()
   ],
   define: {
-    global: 'window'  // ✅ Polyfill global for browser
+    global: 'window'  
   },
   server: {
     https: {

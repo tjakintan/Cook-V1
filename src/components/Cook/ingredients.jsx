@@ -4,35 +4,28 @@ import { motion } from "framer-motion";
 import WobblyText from "../../hooks/wobbly_text";
 
 const colors = [
-    "bg-red-500", "bg-orange-500", "bg-amber-500", "bg-yellow-500",
-    "bg-lime-500", "bg-green-500", "bg-emerald-500", "bg-teal-500",
-    "bg-cyan-500", "bg-sky-500", "bg-blue-500", "bg-indigo-500",
-    "bg-violet-500", "bg-purple-500", "bg-fuchsia-500", "bg-pink-500",
-    "bg-rose-500", "bg-red-400", "bg-orange-400", "bg-yellow-400",
-    "bg-green-400", "bg-teal-400", "bg-cyan-400", "bg-blue-400",
-    "bg-indigo-400", "bg-purple-400", "bg-pink-400", "bg-rose-400",
-    "bg-lime-600", "bg-emerald-600"
+  "bg-red-500", "bg-orange-500", "bg-amber-500", "bg-yellow-500",
+  "bg-lime-500", "bg-green-500", "bg-emerald-500", "bg-teal-500",
+  "bg-cyan-500", "bg-sky-500", "bg-blue-500", "bg-indigo-500",
+  "bg-violet-500", "bg-purple-500", "bg-fuchsia-500", "bg-pink-500",
+  "bg-rose-500", "bg-red-400", "bg-orange-400", "bg-yellow-400",
+  "bg-green-400", "bg-teal-400", "bg-cyan-400", "bg-blue-400",
+  "bg-indigo-400", "bg-purple-400", "bg-pink-400", "bg-rose-400",
+  "bg-lime-600", "bg-emerald-600"
 ];
 
-const UnitDropDownMenu = ({ onSelectUnit }) => {
+const UNITS = ["empty", "gram", "kg", "oz", "lb", "ml", "l", "tsp", "tbsp", "cup"];
 
-    const UNITS = [
-        "empty","gram", "kg", "oz", "lb",
-        "ml", "l", "tsp", "tbsp", "cup"
-    ];
-
+const UnitDropDownMenu = ({ onSelectUnit, parentId }) => {
     return (
         <div className="rounded-xl flex overflow-x-auto scrollbar-hide touch-pan-x">
             {UNITS.map((unit, index) => (
-                <div key={unit} className="flex flex-col items-center p-1">
+                <div key={`${parentId}-${unit}`} className="flex flex-col items-center p-1">
                     <motion.div
                         whileHover={{ scale: 1.07 }}
-                        whileTap={{ scale: 0.95 }} 
+                        whileTap={{ scale: 0.95 }}
                         className={`py-2 px-4 rounded-xl cursor-pointer ${colors[index]} text-center font-thin tracking-widest
-                            ${unit === "empty" 
-                                ? "bg-red-500 text-transparent rounded-[10px]" 
-                                : ""}
-                        `}
+                        ${unit === "empty" ? "bg-red-500 text-transparent rounded-[10px]" : ""}`}
                         onClick={() => onSelectUnit(unit)}
                     >
                         {unit}
@@ -43,131 +36,133 @@ const UnitDropDownMenu = ({ onSelectUnit }) => {
     );
 };
 
+const createIngredient = () => ({
+    id: crypto.randomUUID(),
+    quantity: "",
+    unit: "",
+    name: "",
+    showDropdown: false,
+    shake: false,
+    showRemove: false
+});
+
 const Ingredients = ({ value, onPassToHead }) => {
 
-    const [dish_ingredients, setDish_ingredients] = useState(
-        Array.isArray(value?.dish_ingredients) && value.dish_ingredients.length > 0
-            ? value.dish_ingredients
-            : [{ quantity: "", unit: "", name: "" }] 
-    );
     const dropdownRef = useRef([]);
-    const [showUnitDropdown, setShowUnitDropdown] = useState(dish_ingredients.map(() => false));
-    const [shake, setShake] = useState(dish_ingredients.map(() => false));
-    const [showNextBox, setShowNextBox] = useState(dish_ingredients.map(() => false));
+    const buttonRef = useRef([]);
+
+    const [ingredients, setIngredients] = useState(() => {
+        if (Array.isArray(value?.dish_ingredients) && value.dish_ingredients.length > 0) {
+            return value.dish_ingredients.map(ing => ({
+                ...createIngredient(),
+                ...ing
+            }));
+        }
+        return [createIngredient()];
+    });
 
     const addIngredient = () => {
-
-        const lastIdx = dish_ingredients.length - 1;
-
-        setDish_ingredients(prev => [...prev, { quantity: "", unit: "", name: "" }]);
-        setShowUnitDropdown(prev => [...prev, false]); 
-        setShake(prev => [...prev, false]);
-        setShowNextBox(prev => {
+        setIngredients(prev => {
             const copy = [...prev];
-            copy[lastIdx] = true; 
-            copy.push(false);
-            return copy;
+            copy[copy.length - 1].showRemove = true;
+            return [...copy, createIngredient()];
         });
     };
 
     const updateIngredient = (idx, field, value) => {
-        setDish_ingredients(prev => {
-            const copy = [...prev];
-
-            copy[idx] = {
-                ...copy[idx],
-                [field]: field === "unit" && value === "empty" ? "" : value
-            };
-
-            return copy;
-        });
+        setIngredients(prev =>
+            prev.map((ing, i) =>
+                i === idx
+                ? { ...ing, [field]: field === "unit" && value === "empty" ? "" : value }
+                : ing
+            )
+        );
     };
 
     const removeIngredient = (idx) => {
-        const updated = dish_ingredients.filter((_, i) => i !== idx);
-        setDish_ingredients(updated);
-        setShowUnitDropdown(showUnitDropdown.filter((_, i) => i !== idx));
-        setShake(prev => prev.filter((_, i) => i !== idx));
-        setShowNextBox(showNextBox.filter((_, i) => i !== idx));
+        setIngredients(prev => prev.filter((_, i) => i !== idx));
     };
 
     useEffect(() => {
 
-        const handleClickOutside = (event) => {
+        const handleClickOutside = (e) => {
 
-            dropdownRef.current.forEach((ref, idx) => {
-            if (ref && !ref.contains(event.target)) {
-                setShowUnitDropdown(prev => {
-                const copy = [...prev];
-                copy[idx] = false;  
-                return copy;
-                });
-            }
-            });
-        };
+        setIngredients(prev =>
 
+            prev.map((ing, idx) => {
+                const dropdown = dropdownRef.current[idx];
+                const button = buttonRef.current[idx];
+
+                if (
+                    dropdown &&
+                    !dropdown.contains(e.target) &&
+                    button &&
+                    !button.contains(e.target)
+                ) {
+                    return { ...ing, showDropdown: false };
+                }
+
+                return ing;
+            })
+        );
+    };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const triggerShake = (indices) => {
-        setShake(prev => {
-            const copy = [...prev];
-            indices.forEach(idx => copy[idx] = true);
-            return copy;
-        });
+        setIngredients(prev =>
+            prev.map((ing, i) =>
+                indices.includes(i) ? { ...ing, shake: true } : ing
+            )
+        );
 
         setTimeout(() => {
-            setShake(prev => {
-            const copy = [...prev];
-            indices.forEach(idx => copy[idx] = false);
-            return copy;
-            }, 500);
-        });
+            setIngredients(prev =>
+                prev.map(ing => ({ ...ing, shake: false }))
+            );
+        }, 500);
     };
 
     const passToHead = () => {
-        const invalid = dish_ingredients
-            .map((ing, idx) => (!ing.quantity.trim() || !ing.name.trim() ? idx : null))
-            .filter(idx => idx !== null);
+        const invalid = ingredients
+            .map((ing, i) => (!ing.quantity.trim() || !ing.name.trim() ? i : null))
+            .filter(i => i !== null);
 
         if (invalid.length > 0) {
-            triggerShake(invalid); 
+            triggerShake(invalid);
             return;
         }
 
-        onPassToHead({ dish_ingredients, autoCalculateNutrition: true });
+        onPassToHead({
+            dish_ingredients: ingredients.map(({ showDropdown, shake, showRemove, id, ...clean }) => clean),
+            autoCalculateNutrition: true
+        });
     };
 
     return (
-        <div className="flex items-center justify-start flex-col gap-5 p-5">
+        <div className="h-full w-full flex items-center justify-center flex-col gap-5 p-5">
             
             <h1 className="text-center tracking-widest font-bold text-[50px]">
                 <WobblyText text="ingredients"/>
             </h1>
 
-            <div className="flex flex-col max-h-[500px] overflow-y-auto justify-end scrollbar-hide">
-                {dish_ingredients.map((ing, idx) => (
+            <div className="flex flex-col max-h-[1000px] overflow-y-auto justify-end scrollbar-hide p-5">
+                {ingredients.map((ing, idx) => (
 
                     <motion.div 
-                        key={idx} 
+                        key={`${ing.id || "ing"}-${idx}`} 
                         className={`rounded-[40px] flex flex-col items-center justify-center py-1 px-3`}
-                        animate={shake[idx] ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
+                        animate={ing.shake ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
                     >
-                        {showUnitDropdown[idx] && (
+                        {ing.showDropdown && (
                             <div  
                                 ref={el => {dropdownRef.current[idx] = el || undefined;}}
                                 className={`flex p-1 overflow-x-auto max-w-70 md:max-w-150`}
                             >
                                 <UnitDropDownMenu
-                                    onSelectUnit={(unit) => {
-                                        updateIngredient(idx, "unit", unit);
-                                        setShowUnitDropdown(prev => {
-                                            const copy = [...prev]; 
-                                            copy[idx] = false; 
-                                            return copy;
-                                        });
-                                    }}
+                                    ParentId={ing.id}
+                                    onSelectUnit={(unit) => {updateIngredient(idx, "unit", unit);}}
                                 />
                             </div>
                         )}
@@ -197,20 +192,19 @@ const Ingredients = ({ value, onPassToHead }) => {
 
                                     <motion.div 
                                         ref={el => {
-                                            dropdownRef.current[idx] = el || undefined;  
+                                            buttonRef.current[idx] = el || undefined;  
                                         }}
                                         className={`relative h-[40px] rounded-md 
                                                     flex flex-col items-center justify-center cursor-pointer 
                                                     ${ing.unit ? "" : ""}`}
-                                        onClick={() => {
-                                            setShowUnitDropdown(prev => {
-                                                const copy = [...prev];
-                                                copy[idx] = !copy[idx];
-                                                return copy;
-                                            });
-                                        }}
+                                        onClick={() =>
+                                            setIngredients(prev =>
+                                                prev.map((x, i) =>
+                                                i === idx ? { ...x, showDropdown: !x.showDropdown } : x
+                                                )
+                                            )
+                                        }
                                     >
-
                                         <svg 
                                             className={`w-3 h-3 ${ing.unit ? "hidden" : ""}`} 
                                             viewBox="0 0 24 24"
@@ -252,7 +246,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                             </div>
 
                             {/* Add ingredient button */}
-                            {idx === dish_ingredients.length - 1  && (
+                            {idx === ingredients.length - 1  && (
                                 <motion.div
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.9 }}
@@ -268,7 +262,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                             )}
 
                             {/* remove ingredient button */}
-                            { showNextBox[idx] && ( 
+                            {ing.showRemove && ( 
                                 <motion.div 
                                     whileHover={{ scale: 1.03 }}
                                     whileTap={{ scale: 0.90 }} 
@@ -290,7 +284,7 @@ const Ingredients = ({ value, onPassToHead }) => {
 
             <div className="w-full h-1/5 flex items-center justify-center">
                 <motion.button 
-                    animate={!dish_ingredients.some(ing => !ing.quantity.trim() || !ing.name.trim()) 
+                    animate={!ingredients.some(ing => !ing.quantity.trim() || !ing.name.trim()) 
                         ? { y: [-5, 5] } 
                         : { y: 0 }}  
                     transition={{ 

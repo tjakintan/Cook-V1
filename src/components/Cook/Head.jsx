@@ -6,11 +6,11 @@ import { useUser } from "../../utils/user.jsx";
 import { getUserSub } from "../../utils/auth.js";
 
 export default function Head() {
-
     const { user } = useUser();
     const sub = getUserSub(user);
     const [step, setStep] = useState(0);
     const isActive = (index) => step === index;
+
     const [dishInfoData, setDishInfoData] = useState({
         dish_image_url: "",
         dish_name: "",
@@ -27,188 +27,149 @@ export default function Head() {
         setDishInfoData(data);
         setStep(1);
     };
-
     const handleDishIngredientsChange = (data) => {
         setDishIngredientsData(data.dish_ingredients);
         setStep(2);
     };
-
     const handleDishStepsChange = (data) => {
         setDishStepsData(data.dish_steps);
         setStep(3);
-    }
-
+    };
     const handleDishDietaryChange = (data) => {
-        setDishDietaryData(data.dish_dietary); 
+        setDishDietaryData(data.dish_dietary);
         setStep(4);
+    };
+    const handleDishNutritionChange = (data) => {
+        setDishNutritionData(data);
     };
 
     useEffect(() => {
+        if (!dishIngredientsData?.length) return;
 
-        const handleAutoCalculateNutrition = async () => {
-
-            if (!dishIngredientsData || dishIngredientsData.length === 0) return;
-
+        const timer = setTimeout(async () => {
+            console.log("Ingredients: ", dishIngredientsData);
             try {
-                const payload = {
-                    autoCalculateNutrition: true,
-                    ingredients: dishIngredientsData || []
-                };
-                console.log("Sending ingredients:", payload);
-                const response = await fetch("https://api.gomeal.org/upload", {
+                const payload = { ingredients: dishIngredientsData };
+
+                const res = await fetch("https://api.gomeal.org/autocalculatenutrition", {
                     method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
+                    headers: { "content-type": "application/json" },
                     body: JSON.stringify(payload),
                 });
-                const data = await response.json();
-                if (response.ok) {
-                    console.log("Nutrition results:", data.autoCalculatedNutrition);
-                    setNutritionResults(data.autoCalculatedNutrition);
-                } else {
-                    console.log("Error calculating")
+
+                const data = await res.json();
+                if (typeof data.body === "string") {
+                    data = JSON.parse(data.body);
                 }
-            }   catch (err){
-                console.error("network");
+                if (res.ok) {
+                    setNutritionResults(data.autoCalculatedNutrition);
+                    console.log("results : ", data.autoCalculatedNutrition)
+                } else {
+                    console.error("API error:", data);
+                }
+            } catch (err) {
+                console.error("Error fetching nutrition:", err);
             }
+        }, 500);
 
-        };
-
-        handleAutoCalculateNutrition();
-  
+        return () => clearTimeout(timer);
     }, [dishIngredientsData]);
-
-    const handleDishNutritionChange = (data) => {
-        setStep(5);
-        setDishNutritionData(data)
-    };
 
     const payload = {
         dish_name: dishInfoData.dish_name || "",
         description: dishInfoData.dish_description || "",
         difficulty: dishInfoData.dish_difficulty || "",
         image_url: dishInfoData.dish_image_url || "",
-        created_at: new Date().toISOString(), 
+        created_at: new Date().toISOString(),
         user_sub: sub,
         status: "active",
         status_created_on: new Date().toISOString(),
-        ingredients: dishIngredientsData || [],  
-        steps: dishStepsData || [],              
-        nutrition: dishNutritionData || {},      
-        dietary: dishDietaryData || {}           
+        ingredients: dishIngredientsData,
+        steps: dishStepsData,
+        nutrition: dishNutritionData,
+        dietary: dishDietaryData,
+        autoCalculateNutrition: false,
     };
 
-    return (
-        <div className="w-screen h-screen flex items-center justify-center">
+    const sendToAPI = async () => console.log("payload:", payload);
 
-            <div className={`w-full h-screen overflow-auto flex flex-col scrollbar-hide ${step === 5 ? "" : "gap-10 pb-20"} pt-20`}>
+    return (
+        <div className="w-full min-h-screen flex flex-col justify-center">
+
+            <div className="w-full h-screen flex flex-col justify-center overflow-y-auto scrollbar-hide">
 
                 <AnimatePresence mode="wait">
-
                     {step >= 0 && (
-                        <motion.div
-                            key="dish-info"
-                            className={`w-full flex items-center justify-center ${
-                                isActive(0) ? "pointer-events-auto" : ""
-                            }`}
-                        >
-                            <DishInfo
-                                value={dishInfoData}
-                                onPassToHead={handleDishInfoChange}
-                            />
-                        </motion.div>
+                        <StepWrapper isActive={isActive(0)}>
+                            <DishInfo value={dishInfoData} onPassToHead={handleDishInfoChange} />
+                        </StepWrapper>
                     )}
-
                     {step >= 1 && (
-                        <motion.div
-                            key="ingredients"
-                            className={`w-full flex items-center justify-center ${
-                                isActive(1) ? "pointer-events-auto" : ""
-                            }`}
-                            variants={slideVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                        >
-                            <Ingredients
-                                value={dishIngredientsData}
-                                onPassToHead={handleDishIngredientsChange}
-                            />
-                        </motion.div>
+                        <StepWrapper isActive={isActive(1)}>
+                            <Ingredients value={dishIngredientsData} onPassToHead={handleDishIngredientsChange} />
+                        </StepWrapper>
                     )}
-
                     {step >= 2 && (
-                        <motion.div
-                            key="steps"
-                            className={`w-full flex items-center justify-center ${
-                                isActive(2) ? "pointer-events-auto" : ""
-                            }`}
-                            variants={slideVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                        >
-                            <Steps 
-                                value={dishStepsData}
-                                onPassToHead={handleDishStepsChange}
-                            />
-                        </motion.div>
+                        <StepWrapper isActive={isActive(2)}>
+                            <Steps value={dishStepsData} onPassToHead={handleDishStepsChange} />
+                        </StepWrapper>
                     )}
-
                     {step >= 3 && (
-                        <motion.div
-                            key="nutrition"
-                            className={`flex items-center justify-center bg-gradient-to-b from-white to-white/80 ${
-                                isActive(3) ? "pointer-events-auto" : ""
-                            }`}
-                            variants={slideVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                        >
-                            <Dietary 
-                                value={dishDietaryData}
-                                onPassToHead={handleDishDietaryChange}
-                            />
-                        </motion.div>
-                    )}
+                        <StepWrapper isActive bgClass="bg-gradient-to-b from-white to-black/90">
+                            <div className="w-full flex flex-col gap-5">
+                                <Dietary 
+                                    value={dishDietaryData} 
+                                    onPassToHead={handleDishDietaryChange} 
+                                />
 
+                                <Nutrition 
+                                    nutritionResults={nutritionResults} 
+                                    onPassToHead={handleDishNutritionChange} 
+                                />
+                            </div>
+                        </StepWrapper>
+                    )}
                     {step >= 4 && (
                         <motion.div
-                            key="dietary"
-                            className={`w-full flex items-center justify-center bg-gradient-to-b from-white/80 to-black/90 ${
-                                isActive(4) ? "pointer-events-auto" : ""
-                            }`}
-                            variants={slideVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
+                            className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-black/90 to-black"
                         >
-                            <Nutrition 
-                                nutritionResults={nutritionResults} 
-                                onPassToHead={handleDishNutritionChange}
-                            />
+                            <svg
+                                onClick={sendToAPI}
+                                className="w-20 h-20 cursor-pointer text-white"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                            >
+                                <circle cx="12" cy="12" r="11" stroke="white" strokeWidth="0.5" fill="none" />
+                                <line x1="12" y1="7" x2="12" y2="17" stroke="white" strokeWidth="0.5" strokeLinecap="round" />
+                                <line x1="7" y1="12" x2="17" y2="12" stroke="white" strokeWidth="0.5" strokeLinecap="round" />
+                            </svg>
                         </motion.div>
                     )}
-
-                    {step >= 5 && (
-                        <motion.div className="w-full flex bg-gradient-to-b from-black/90 to-black">
-                            <div className="w-screen h-screen flex flex-col items-center justify-center gap-5">
-
-                            </div>
-                        </motion.div>
-                    )}
-
                 </AnimatePresence>
 
             </div>
+
         </div>
     );
 }
 
+// Step wrapper with smooth slide animation
+const StepWrapper = ({ children, isActive, bgClass, height }) => (
+    <motion.div
+        className={`w-full max-w-5xl mx-auto 
+                    ${bgClass}   
+                    ${isActive ? "pointer-events-auto" : ""}`}
+        variants={slideVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+    >
+        {children}
+    </motion.div>
+);
+
 const slideVariants = {
-    initial: { y: "100vh", opacity: 0 },
+    initial: { y: 50, opacity: 0 },
     animate: { y: 0, opacity: 1 },
-    exit: { y: "-100vh", opacity: 0 },
+    exit: { y: -50, opacity: 0 },
 };

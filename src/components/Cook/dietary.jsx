@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import WobblyText from "../../hooks/wobbly_text";
 
 const colors = [
-    "bg-green-600", "bg-teal-600", "bg-cyan-600", "bg-blue-600",
+    "bg-green-600", "bg-teal-600", "bg-cyan-600", "bg-blue-500",
     "bg-orange-600", "bg-purple-600", "bg-pink-600", "bg-rose-600",
     "bg-lime-600", "bg-emerald-600"
 ];
@@ -21,7 +21,7 @@ const Dietary = ({ value, onPassToHead }) => {
         halal: value?.dish_dietary?.halal || false,
         pescatarian: value?.dish_dietary?.pescatarian || false,
         kosher: value?.dish_dietary?.kosher || false,
-        other: value?.dish_dietary?.other || ""
+        other: value?.dish_dietary?.other ?? "" 
     });
 
     const dietaryDescriptions = {
@@ -101,37 +101,34 @@ const Dietary = ({ value, onPassToHead }) => {
         return rows;
     };
 
-    const passToHead = () => {
-        const selectedDietary = Object.keys(dish_dietary).filter(
-            key => key !== "other" && dish_dietary[key] === true
-        );
-
-        onPassToHead(selectedDietary);
-    };
+    useEffect(() => {
+        onPassToHead({
+            dish_dietary: dish_dietary
+        });
+    }, [dish_dietary, onPassToHead]);
 
     const rows = getRows();
 
     return (
-        <div className="flex flex-col p-5 gap-2 items-center justify-start text-white">
+        <div className="w-full h-full flex flex-col gap-2 items-center justify-center text-white">
 
             <h1 className="text-center tracking-widest font-bold text-[50px] text-black">
                 <WobblyText text="dietary"/>
             </h1>
 
-            <div className="flex flex-col py-5 max-h-[500px] overflow-y-auto scrollbar-hide">
+            <div className="flex-1 w-full h-[600px] overflow-hidden">
 
-                <div className="flex flex-col gap-2 p-2 w-full max-w-[1200px]">
+                <div className="flex flex-col gap-2 p-2 w-full h-full overflow-y-auto max-w-[1200px] mx-auto scrollbar-hide">
+
                     {rows.map((rowKeys, rowIdx) => (
-                        <div key={rowIdx} className="flex justify-center gap-4 p-3 flex-wrap ">
+                        <div key={`row-${rowIdx}`} className="flex justify-center gap-4 p-3 flex-wrap ">
                             {rowKeys.map((key, idx) => (
                                 <div 
-                                    key={key} 
-                                    className={`relative flex bg-red-300 shadow-xl
+                                    key={`row-${rowIdx}-item-${key}`} 
+                                    className={`relative flex bg-red-300
                                                 overflow-hidden flex flex-col rounded-[25px]
-                                                    
                                                 ${invalidCombination6.includes(key) ? "opacity-50 pointer-events-none" : ""}`}
                                 >      
-
                                     <div className={`absolute w-full h-full z-0 ${colors[idx]} blur`}></div>
 
                                     <div className={`m-4 z-10`}>
@@ -173,7 +170,27 @@ const Dietary = ({ value, onPassToHead }) => {
 
                                         {/* input box information */}
                                         <div className={`mt-1 font-light text-[10px] tracking-widest text-start max-w-60`}>  
-                                            {dietaryDescriptions[key]}
+                                            {key === "other" ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder="please specify"
+                                                    onChange={(e) => setDish_dietary(prev => ({ ...prev, other: e.target.value }))}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            setDish_dietary(prev => ({ ...prev, other: e.target.value }));
+                                                        }
+                                                    }}
+                                                    value={dish_dietary.other || ""}
+                                                    className="w-full h-[35px] bg-cyan-500 rounded-[25px]
+                                                            px-3 cursor-pointer text-center font-light tracking-wide text-[15px] hover:outline-1 hover:outline-white
+                                                            placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
+                                                            placeholder:text-white"                                                
+                                                />
+                                                ) : (
+                                                <div className="mt-1 font-light text-[10px] tracking-widest text-start max-w-60">
+                                                    {dietaryDescriptions[key]}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -181,26 +198,9 @@ const Dietary = ({ value, onPassToHead }) => {
                             ))}
                         </div>
                     ))}
+
                 </div>
 
-            </div>
-
-            <div className="w-full h-1/5 flex items-center justify-center">
-                <motion.button 
-                    animate={{ y: [-5, 5] }}
-                    transition={{ duration: 1, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }}
-                    whileHover={{ scale: 1.05 }} 
-                    className="next-section-button"
-                    onClick={passToHead}
-                >
-                    <svg className="w-6 h-6" viewBox="0 0 24 24">
-                        <g id="evaArrowIosDownwardFill0">
-                            <g id="evaArrowIosDownwardFill1">
-                                <path id="evaArrowIosDownwardFill2" fill="#000000" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
-                            </g>
-                        </g>
-                    </svg>
-                </motion.button>
             </div>
 
         </div>

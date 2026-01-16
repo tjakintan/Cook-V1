@@ -210,10 +210,8 @@ const Steps = ({ value, onPassToHead }) => {
 
     const [dish_steps, setDish_steps] = useState(
         Array.isArray(value?.dish_steps) && value.dish_steps.length > 0
-            ? value.dish_steps
-            : [{ step_number: 1, description: "", timer: null,
-                image_url: "", tips: ""
-            }] 
+            ? value.dish_steps.map(step => ({ ...step, id: crypto.randomUUID() }))
+            : [{ step_number: 1, description: "", timer: null, image_url: "", tips: "", id: crypto.randomUUID() }]
     );
     const [shake, setShake] = useState(dish_steps.map(() => false));
     const [showTimer, setShowTimer] = useState(dish_steps.map(() => false));
@@ -240,7 +238,7 @@ const Steps = ({ value, onPassToHead }) => {
 
         const lastIdx = dish_steps.length - 1; 
         setDish_steps(prev => 
-            [ ...prev, { step_number: prev.length + 1, description: "", timer: null, image_url: "", tips: "" } ]
+            [ ...prev, { step_number: prev.length + 1, description: "", timer: null, image_url: "", tips: "",  id: crypto.randomUUID() } ]
         );
         setShake(prev => [...prev, false]); 
         setShowTimer(prev => [...prev, false]); 
@@ -342,18 +340,18 @@ const Steps = ({ value, onPassToHead }) => {
     };
 
     return (
-        <div className="flex items-center justify-start flex-col gap-5">
+        <div className="flex items-center justify-center flex-col gap-5 pb-20">
             
             <h1 className="text-center tracking-widest font-bold text-[50px]">
                 <WobblyText text="steps"/>
             </h1>
 
-            <div className="flex flex-col max-h-[500px] overflow-y-auto justify-end scrollbar-hide">
+            <div className="flex flex-col max-h-[1000px] overflow-y-auto justify-end scrollbar-hide">
                 {dish_steps.map((step, idx) => (
                     
                     <motion.div 
-                        key={idx} 
-                        className={`rounded-[40px] ${showBoxOption[idx] ? "" : ""} flex flex-col p-2`}
+                        key={step.id} 
+                        className={`${showBoxOption[idx] ? "" : ""} flex flex-col p-2`}
                         initial={false}
                         style={{ transformOrigin: "top" }} 
                         animate={{
@@ -380,8 +378,8 @@ const Steps = ({ value, onPassToHead }) => {
                                     </div>
                                     <div className="flex cursor-pointer" onClick={() => {updateStep(idx, "timer", null)}}>
                                         <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                            <line x1="4" y1="4" x2="20" y2="20" stroke="black" stroke-width="1" stroke-linecap="round"/>
-                                            <line x1="20" y1="4" x2="4" y2="20" stroke="black" stroke-width="1" stroke-linecap="round"/>
+                                            <line x1="4" y1="4" x2="20" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
+                                            <line x1="20" y1="4" x2="4" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
                                         </svg>
                                     </div>
                                 </div>
@@ -401,8 +399,8 @@ const Steps = ({ value, onPassToHead }) => {
                                     </div>
                                     <div className="flex cursor-pointer" onClick={() => {updateStep(idx, "tools", [])}}>
                                         <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                            <line x1="4" y1="4" x2="20" y2="20" stroke="black" stroke-width="1" stroke-linecap="round"/>
-                                            <line x1="20" y1="4" x2="4" y2="20" stroke="black" stroke-width="1" stroke-linecap="round"/>
+                                            <line x1="4" y1="4" x2="20" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
+                                            <line x1="20" y1="4" x2="4" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
                                         </svg>
                                     </div>
                                 </div>
@@ -480,7 +478,7 @@ const Steps = ({ value, onPassToHead }) => {
                                         <div className="w-full flex items-center gap-2 pl-2">
                                             <div className="flex">
                                                 <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                                    <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                                                    <path fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
                                                 </svg>
                                             </div>
                                             <div className="overflow-hidden rounded-xl">
@@ -603,6 +601,7 @@ const Steps = ({ value, onPassToHead }) => {
                         </div>
 
                     </motion.div>
+
                 ))}
             </div>
 
