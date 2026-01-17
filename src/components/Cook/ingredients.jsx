@@ -38,18 +38,23 @@ const UnitDropDownMenu = ({ onSelectUnit, parentId }) => {
 
 const createIngredient = () => ({
     id: crypto.randomUUID(),
+    fdcId: null,               
+    category: null,
     quantity: "",
     unit: "",
     name: "",
     showDropdown: false,
     shake: false,
-    showRemove: false
+    showRemove: false,
+    suggestions: [],
+    showSuggestions: false,
 });
 
-const Ingredients = ({ value, onPassToHead }) => {
+const Ingredients = ({ value, onPassToHead, dish_name, dish_description }) => {
 
     const dropdownRef = useRef([]);
     const buttonRef = useRef([]);
+    const debounceTimers = useRef({});
 
     const [ingredients, setIngredients] = useState(() => {
         if (Array.isArray(value?.dish_ingredients) && value.dish_ingredients.length > 0) {
@@ -61,6 +66,28 @@ const Ingredients = ({ value, onPassToHead }) => {
         return [createIngredient()];
     });
 
+    const fetchSuggestions = async (query) => {
+        if (!query || query.trim().length < 3) return [];
+        try {
+            const body = JSON.stringify({
+                query,
+                dish_name,
+                dish_description
+            });
+            const res = await fetch("https://api.gomeal.org/liveingredientssearch", {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body
+            });
+            if (!res.ok) return [];
+            const data = await res.json();
+            return data || [];
+        } catch (err) {
+            console.error("Live ingredient search error:", err);
+            return [];
+        }
+    };
+
     const addIngredient = () => {
         setIngredients(prev => {
             const copy = [...prev];
@@ -69,11 +96,62 @@ const Ingredients = ({ value, onPassToHead }) => {
         });
     };
 
-    const updateIngredient = (idx, field, value) => {
+    const updateIngredient = async (idx, field, value) => {
+
         setIngredients(prev =>
             prev.map((ing, i) =>
                 i === idx
-                ? { ...ing, [field]: field === "unit" && value === "empty" ? "" : value }
+                ? {
+                    ...ing,
+                    [field]: field === "unit" && value === "empty" ? "" : value,
+                    ...(field === "name" ? { showSuggestions: true } : {})
+                    }
+                : ing
+            )
+        );
+        if (field !== "name") return;
+
+        // Clear previous timer for this input
+        if (debounceTimers.current[idx]) {
+            clearTimeout(debounceTimers.current[idx]);
+        }
+
+        // Set new debounce timer
+        debounceTimers.current[idx] = setTimeout(async () => {
+
+            if (!value || value.trim().length < 3) {
+                setIngredients(prev =>
+                    prev.map((ing, i) =>
+                        i === idx ? { ...ing, suggestions: [], showSuggestions: false } : ing
+                    )
+                );
+                return;
+            }
+
+            const suggestions = await fetchSuggestions(value);
+
+            setIngredients(prev =>
+                prev.map((ing, i) =>
+                    i === idx
+                        ? { ...ing, suggestions, showSuggestions: true }
+                        : ing
+                )
+            );
+        }, 400);
+    };
+
+    const selectSuggestion = (idx, suggestion) => {
+        setIngredients(prev =>
+            prev.map((ing, i) =>
+                i === idx
+                ? { 
+                    ...ing,
+                    name: suggestion.name, 
+                    fdcId:suggestion.id, 
+                    category:suggestion.category, 
+                    showSuggestions: false, 
+                    suggestions: [] 
+                }
                 : ing
             )
         );
@@ -99,7 +177,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                     button &&
                     !button.contains(e.target)
                 ) {
-                    return { ...ing, showDropdown: false };
+                    return { ...ing, showDropdown: false, showSuggestions: false };
                 }
 
                 return ing;
@@ -135,24 +213,25 @@ const Ingredients = ({ value, onPassToHead }) => {
         }
 
         onPassToHead({
-            dish_ingredients: ingredients.map(({ showDropdown, shake, showRemove, id, ...clean }) => clean),
+            dish_ingredients: ingredients.map(({ showDropdown, shake, showRemove, id, showSuggestions, suggestions, ...clean }) => clean),
             autoCalculateNutrition: true
         });
     };
 
     return (
-        <div className="h-full w-full flex items-center justify-center flex-col gap-5 p-5">
+        <div className="flex items-center justify-center flex-col gap-5 p-5 ">
             
             <h1 className="text-center tracking-widest font-bold text-[50px]">
                 <WobblyText text="ingredients"/>
             </h1>
 
-            <div className="flex flex-col max-h-[1000px] overflow-y-auto justify-end scrollbar-hide p-5">
+            <div className="flex flex-col p-1 gap-1 justify-end scrollbar-hide relative">
+
                 {ingredients.map((ing, idx) => (
 
                     <motion.div 
                         key={`${ing.id || "ing"}-${idx}`} 
-                        className={`rounded-[40px] flex flex-col items-center justify-center py-1 px-3`}
+                        className={`relative rounded-[40px] flex flex-col items-center justify-center py-1 px-3`}
                         animate={ing.shake ? { x: [0, -10, 10, -10, 10, 0] } : { x: 0 }}
                     >
                         {ing.showDropdown && (
@@ -167,21 +246,24 @@ const Ingredients = ({ value, onPassToHead }) => {
                             </div>
                         )}
 
-                        <div className={`flex`}>
+                        <div className={`flex gap-2`}>
 
                             <div className="flex items-center justify-center gap-5">
 
                                 {/* Ingredient quantity & unit input */}
                                 <div className="flex items-center justify-center space-x-2">
+
                                     <input 
                                         className="w-[60px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
                                                     px-3 cursor-pointer text-center text-sm font-thin tracking-wide
                                                     placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
                                                     "
-                                        type="text"
+                                        type="numeric"
                                         min="0"
                                         value={ing.quantity}
                                         placeholder="3.5g"
+                                        inputMode="numeric"
+                                        step="any"
                                         onChange={(e) => {
                                             const val = e.target.value;
                                             if (/^\d*\.?\d*$/.test(val)) {
@@ -190,6 +272,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                                         }}
                                     />
 
+                                    {/* show unit section */}
                                     <motion.div 
                                         ref={el => {
                                             buttonRef.current[idx] = el || undefined;  
@@ -230,9 +313,10 @@ const Ingredients = ({ value, onPassToHead }) => {
                                 </div>
                                 
                                 {/* Ingredient name input */}
-                                <div className="flex items-center justify-center">
+                                <div className="relative flex flex-col items-center justify-center p-1">
+
                                     <input 
-                                        className="w-[100px] md:w-[150px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
+                                        className="w-[175px] md:w-[300px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
                                                     px-3 cursor-pointer text-sm font-thin tracking-wide
                                                     placeholder:font-light placeholder:text-gray-300 placeholder:text-xs placeholder:italic
                                                     "
@@ -241,6 +325,30 @@ const Ingredients = ({ value, onPassToHead }) => {
                                         placeholder="rice"
                                         onChange={(e) => updateIngredient(idx, "name", e.target.value)}
                                     />
+
+                                    {/* live input section */}
+                                    {ing.showSuggestions && ing.suggestions.length > 0 && (
+
+                                        <div
+                                            ref={el => {dropdownRef.current[idx] = el || undefined;}}
+                                            className="absolute top-[45px] z-50 w-full max-h-[200px] overflow-y-auto rounded-xl bg-white shadow-lg scrollbar-hide"
+                                        >
+                                            {ing.suggestions.map((sug) => (
+
+                                                <div
+                                                    key={sug.id}
+                                                    className="px-3 py-2 font-extralight rounded-2xl text-sm tracking-wider cursor-pointer hover:bg-gray-200"
+                                                    onClick={() => selectSuggestion(idx, sug)}
+                                                >
+                                                    {sug.name} <span className="text-gray-400 text-[10px] ml-1">({sug.category})</span>
+                                                </div>
+
+                                            ))}
+
+                                        </div>
+
+                                    )}
+
                                 </div>
 
                             </div>
@@ -255,7 +363,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                                 >
                                     <img
                                         src="/add_ingredient.svg"
-                                        className="w-12 h-12"
+                                        className="w-10 h-10"
                                         alt="Add ingredient"
                                     />
                                 </motion.div>
@@ -271,7 +379,7 @@ const Ingredients = ({ value, onPassToHead }) => {
                                 >
                                     <img 
                                         src="/remove_ingredient.svg" 
-                                        className="w-12 h-12"
+                                        className="w-10 h-10"
                                     />
                                 </motion.div>
                             )}
@@ -280,6 +388,7 @@ const Ingredients = ({ value, onPassToHead }) => {
 
                     </motion.div>
                 ))}
+
             </div>
 
             <div className="w-full h-1/5 flex items-center justify-center">

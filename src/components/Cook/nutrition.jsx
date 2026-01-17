@@ -29,6 +29,30 @@ const emptyNutrition = {
     water_g: 0
 };
 
+const unitToGrams = {
+    empty: 1,
+    gram: 1,
+    kg: 1000,
+    oz: 28.3495,
+    lb: 453.592,
+    ml: 1,       
+    l: 1000,     
+    tsp: 4.2,    
+    tbsp: 14.3,  
+    cup: 240,    
+};
+
+const convertToGrams = (quantity, unit) => {
+    const q = parseFloat(quantity) || 0;
+    const u = (unit || "empty").toLowerCase();
+
+    if (u === "empty") {
+        return q;
+    }
+
+    return q * (unitToGrams[u] || 1);
+};
+
 const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
 
     const [dish_nutrition, setDish_nutrition] = useState(emptyNutrition);
@@ -47,23 +71,23 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
         if (!nutritionResults || nutritionResults.length === 0) return;
 
         const totals = nutritionResults.reduce((acc, ing) => {
-            const qty = parseFloat(ing.quantity) || 0;
+            const quantityInGrams = convertToGrams(ing.quantity, ing.unit);
+            const factor = quantityInGrams / 100; 
             const nutrition = ing.nutrition || {};
-            const factor = qty / 100;
 
             acc.calories_per_100g += (nutrition.calories_per_100g || 0) * factor;
-            acc.protein_per_100g += (nutrition.protein_per_100g || 0) * factor;
-            acc.carbs_per_100g += (nutrition.carbs_per_100g || 0) * factor;
-            acc.sugar_per_100g += (nutrition.sugar_per_100g || 0) * factor;
-            acc.fat_per_100g += (nutrition.fat_per_100g || 0) * factor;
-            acc.saturated_fat_g += (nutrition.saturated_fat_g || 0) * factor;
-            acc.fiber_g += (nutrition.fiber_g || 0) * factor;
-            acc.cholesterol_mg += (nutrition.cholesterol_mg || 0) * factor;
-            acc.sodium_mg += (nutrition.sodium_mg || 0) * factor;
-            acc.water_g += (nutrition.water_g || 0) * factor;
+            acc.protein_per_100g  += (nutrition.protein_per_100g || 0) * factor;
+            acc.carbs_per_100g    += (nutrition.carbs_per_100g || 0) * factor;
+            acc.sugar_per_100g    += (nutrition.sugar_per_100g || 0) * factor;
+            acc.fat_per_100g      += (nutrition.fat_per_100g || 0) * factor;
+            acc.saturated_fat_g   += (nutrition.saturated_fat_g || 0) * factor;
+            acc.fiber_g           += (nutrition.fiber_g || 0) * factor;
+            acc.cholesterol_mg    += (nutrition.cholesterol_mg || 0) * factor;
+            acc.sodium_mg         += (nutrition.sodium_mg || 0) * factor;
+            acc.water_g           += (nutrition.water_g || 0) * factor;
 
             return acc;
-        }, { ...emptyNutrition });
+    }, { ...emptyNutrition });
 
         setBaseNutrition(totals);
     }, [nutritionResults]);
@@ -101,7 +125,7 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
     );
 
     return (
-        <div className="flex flex-col items-center justify-center px-10 py-5 text-white">
+        <div className="flex flex-col items-center justify-center py-5 text-white">
 
             <div className="p-2 flex flex-col gap-1 bg-transparent outline-2 outline-white">
 

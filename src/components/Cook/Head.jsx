@@ -94,9 +94,9 @@ export default function Head() {
     const sendToAPI = async () => console.log("payload:", payload);
 
     return (
-        <div className="w-full min-h-screen flex flex-col justify-center">
+        <div className="w-screen min-h-screen">
 
-            <div className="w-full h-screen flex flex-col justify-center overflow-y-auto scrollbar-hide">
+            <div className="h-screen flex flex-col justify-center overflow-y-auto scrollbar-hide">
 
                 <AnimatePresence mode="wait">
                     {step >= 0 && (
@@ -106,7 +106,11 @@ export default function Head() {
                     )}
                     {step >= 1 && (
                         <StepWrapper isActive={isActive(1)}>
-                            <Ingredients value={dishIngredientsData} onPassToHead={handleDishIngredientsChange} />
+                            <Ingredients 
+                                value={dishIngredientsData} 
+                                dish_name={dishInfoData.dish_name} 
+                                dish_description={dishInfoData.dish_description}
+                                onPassToHead={handleDishIngredientsChange} />
                         </StepWrapper>
                     )}
                     {step >= 2 && (
@@ -116,7 +120,7 @@ export default function Head() {
                     )}
                     {step >= 3 && (
                         <StepWrapper isActive bgClass="bg-gradient-to-b from-white to-black/90">
-                            <div className="w-full flex flex-col gap-5">
+                            <div className="flex flex-col gap-5">
                                 <Dietary 
                                     value={dishDietaryData} 
                                     onPassToHead={handleDishDietaryChange} 
@@ -131,7 +135,7 @@ export default function Head() {
                     )}
                     {step >= 4 && (
                         <motion.div
-                            className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-black/90 to-black"
+                            className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-black/90 to-black"
                         >
                             <svg
                                 onClick={sendToAPI}
@@ -156,7 +160,7 @@ export default function Head() {
 // Step wrapper with smooth slide animation
 const StepWrapper = ({ children, isActive, bgClass, height }) => (
     <motion.div
-        className={`w-full max-w-5xl mx-auto 
+        className={`w-screen 
                     ${bgClass}   
                     ${isActive ? "pointer-events-auto" : ""}`}
         variants={slideVariants}

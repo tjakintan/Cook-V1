@@ -34,7 +34,7 @@ const Dietary = ({ value, onPassToHead }) => {
         halal: "Prepared according to Islamic law; includes halal meat and grains",
         pescatarian: "Includes fish like salmon, tilapia, shrimp; no other meat",
         kosher: "Prepared following Jewish dietary laws; includes kosher meat, dairy rules",
-        other: "Any other dietary restrictions; e.g., soy-free, nightshade-free"
+        other: "soy-free, nightshade-free"
     };
 
     const dietaryIcons = {
@@ -47,7 +47,6 @@ const Dietary = ({ value, onPassToHead }) => {
         halal: "/dietary/halal_food.svg",
         pescatarian: "/dietary/pescatarian.png",
         kosher: "/dietary/kosher_food.svg",
-        //other: "/dietary/other.svg"
     };
 
     const [invalidCombination1, setInvalidCombination1] = useState([]);
@@ -110,15 +109,15 @@ const Dietary = ({ value, onPassToHead }) => {
     const rows = getRows();
 
     return (
-        <div className="w-full h-full flex flex-col gap-2 items-center justify-center text-white">
+        <div className="flex flex-col gap-2 items-center justify-center text-white">
 
             <h1 className="text-center tracking-widest font-bold text-[50px] text-black">
                 <WobblyText text="dietary"/>
             </h1>
 
-            <div className="flex-1 w-full h-[600px] overflow-hidden">
+            <div className="flex-1 overflow-hidden">
 
-                <div className="flex flex-col gap-2 p-2 w-full h-full overflow-y-auto max-w-[1200px] mx-auto scrollbar-hide">
+                <div className="flex flex-col gap-2 p-2 overflow-y-auto max-w-[1200px] mx-auto scrollbar-hide">
 
                     {rows.map((rowKeys, rowIdx) => (
                         <div key={`row-${rowIdx}`} className="flex justify-center gap-4 p-3 flex-wrap ">
@@ -173,7 +172,7 @@ const Dietary = ({ value, onPassToHead }) => {
                                             {key === "other" ? (
                                                 <input
                                                     type="text"
-                                                    placeholder="please specify"
+                                                    placeholder={dietaryDescriptions[key]}
                                                     onChange={(e) => setDish_dietary(prev => ({ ...prev, other: e.target.value }))}
                                                     onKeyDown={(e) => {
                                                         if (e.key === "Enter") {
@@ -181,12 +180,12 @@ const Dietary = ({ value, onPassToHead }) => {
                                                         }
                                                     }}
                                                     value={dish_dietary.other || ""}
-                                                    className="w-full h-[35px] bg-cyan-500 rounded-[25px]
-                                                            px-3 cursor-pointer text-center font-light tracking-wide text-[15px] hover:outline-1 hover:outline-white
-                                                            placeholder-italic placeholder:font-light placeholder:tracking-wider placeholder:text-sm placeholder:italic
+                                                    className="w-full h-[35px] bg-cyan-500 rounded-xl text-start
+                                                            px-3 cursor-pointer text-center font-light tracking-wide text-sm hover:outline-1 hover:outline-white
+                                                            placeholder-italic placeholder:font-light placeholder:tracking-widest placeholder:text-[10px]
                                                             placeholder:text-white"                                                
                                                 />
-                                                ) : (
+                                            ) : (
                                                 <div className="mt-1 font-light text-[10px] tracking-widest text-start max-w-60">
                                                     {dietaryDescriptions[key]}
                                                 </div>
