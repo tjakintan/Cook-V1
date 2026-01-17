@@ -71,15 +71,16 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
         if (!nutritionResults || nutritionResults.length === 0) return;
 
         const totals = nutritionResults.reduce((acc, ing) => {
-            const quantityInGrams = convertToGrams(ing.quantity, ing.unit);
-            const factor = quantityInGrams / 100; 
             const nutrition = ing.nutrition || {};
+            const factor = ing.unit === "empty" 
+                ? parseFloat(ing.quantity) || 0 
+                : (convertToGrams(ing.quantity, ing.unit) / 100);
 
             acc.calories_per_100g += (nutrition.calories_per_100g || 0) * factor;
-            acc.protein_per_100g  += (nutrition.protein_per_100g || 0) * factor;
-            acc.carbs_per_100g    += (nutrition.carbs_per_100g || 0) * factor;
-            acc.sugar_per_100g    += (nutrition.sugar_per_100g || 0) * factor;
-            acc.fat_per_100g      += (nutrition.fat_per_100g || 0) * factor;
+            acc.protein_per_100g  += (nutrition.protein_g || 0) * factor;
+            acc.carbs_per_100g    += (nutrition.carbs_g || 0) * factor;
+            acc.sugar_per_100g    += (nutrition.sugar_g || 0) * factor;
+            acc.fat_per_100g      += (nutrition.fat_g || 0) * factor;
             acc.saturated_fat_g   += (nutrition.saturated_fat_g || 0) * factor;
             acc.fiber_g           += (nutrition.fiber_g || 0) * factor;
             acc.cholesterol_mg    += (nutrition.cholesterol_mg || 0) * factor;
@@ -87,7 +88,7 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
             acc.water_g           += (nutrition.water_g || 0) * factor;
 
             return acc;
-    }, { ...emptyNutrition });
+        }, { ...emptyNutrition });
 
         setBaseNutrition(totals);
     }, [nutritionResults]);
@@ -127,60 +128,98 @@ const Nutrition = ({ value, onPassToHead, nutritionResults }) => {
     return (
         <div className="flex flex-col items-center justify-center py-5 text-white">
 
-            <div className="p-2 flex flex-col gap-1 bg-transparent outline-2 outline-white">
+            <div className="min-h-[600px] min-w-[300px] p-1 flex bg-transparent outline-2 outline-white">
 
-                <h1 className="tracking-widest font-bold text-[50px] text-center">
-                    <WobblyText text="nutrition"/>
-                </h1>
+                <div className={`flex flex-col ${nutritionResults?.length ? "" : "hidden"}`}>
+                    <h1 className="tracking-widest font-bold text-[50px] text-center">
+                        <WobblyText text="nutrition"/>
+                    </h1>
 
-                <div className="h-[1px] bg-white"></div>
+                    <div className="h-[1px] bg-white"></div>
 
-                <div className="flex justify-between p-1 items-center">
-                    <div className="tracking-wider text-[20px] font-bold">
-                        Servings
+                    <div className="flex justify-between p-1 items-center">
+                        <div className="tracking-wider text-[20px] font-bold">
+                            Servings
+                        </div>
+                        <div className="gap-3 flex items-center">
+                            <svg onClick={increaseServings} className="w-6 h-6 cursor-pointer" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="12" r="11" stroke="currentColor" strokewidth="1" fill="none"/>
+                                <line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+                                <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+                            </svg>
+                            <h1 className="font-bold text-center text-2xl">
+                                {servings}
+                            </h1>
+                            <svg onClick={decreaseServings} className={`${servings === 1 ? "opacity-20 pointer-events-none" : "" } w-6 h-6 cursor-pointer`} viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1" fill="none"/>
+                                <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+                            </svg>
+                        </div>
                     </div>
-                    <div className="gap-3 flex items-center">
-                        <svg onClick={increaseServings} className="w-6 h-6 cursor-pointer" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="11" stroke="currentColor" strokewidth="1" fill="none"/>
-                            <line x1="12" y1="7" x2="12" y2="17" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-                            <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-                        </svg>
-                        <h1 className="font-bold text-center text-2xl">
-                            {servings}
-                        </h1>
-                        <svg onClick={decreaseServings} className={`${servings === 1 ? "opacity-20 pointer-events-none" : "" } w-6 h-6 cursor-pointer`} viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="12" r="11" stroke="currentColor" strokeWidth="1" fill="none"/>
-                            <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-                        </svg>
+
+                    <div className="h-[10px] bg-white"></div>
+
+                    <div className="flex justify-between items-center text-[25px] font-extrabold mb-2">
+                        <span>Calories</span>
+                        <span className="">
+                            {Math.round(dish_nutrition.calories_per_100g)}
+                            <span className="text-sm font-medium ml-[0.25px]">kcal</span>
+                        </span>
+                    </div>
+
+                    <div className="h-[5px] bg-white"></div>
+
+                    <div className="flex flex-col gap-3">
+                        {[
+                            ["Protein", dish_nutrition.protein_per_100g],
+                            ["Carbohydrates", dish_nutrition.carbs_per_100g],
+                            ["Sugars", dish_nutrition.sugar_per_100g],
+                            ["Fat", dish_nutrition.fat_per_100g],
+                            ["Saturated Fat", dish_nutrition.saturated_fat_g],
+                            ["Fiber", dish_nutrition.fiber_g],
+                            ["Cholesterol", dish_nutrition.cholesterol_mg, "mg"],
+                            ["Sodium", dish_nutrition.sodium_mg, "mg"]
+                        ].map(([label, val, unit], idx) => 
+                            displayRow(label, val, unit || "g", idx)
+                        )}
                     </div>
                 </div>
 
-                <div className="h-[10px] bg-white"></div>
-
-                <div className="flex justify-between items-center text-[25px] font-extrabold mb-2">
-                    <span>Calories</span>
-                    <span className="">
-                        {Math.round(dish_nutrition.calories_per_100g)}
-                        <span className="text-sm font-medium ml-[0.25px]">kcal</span>
-                    </span>
+                <div className={`w-full gap-5 flex flex-col items-center justify-center ${nutritionResults?.length ? "hidden" : ""}`}>
+                    <svg 
+                        className="w-15 h-15"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle cx="12" cy="2" r="0" fill="#ffffff">
+                            <animate attributeName="r" begin="0" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(45 12 12)">
+                            <animate attributeName="r" begin="0.125s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(90 12 12)">
+                            <animate attributeName="r" begin="0.25s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(135 12 12)">
+                            <animate attributeName="r" begin="0.375s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(180 12 12)">
+                            <animate attributeName="r" begin="0.5s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(225 12 12)">
+                            <animate attributeName="r" begin="0.625s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(270 12 12)">
+                            <animate attributeName="r" begin="0.75s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                        <circle cx="12" cy="2" r="0" fill="#ffffff" transform="rotate(315 12 12)">
+                            <animate attributeName="r" begin="0.875s" calcMode="spline" dur="1s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" repeatCount="indefinite" values="0;2;0;0"/>
+                        </circle>
+                    </svg>
+                    <h1 className="font-thin tracking-widest text-sm">
+                        Loading Nutritional Values
+                    </h1>
                 </div>
 
-                <div className="h-[5px] bg-white"></div>
-
-                <div className="flex flex-col gap-3">
-                    {[
-                        ["Protein", dish_nutrition.protein_per_100g],
-                        ["Carbohydrates", dish_nutrition.carbs_per_100g],
-                        ["Sugars", dish_nutrition.sugar_per_100g],
-                        ["Fat", dish_nutrition.fat_per_100g],
-                        ["Saturated Fat", dish_nutrition.saturated_fat_g],
-                        ["Fiber", dish_nutrition.fiber_g],
-                        ["Cholesterol", dish_nutrition.cholesterol_mg, "mg"],
-                        ["Sodium", dish_nutrition.sodium_mg, "mg"]
-                    ].map(([label, val, unit], idx) => 
-                        displayRow(label, val, unit || "g", idx)
-                    )}
-                </div>
             </div>
 
         </div>

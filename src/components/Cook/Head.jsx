@@ -96,7 +96,7 @@ export default function Head() {
     return (
         <div className="w-screen min-h-screen">
 
-            <div className="h-screen flex flex-col justify-center overflow-y-auto scrollbar-hide">
+            <div className="w-screen h-screen flex flex-col justify-center overflow-y-auto scrollbar-hide">
 
                 <AnimatePresence mode="wait">
                     {step >= 0 && (

@@ -137,7 +137,7 @@ const Ingredients = ({ value, onPassToHead, dish_name, dish_description }) => {
                         : ing
                 )
             );
-        }, 400);
+        }, 200);
     };
 
     const selectSuggestion = (idx, suggestion) => {
