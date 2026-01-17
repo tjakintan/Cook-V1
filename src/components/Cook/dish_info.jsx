@@ -124,9 +124,9 @@ const DishInfo = ({ value, onPassToHead }) => {
                     drag="y" 
                     dragConstraints={{ top: -sectionHeight * TOTAL_PAGES, bottom: -sectionHeight * TOTAL_PAGES }}
                     onDragEnd={(e, info) => {
-                        if (info.offset.y < -80) {
+                        if (info.offset.y < -5) {
                             swipeUp();
-                        } else if (info.offset.y > 80) {
+                        } else if (info.offset.y > 5) {
                             swipeDown();
                         } 
                     }}
