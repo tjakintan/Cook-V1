@@ -57,7 +57,7 @@ const DishInfo = ({ value, onPassToHead }) => {
         },
     };
     const PADDING = 40;
-    const sectionHeight = containerRef.current ? containerRef.current.clientHeight : 0;
+    const sectionHeight = "75vh";
     const TOTAL_PAGES = 4;
     const controls = useAnimationControls();
 
@@ -116,11 +116,11 @@ const DishInfo = ({ value, onPassToHead }) => {
 
         <div className="flex items-center">
 
-            <div ref={containerRef} className="relative h-[50vh] w-full flex overflow-y-auto scrollbar-hide">
+            <div ref={containerRef} className="relative h-[100vh] w-full flex overflow-y-auto scrollbar-hide">
                 
                 <motion.div 
                     ref={mainContainerRef}
-                    className="absolute w-full flex flex-col justify-center" 
+                    className="absolute w-full justify-center" 
                     animate={{ y: -pageIndex * sectionHeight }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }} 
                 >
