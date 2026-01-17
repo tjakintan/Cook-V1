@@ -19,7 +19,7 @@ scrollbar-width: none;
     @apply font-light tracking-widest text-[15px] text-center italic opacity-50;
 }
 .ingredient-button {
-    @apply flex items-center justify-center cursor-pointer ;
+    @apply items-center justify-center cursor-pointer ;
 }
 
 .next-section-button {

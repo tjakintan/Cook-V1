@@ -206,7 +206,7 @@ const ToolsPicker = ({ onChange = () => {} }) =>  {
     );
 }
 
-const Steps = ({ value, onPassToHead }) => {
+const Steps = ({ onBack, value, onPassToHead }) => {
 
     const [dish_steps, setDish_steps] = useState(
         Array.isArray(value?.dish_steps) && value.dish_steps.length > 0
@@ -342,6 +342,16 @@ const Steps = ({ value, onPassToHead }) => {
     return (
         <div className="flex items-center justify-center flex-col gap-5 pb-20">
             
+            <div onClick={onBack} className="w-full flex justify-center">
+                <svg className="w-6 h-6 rotate-180 " viewBox="0 0 24 24">
+                    <g id="evaArrowIosDownwardFill0">
+                        <g id="evaArrowIosDownwardFill1">
+                            <path id="evaArrowIosDownwardFill2" fill="#5a5a5a" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+
             <h1 className="text-center tracking-widest font-bold text-[50px]">
                 <WobblyText text="steps"/>
             </h1>

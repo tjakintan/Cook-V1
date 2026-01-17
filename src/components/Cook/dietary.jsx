@@ -9,7 +9,7 @@ const colors = [
     "bg-lime-600", "bg-emerald-600"
 ];
 
-const Dietary = ({ value, onPassToHead }) => {
+const Dietary = ({ onBack, value, onPassToHead }) => {
 
     const [dish_dietary, setDish_dietary] = useState({
         vegetarian: value?.dish_dietary?.vegetarian || false,
@@ -110,6 +110,16 @@ const Dietary = ({ value, onPassToHead }) => {
 
     return (
         <div className="flex flex-col gap-2 items-center justify-center text-white">
+
+            <div onClick={onBack} className="w-full flex justify-center">
+                <svg className="w-6 h-6 rotate-180 " viewBox="0 0 24 24">
+                    <g id="evaArrowIosDownwardFill0">
+                        <g id="evaArrowIosDownwardFill1">
+                            <path id="evaArrowIosDownwardFill2" fill="#5a5a5a" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
 
             <h1 className="text-center tracking-widest font-bold text-[50px] text-black">
                 <WobblyText text="dietary"/>

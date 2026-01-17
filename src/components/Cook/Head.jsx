@@ -22,6 +22,7 @@ export default function Head() {
     const [dishDietaryData, setDishDietaryData] = useState([]);
     const [nutritionResults, setNutritionResults] = useState([]);
     const [dishNutritionData, setDishNutritionData] = useState([]);
+    const [direction, setDirection] = useState(1)
 
     const handleDishInfoChange = (data) => {
         setDishInfoData(data);
@@ -37,10 +38,14 @@ export default function Head() {
     };
     const handleDishDietaryChange = (data) => {
         setDishDietaryData(data.dish_dietary);
-        setStep(4);
     };
     const handleDishNutritionChange = (data) => {
         setDishNutritionData(data);
+        setStep(4);
+    };
+
+    const handleBack = () => {
+        setStep(prev => Math.max(prev - 1, 0));
     };
 
     useEffect(() => {
@@ -94,73 +99,74 @@ export default function Head() {
     const sendToAPI = async () => console.log("payload:", payload);
 
     return (
-        <div className="w-screen min-h-screen">
 
-            <div className="w-screen h-screen flex flex-col justify-center overflow-y-auto scrollbar-hide">
+        <div className={`h-screen ${step >= 3 ? "pt-[40vh]" : "justify-center"} 
+                        flex flex-col scrollbar-hide overflow-y-auto`}
+        >
+            <AnimatePresence mode="wait">
+                {step === 0 && (
+                    <StepWrapper isActive={isActive(0)} bgClass="">
+                        <DishInfo value={dishInfoData} onPassToHead={handleDishInfoChange} />
+                    </StepWrapper>
+                )}
+                {step === 1 && (
+                    <StepWrapper height="min-h-[50vh]" bgClass="" isActive={isActive(1)}>
+                        <Ingredients 
+                            onBack={handleBack}
+                            value={dishIngredientsData} 
+                            dish_name={dishInfoData.dish_name} 
+                            dish_description={dishInfoData.dish_description}
+                            onPassToHead={handleDishIngredientsChange} />
+                    </StepWrapper>
+                )}
+                {step === 2 && (
+                    <StepWrapper height="min-h-[50vh]" bgClass="" isActive={isActive(2)}>
+                        <Steps onBack={handleBack} value={dishStepsData} onPassToHead={handleDishStepsChange} />
+                    </StepWrapper>
+                )}
+                {step >= 3 && (
+                    <StepWrapper height="min-h-[50vh]" bgClass="bg-gradient-to-b from-white to-black/90">
+                        <div className="flex flex-col gap-5">
+                            <Dietary 
+                                onBack={handleBack}
+                                value={dishDietaryData} 
+                                onPassToHead={handleDishDietaryChange} 
+                            />
 
-                <AnimatePresence mode="wait">
-                    {step >= 0 && (
-                        <StepWrapper isActive={isActive(0)}>
-                            <DishInfo value={dishInfoData} onPassToHead={handleDishInfoChange} />
-                        </StepWrapper>
-                    )}
-                    {step >= 1 && (
-                        <StepWrapper isActive={isActive(1)}>
-                            <Ingredients 
-                                value={dishIngredientsData} 
-                                dish_name={dishInfoData.dish_name} 
-                                dish_description={dishInfoData.dish_description}
-                                onPassToHead={handleDishIngredientsChange} />
-                        </StepWrapper>
-                    )}
-                    {step >= 2 && (
-                        <StepWrapper isActive={isActive(2)}>
-                            <Steps value={dishStepsData} onPassToHead={handleDishStepsChange} />
-                        </StepWrapper>
-                    )}
-                    {step >= 3 && (
-                        <StepWrapper isActive bgClass="bg-gradient-to-b from-white to-black/90">
-                            <div className="flex flex-col gap-5">
-                                <Dietary 
-                                    value={dishDietaryData} 
-                                    onPassToHead={handleDishDietaryChange} 
-                                />
-
-                                <Nutrition 
-                                    nutritionResults={nutritionResults} 
-                                    onPassToHead={handleDishNutritionChange} 
-                                />
-                            </div>
-                        </StepWrapper>
-                    )}
-                    {step >= 4 && (
-                        <motion.div
-                            className="w-screen h-screen flex items-center justify-center bg-gradient-to-b from-black/90 to-black"
+                            <Nutrition 
+                                nutritionResults={nutritionResults} 
+                                onPassToHead={handleDishNutritionChange} 
+                            />
+                        </div>
+                    </StepWrapper>
+                )}
+                {step === 4 && (
+                    <motion.div
+                        className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black/90 to-black"
+                    >
+                        <svg
+                            onClick={sendToAPI}
+                            className="w-20 h-20 cursor-pointer text-white"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
                         >
-                            <svg
-                                onClick={sendToAPI}
-                                className="w-20 h-20 cursor-pointer text-white"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                            >
-                                <circle cx="12" cy="12" r="11" stroke="white" strokeWidth="0.5" fill="none" />
-                                <line x1="12" y1="7" x2="12" y2="17" stroke="white" strokeWidth="0.5" strokeLinecap="round" />
-                                <line x1="7" y1="12" x2="17" y2="12" stroke="white" strokeWidth="0.5" strokeLinecap="round" />
-                            </svg>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
-            </div>
+                            <circle cx="12" cy="12" r="11" stroke="white" strokeWidth="0.5" fill="none" />
+                            <line x1="12" y1="7" x2="12" y2="17" stroke="white" strokeWidth="0.5" strokeLinecap="round" />
+                            <line x1="7" y1="12" x2="17" y2="12" stroke="white" strokeWidth="0.5" strokeLinecap="round" />
+                        </svg>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
         </div>
+
     );
 }
 
 // Step wrapper with smooth slide animation
 const StepWrapper = ({ children, isActive, bgClass, height }) => (
     <motion.div
-        className={`w-screen 
+        className={`
                     ${bgClass}   
                     ${isActive ? "pointer-events-auto" : ""}`}
         variants={slideVariants}

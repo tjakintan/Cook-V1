@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import {
   handleConfirmForgotPassword as cognitoConfirmForgotPassword,
   handleResendConfirmationCode as resendConfirmUser,
@@ -127,10 +127,10 @@ export const SignIn = ({ email }) => {
       <>
           <div className="fixed inset-0 backdrop-blur-sm z-10"/>
   
-          <div className="fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
+          <div className=" fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
 
             <motion.div 
-              className={`w-full md:w-2/3 lg:w-2/3 flex flex-col items-center justify-center gap-5 p-5 text-black`}
+              className={`w-full md:w-2/3 lg:w-2/3 bg-red-300 flex flex-col items-center justify-center gap-5 p-5 text-black`}
               onClick={(e) => e.stopPropagation()}
             >
 
