@@ -121,15 +121,6 @@ const DishInfo = ({ value, onPassToHead }) => {
                 <motion.div 
                     ref={mainContainerRef}
                     className="absolute w-full flex flex-col justify-center" 
-                    drag="y" 
-                    dragConstraints={{ top: -sectionHeight * TOTAL_PAGES, bottom: -sectionHeight * TOTAL_PAGES }}
-                    onDragEnd={(e, info) => {
-                        if (info.offset.y < -5) {
-                            swipeUp();
-                        } else if (info.offset.y > 5) {
-                            swipeDown();
-                        } 
-                    }}
                     animate={{ y: -pageIndex * sectionHeight }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }} 
                 >

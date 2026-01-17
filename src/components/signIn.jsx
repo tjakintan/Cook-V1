@@ -47,7 +47,7 @@ export const SignIn = ({ email }) => {
                 const lambdaRes = await fetch("https://api.gomeal.org/auth/socialsignin", {
                     method: "POST",
                     credentials: "include",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "content-type": "application/json" },
                     body: JSON.stringify({
                         provider_sub: userInfo.sub,
                         email: userInfo.email,

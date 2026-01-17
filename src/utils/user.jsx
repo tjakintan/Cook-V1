@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
 
@@ -46,6 +46,10 @@ export function UserProvider({ children }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    refreshUser(); // ← THIS is what fixes reload
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser, refreshUser, loading }}>
