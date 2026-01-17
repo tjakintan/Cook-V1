@@ -31,8 +31,47 @@ export const SignIn = ({ email }) => {
       navigate("/");   
     };
 
-    const handleGoogleSignIn = () => {
-    };
+    const handleGoogleSignIn = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            console.log("🔥 GOOGLE LOGIN SUCCESS 🔥", tokenResponse);
+
+            try {
+                // Fetch Google user info
+                const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+                });
+                const userInfo = await res.json();
+                console.log("🔥 GOOGLE USER INFO 🔥", userInfo);
+
+                // Send to social login Lambda
+                const lambdaRes = await fetch("https://api.gomeal.org/auth/socialsignin", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        provider_sub: userInfo.sub,
+                        email: userInfo.email,
+                        provider: "google",
+                        first_name: userInfo.given_name,
+                        last_name: userInfo.family_name,
+                        profile_img_url: userInfo.picture
+                    }),
+                });
+
+                const data = await lambdaRes.json();
+                console.log("🔥 SOCIAL LOGIN RESPONSE 🔥", data);
+
+                if (data.status === "success") {
+                    await handleUserLogin(data.user);
+                } else if (data.status === "not_found") {
+                    setShowSignUp(true);
+                }
+            } catch (err) {
+                console.error("🔥 GOOGLE LOGIN ERROR 🔥", err);
+            }
+        },
+        onError: (err) => console.error("🔥 GOOGLE LOGIN HOOK ERROR 🔥", err),
+    });
 
     const handleTwitterSignIn = async (postId) => {}
 
