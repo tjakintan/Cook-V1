@@ -57,15 +57,16 @@ const DishInfo = ({ value, onPassToHead }) => {
         },
     };
     const PADDING = 40;
-    const sectionHeight = "100vh";
+    const sectionHeight = window.innerHeight; 
     const TOTAL_PAGES = 4;
     const controls = useAnimationControls();
 
 
     useEffect(() => {
-        if (containerRef.current) {
-            setContainerHeight(containerRef.current.clientHeight);
-        }
+        const handleResize = () => setContainerHeight(window.innerHeight);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({

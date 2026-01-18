@@ -174,21 +174,22 @@ export const SignUp = () => {
 
             <div className={`fixed inset-0 z-20`} onClick={() => navigate("/")}>
 
-                <motion.div className="pointer-events-auto flex h-full items-center justify-center pt-0 md:pt-10 lg:top-10">
+                <div className="flex h-screen items-center justify-center">
                     
-                    <form className={`w-11/12 md:w-2/3 lg:w-2/3 overflow-y-auto backdrop-blur-xs p-3 flex flex-col gap-3 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
+                    <div className={`max-w-80 outline-1 px-5 py-2 flex flex-col gap-1 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
                         
                         <div className="flex items-center justify-center">
-                                <div className="w-[100px] h-[50px] flex items-center justify-center overflow-hidden">
+                                <div className="flex items-center justify-center overflow-hidden">
                                     <AuthHeader />
                                 </div>
                             <h1 className="text-[25px] font-thin tracking-wider text-center">Lets get started</h1>
                         </div>
-                        
+
                         {/* SIGN UP pfp*/}
-                        <div className="flex items-center justify-center">
+                        <div className={`flex flex-col items-center mb-1`}>    
+
                             <motion.div 
-                                className="w-20 h-20 bg-white border-1 rounded-full flex items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
+                                className="w-15 h-15 border-1 rounded-full flex items-center justify-center cursor-pointer overflow-hidden" onClick={openFilePicker}
                                 animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                             >
                                 <input
@@ -218,56 +219,52 @@ export const SignUp = () => {
                                     </svg>
                                 )}
                             </motion.div>
-                        </div>
 
-                        {/* SIGN UP pfp text */}
-                        <span className={`mb-2 block text-[11px] font-light text-center tracking-widest`}>
-                            Choose a profile picture
-                        </span>
+                            <span className={`block text-[11px] font-light tracking-widest`}>
+                                Choose a profile picture
+                            </span>
 
-                        {/* SIGN UP first name & last name*/}
-                        <div className="flex flex-row gap-5">
-                            {/* SIGN UP first name*/}
-                            <motion.div 
-                                className="flex-1"
-                                animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                            >
-                                <input
-                                    id="user_first_name"
-                                    ref={payload_inputRefs.user_first_name}
-                                    name="user_first_name"
-                                    type="text"
-                                    placeholder="first name"
-                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                        </div>     
+
+                        {/* SIGN UP first name*/}
+                        <motion.div 
+                            className="flex-1"
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <input
+                                id="user_first_name"
+                                ref={payload_inputRefs.user_first_name}
+                                name="user_first_name"
+                                type="text"
+                                placeholder="first name"
+                                className="rounded-xl px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                        text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                        focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                            />
+                        </motion.div>
+
+                        {/* SIGN UP last name*/}
+                        <motion.div 
+                            className="flex-1"
+                            animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
+                        >
+                            <input
+                                id="user_last_name"
+                                ref={payload_inputRefs.user_last_name}
+                                name="user_last_name"
+                                placeholder="last name"
+                                className="rounded-xl px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                            text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
                                             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                                />
-                            </motion.div>
-
-                            {/* SIGN UP last name*/}
-                            <motion.div 
-                                className="flex-1"
-                                animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
-                            >
-                                <input
-                                    id="user_last_name"
-                                    ref={payload_inputRefs.user_last_name}
-                                    name="user_last_name"
-                                    placeholder="last name"
-                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
-                                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                                />
-                            </motion.div> 
-
-                        </div>
+                            />
+                        </motion.div> 
 
                         {/* SIGN UP dob */}
                         <motion.div 
-                            className="w-full flex flex-col justify-start"
+                            className="flex flex-col justify-start"
                             animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
-                            <div className="w-full flex items-center justify-start gap-2">
+                            <div className="flex items-center justify-start gap-2">
                                 {date_inputs.map((date_input, i) => (
                                     <React.Fragment key={date_input.id}>
                                     <input
@@ -279,7 +276,7 @@ export const SignUp = () => {
                                         pattern="[0-9]*"
                                         onChange={(e) => date_handleChange(e, i)}
                                         onKeyDown={(e) => date_handleKeyDown(e, i)}
-                                        className="w-12 h-8 flex items-center justify-center rounded-md bg-white text-center text-black 
+                                        className="w-12 h-8 flex items-center justify-center rounded-xl text-center text-black 
                                                     text-sm outline-1 outline-black focus:outline-2 focus:outline-indigo-500 cursor-text"
                                     />
                                     {/* Add / separators */}
@@ -291,7 +288,7 @@ export const SignUp = () => {
 
                         {/* SIGN UP email */}
                         <motion.div 
-                            className="w-full flex flex-col justify-start"
+                            className="flex flex-col justify-start"
                             animate={invalidEmail || emailInUse ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
                             <div className="mb-1">
@@ -301,7 +298,7 @@ export const SignUp = () => {
                                     name="user_email"
                                     type="email"
                                     placeholder="email"
-                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
+                                    className="w-3/5 rounded-xl px-3 py-1.5 text-base text-sm placeholder:text-xs
                                             text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
                                             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
                                 />
@@ -310,7 +307,7 @@ export const SignUp = () => {
 
                         {/* SIGN UP confirm email */}
                         <motion.div 
-                            className="w-full flex flex-col justify-start"
+                            className="flex flex-col justify-start"
                             animate={invalidEmail || emailNotMatch || emailInUse ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
                             <div className="mb-1">
@@ -320,7 +317,7 @@ export const SignUp = () => {
                                     name="user_email"
                                     type="email"
                                     placeholder="confirm email"
-                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
+                                    className="w-4/5 rounded-xl px-3 py-1.5 text-base text-sm placeholder:text-xs
                                             text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
                                             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
                                 />
@@ -332,7 +329,7 @@ export const SignUp = () => {
 
                         {/* SIGN Up username */}
                         <motion.div 
-                            className={`w-2/3 flex flex-col justify-start`}
+                            className={`flex flex-col justify-start`}
                             animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
                             <div className="mb-1">
@@ -342,7 +339,7 @@ export const SignUp = () => {
                                     name="user_email"
                                     type="text"
                                     placeholder="choose user name"
-                                    className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs
+                                    className="rounded-xl px-3 py-1.5 text-base text-sm placeholder:text-xs
                                             text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
                                             focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
                                 />
@@ -351,10 +348,10 @@ export const SignUp = () => {
 
                         {/* SIGN UP Password */}
                         <motion.div 
-                            className={`w-full h-full flex flex-col justify-between`}
+                            className={`flex flex-col justify-between`}
                             animate={shake ? { x: [-10, 10, -6, 6, -3, 3, 0] } : {}}
                         >
-                            <div className="flex gap-2 w-full h-full">
+                            <div className="flex gap-2">
                                 {[0, 1, 2, 3, 4, 5].map((i) => (
                                         <input
                                             key={i}
@@ -368,37 +365,58 @@ export const SignUp = () => {
                                             onTouchStart={(e) => {
                                                 e.target.focus();
                                             }} 
-                                        className="w-10 h-10 flex items-center justify-center rounded-md bg-white
-                                                    text-center text-black text-md font-thin outline-1
-                                                    focus:outline-2 focus:outline-indigo-500 cursor-text"
-                                        tabIndex={0} 
-                                        />
+                                            placeholder="0"
+                                            className="w-8 h-8 flex items-center justify-center rounded-xl
+                                                        text-center text-black text-md font-thin outline-1 placeholder:opacity-20
+                                                        focus:outline-2 focus:outline-indigo-500 cursor-text"
+                                            tabIndex={0} 
+                                            />
                                 ))}
                             </div>
                             <span htmlFor="email" className={`block mt-2 text-[11px] font-light  tracking-widest`}>
-                                Choose a 6 digit password
+                                Choose a 6 digit numeric password
                             </span>
                         </motion.div>
 
                         {/* SIGN UP button */}
                         <motion.div
-                            whileHover={{ scale: 1.03 }} 
+                            whileHover={{ scale: 1.02 }} 
                             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                            className="w-2/3 flex flex-col justify-center rounded-[30px] px-5 py-3 text-sm font-light tracking-widest
-                                        cursor-pointer bg-white outline-1 rounded-l-none"
+                            className="shadow-xl bg-cyan-500 flex rounded-[30px] p-3 text-sm font-light tracking-widest
+                                        cursor-pointer outline-1 rounded-l-none"
                             onClick={handleSignUp}
                         >
                             sign Up
                         </motion.div>  
 
-                        {/* SIGN UP text */}
+                        {/* SIGN IN button */}
+                        <motion.div
+                            className={`p-1 cursor-pointer flex items-end border-r-1 border-b-1 border-black rounded-r-[30px]
+                                        cursor-pointer tracking-widest font-extralight 
+                                        overflow-hidden `}
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.90 }}
+                        >
+                            <h1 className="w-2/3 mt-2 py-2 px-3 flex items-end justify-start pb-1 text-[11px] bg-transparent">
+                                A goMeal user ?
+                            </h1>
+                            <div 
+                                className="w-1/2 py-2 px-3 text-sm flex items-center border-l-1 border-black justify-start px-2"
+                                onClick={() => navigate("/auth?mode=signin")}
+                            >
+                                sign in
+                            </div>
+                        </motion.div>
+
+                        {/* SIGN UP privacy text */}
                         <span className={`text-[9px] font-thin tracking-widest mt-1`}>
-                            Sign up with your email to use GoMeal. We respect your privacy and use your email only for account management.
+                            We respect your privacy and use your information for account management.
+                            Before continuing, review our <span className="font-bold text-black underline cursor-pointer">Privacy policy</span> .
                         </span>   
 
-                    </form>
+                    </div>
 
-                </motion.div>
+                </div>
 
             </div> 
 

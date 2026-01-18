@@ -40,40 +40,10 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="w-screen h-[3000px] md:h-screen lg:h-screen flex items-center justify-center p-5">
-                <div className="w-full h-full flex flex-col md:flex-row lg:flex-row p-5 gap-5">
-
-                    <div className="w-full md:w-1/2 lg:w-1/2 h-full rounded-[30px] bg-gray-100 flex flex-col p-1 md:p-5 lg:p-5 gap-5">
-                        <div className="w-full h-2/3">
-
-                        </div>
-                        <motion.div 
-                            className="h-1/2 md:h-1/3 lg:h-1/3 w-full rounded-[30px] bg-orange-500 shadow-xl cursor-pointer"
-                            whileHover={{ scale: 1.05 }} 
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-
-                        </motion.div>
-                    </div>
-
-                    <div className="w-full md:w-1/2 lg:w-1/2  h-full flex flex-col p-1 md:p-5 lg:p-5 justify-center space-y-5 md:space-y-10 lg:space-y-10">
-                        <motion.div 
-                            className="h-1/2 md:h-1/3 lg:h-1/3 w-full rounded-[30px] bg-green-500 shadow-xl cursor-pointer"
-                            whileHover={{ scale: 1.05 }} 
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-
-                        </motion.div>
-                        <motion.div 
-                            className="h-1/2 md:h-1/3 lg:h-1/3 w-full rounded-[30px] bg-purple-500 shadow-xl cursor-pointer"
-                            whileHover={{ scale: 1.05 }} 
-                            transition={{ type: "spring", stiffness: 300, damping: 20 }}>
-
-                        </motion.div>
-                    </div>
-
-                </div>
+            <div className="w-screen h-[3000px] md:h-screen bg-red-500 flex items-center justify-center p-5">
             </div>
 
-            <div className="w-screen h-screen flex items-center justify-start p-5">
+            <div className="w-screen h-screen flex bg-cyan-500 items-center justify-start p-5">
 
                 <div className="w-full md:w-4/5 lg:w-4/5 h-4/5 overflow-hidden">
 
