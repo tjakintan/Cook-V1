@@ -57,7 +57,7 @@ const DishInfo = ({ value, onPassToHead }) => {
         },
     };
     const PADDING = 40;
-    const sectionHeight = "75vh";
+    const sectionHeight = "100vh";
     const TOTAL_PAGES = 4;
     const controls = useAnimationControls();
 
