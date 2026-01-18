@@ -5,7 +5,7 @@ export function getUserSub(user) {
 }
 
 export function useSignOut() {
-  const { setUser } = useUser(); 
+  const { setUser, setHasAttemptedAuth } = useUser(); 
 
   const signout = async () => {
     try {
@@ -17,6 +17,7 @@ export function useSignOut() {
         }
       );
       setUser(null);
+      setHasAttemptedAuth(false);
     } catch (err) {
       console.error(err);
     }

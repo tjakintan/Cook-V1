@@ -5,6 +5,7 @@ const UserContext = createContext();
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
 
   // Only call this after sign-in
   const refreshUser = async () => {
@@ -48,11 +49,11 @@ export function UserProvider({ children }) {
   };
 
   useEffect(() => {
-    refreshUser(); // ← THIS is what fixes reload
-  }, []);
+    if (hasAttemptedAuth) refreshUser();
+  }, [hasAttemptedAuth]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, refreshUser, loading }}>
+    <UserContext.Provider value={{ user, setUser, refreshUser, loading, setHasAttemptedAuth }}>
       {children}
     </UserContext.Provider>
   );

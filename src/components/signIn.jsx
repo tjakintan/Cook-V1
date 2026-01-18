@@ -14,7 +14,7 @@ const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 export const SignIn = ({ email }) => {
 
     const [emailValue, setEmailValue] = useState(email || "");
-    const { setUser, refreshUser } = useUser();
+    const { setUser, setHasAttemptedAuth } = useUser();
     const navigate = useNavigate();
     const payload_inputRefs = {
         signIn_user_email: useRef({})
@@ -27,7 +27,7 @@ export const SignIn = ({ email }) => {
 
     const handleUserLogin = async (user) => {
       setUser(user);
-      await refreshUser();
+      setHasAttemptedAuth(true);
       navigate("/");   
     };
 
@@ -164,8 +164,9 @@ export const SignIn = ({ email }) => {
 
   return (
       <>
+
           <div className="fixed inset-0 backdrop-blur-sm z-10"/>
-  
+
           <div className=" fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
 
             <motion.div 
@@ -314,6 +315,7 @@ export const SignIn = ({ email }) => {
             </motion.div>
 
           </div>
+
       </>
 
   )
