@@ -167,7 +167,7 @@ export const SignIn = ({ email }) => {
 
           <div className="fixed inset-0 backdrop-blur-sm z-10"/>
 
-          <div className=" fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
+          <div className="fixed inset-0 z-20 flex items-center justify-center p-2 pointer-events-auto" onClick={() => navigate("/")}>
 
             <motion.div 
               className={`outline-1 md:min-w-100 flex flex-col gap-5 p-5 text-black`}

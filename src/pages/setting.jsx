@@ -190,9 +190,9 @@ const UpdateAccount = ({payload = {}, passToHeadUpdate }) => {
     const handleUpdateAccount = async () => {
         setIsLoading(true);
 
-        const first_name = upload_inputRefs.user_first_name.current?.value || user.first_name;
-        const last_name = upload_inputRefs.user_last_name.current?.value || user.last_name;
-        const profile_name = upload_inputRefs.user_name.current?.value || user.profile_name;
+        const first_name = upload_inputRefs.user_first_name.current?.value || user?.first_name;
+        const last_name = upload_inputRefs.user_last_name.current?.value || user?.last_name;
+        const profile_name = upload_inputRefs.user_name.current?.value || user?.profile_name;
         const profile_img_base64 = profile_img.current || null;
 
         // Build payload
@@ -213,15 +213,21 @@ const UpdateAccount = ({payload = {}, passToHeadUpdate }) => {
         <>
         
             {/* Update Account Section */}
-            <div className={`w-full md:w-2/3 lg:w-2/3 h-full flex flex-col justify-center items-center p-10 gap-5 bg-white rounded-[30px]`}>
+            <div className={`overflow-hidden max-w-90 md:min-w-100 h-full flex flex-col justify-center space-y-5 p-3 text-black`}>
 
                 {/* EDIT profile image */}                         
-                <div className="w-full h-[30%] flex flex-col justify-center items-center">
-                    <img
-                        src={previewUrl}
-                        className="w-25 h-25 rounded-full object-cover overflow-hidden outline-1 cursor-pointer"
-                        onClick={openFilePicker}
-                    />
+                <motion.div 
+                    whileHover={{ scale: 1.01 }} 
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    onClick={openFilePicker} 
+                    className={`${previewUrl ? "" : "cursor-pointer bg-purple-500"} w-full h-[100px] rounded-lg shadow-lg l flex flex-col`}
+                >
+                    {previewUrl && (
+                        <img
+                            src={previewUrl}
+                            className="w-25 h-25 rounded-full object-cover overflow-hidden outline-1 cursor-pointer"
+                        />
+                    )}
                     <input
                         type="file"
                         accept="image/*"
@@ -229,98 +235,93 @@ const UpdateAccount = ({payload = {}, passToHeadUpdate }) => {
                         className="hidden"
                         onChange={handleImageSelect}
                     />
-                    <span htmlFor="email" className={`mt-1 block text-[12px] font-light text-black text-center tracking-widest`}>
-                        Choose a new profile picture
-                    </span>
-                </div>
+                </motion.div>
+                <span htmlFor="email" className={`mt-1 block text-[12px] font-light text-black text-center tracking-widest`}>
+                    click the purple box to choose a new pfp
+                </span>
 
-                <div className="w-full border-t border-gray-300"></div>
-                
-                <div className="w-full h-full flex flex-col justify-center items-center bg-white gap-5 rounded-[30px]">
-                            
-                    <span className={`block text-[15px] font-light text-black text-center tracking-widest`}>
-                        {user.email}
-                    </span>
+                {/* Show email */}
+                <span className={`block text-[15px] font-light text-black text-center tracking-widest`}>
+                    {user?.email || ""}
+                </span>
 
-                    {/* EDIT first name*/}
-                    <motion.div 
-                            className="w-full"
-                    >
-                        <input
-                            id="user_first_name"
-                            name="user_first_name"
-                            type="text"
-                            ref={upload_inputRefs.user_first_name}
-                            placeholder={user.first_name || "first name"}
-                            className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                    text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
-                                    focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                        />
-                    </motion.div>
+                {/* Show dob */}
+                <div className="flex flex-col justify-start">
+                    <div className="w-full flex font-thin gap-2 justify-center tracking-widest">
+                        {(() => {
+                        if (!user?.dob) return "-- / -- / ----";
 
-                    {/* EDIT last name*/}
-                    <motion.div 
-                        className="w-full"
-                    >
-                        <input
-                            id="user_last_name"
-                            name="user_last_name"
-                            type="text"
-                            ref={upload_inputRefs.user_last_name}
-                            placeholder={user.last_name || "last name"}
-                            className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                        text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
-                                        focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                        />
-                    </motion.div> 
+                        const dobDate = new Date(user.dob);
 
-                    {/* Show dob */}
-                    <div className="w-full flex flex-col justify-start">
-                        <div className="w-full flex items-center justify-center font-thin gap-2 tracking-widest">
-                            {(() => {
-                            if (!user?.dob) return "-- / -- / ----";
+                        const formattedDob = [
+                            String(dobDate.getMonth() + 1).padStart(2, "0"),
+                            String(dobDate.getDate()).padStart(2, "0"),
+                            String(dobDate.getFullYear())
+                        ].join(" / ");
 
-                            const dobDate = new Date(user.dob);
-
-                            const formattedDob = [
-                                String(dobDate.getMonth() + 1).padStart(2, "0"),
-                                String(dobDate.getDate()).padStart(2, "0"),
-                                String(dobDate.getFullYear())
-                            ].join(" / ");
-
-                            return formattedDob;
-                            })()}
-                        </div>
+                        return formattedDob;
+                        })()}
                     </div>
-
-                    {/* EDIT user_name*/}
-                    <motion.div 
-                        className="w-1/2"
-                    >
-                        <input
-                            id="user_last_name"
-                            name="user_last_name"
-                            type="text"
-                            ref={upload_inputRefs.user_name}
-                            placeholder={user.profile_name || "user name"}
-                            className="w-full rounded-md bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
-                                        text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
-                                        focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                        />
-                    </motion.div> 
-
                 </div>
+
+                {/* EDIT first name*/}
+                <motion.div 
+                        className="flex"
+                >
+                    <input
+                        id="user_first_name"
+                        name="user_first_name"
+                        type="text"
+                        ref={upload_inputRefs.user_first_name}
+                        placeholder={user?.first_name || "first name"}
+                        className="w-full rounded-xl bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic 
+                                focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                    />
+                </motion.div>
+
+                {/* EDIT last name*/}
+                <motion.div 
+                    className="flex"
+                >
+                    <input
+                        id="user_last_name"
+                        name="user_last_name"
+                        type="text"
+                        ref={upload_inputRefs.user_last_name}
+                        placeholder={user?.last_name || "last name"}
+                        className="w-full rounded-xl bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                    text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
+                                    focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                    />
+                </motion.div> 
+
+                {/* EDIT user_name*/}
+                <motion.div 
+                    className="flex"
+                >
+                    <input
+                        id="user_last_name"
+                        name="user_last_name"
+                        type="text"
+                        ref={upload_inputRefs.user_name}
+                        placeholder={user?.profile_name || "user name"}
+                        className="w-full rounded-xl bg-white px-3 py-1.5 text-base text-sm placeholder:text-xs 
+                                    text-black outline-1 -outline-offset-1 outline-black placeholder:text-gray-400 placeholder:italic
+                                    focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                    />
+                </motion.div> 
 
                 <motion.div 
-                    whileHover={{ scale: 1.05 }} 
+                    whileHover={{ scale: 1.01 }} 
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className={`w-full h-[50px] flex justify-start items-center space-x-1 cursor-pointer 
-                                text-md rounded-[30px] rounded-l-none text-white font-light tracking-widest px-3 py-3
-                                ${isLoading ? "" : "bg-black"}`}
+                    className={`flex items-center space-x-1 cursor-pointer 
+                                text-md rounded-[30px] rounded-l-none text-white font-light tracking-widest px-2 py-1.5
+                                ${isLoading ? "justify-center" : "justify-start outline-1 outline-black bg-cyan-500"}`}
                     onClick={() => {if (!isLoading) handleUpdateAccount();}}
                 >            
                     {isLoading ? (
-                        <div className="h-full w-full flex justify-center items-center">
+                        <div className="flex justify-center items-center">
                             <svg width="24" height="24" viewBox="0 0 24 24">
                                 <circle cx="12" cy="2" r="0" fill="#000">
                                 <animate attributeName="r" begin="0s" dur="1s" repeatCount="indefinite" values="0;2;0;0" />
@@ -341,11 +342,12 @@ const UpdateAccount = ({payload = {}, passToHeadUpdate }) => {
                     )}                                      
                 </motion.div>
 
-                <span className={`text-[10px] font-thin text-center text-black tracking-widest`}>
+                <span className={`text-[9px] font-thin text-black tracking-widest max-w-80`}>
                     Changes will be fully reflected after restarting the application.
                 </span> 
 
             </div>
+            
         </>
     );
 }
@@ -442,86 +444,164 @@ export default function Settings({isOpen, toggleOpen }) {
         }
     };
 
+    useEffect(() => {
+        if (!isOpen) {
+            setShowAccountUpdateSection(false);
+            setShowDeleteConfirm(false);
+        }
+    }, [isOpen]);
+
     return (
         <div className={`flex flex-col items-center justify-between`}>
 
-            <div className={`w-full px-3 pt-0 flex items-center ${isOpen ? "h-[75vh] max-w-full md:max-w-2/3" : "hidden"}`}>
-                <div className="w-full h-full flex flex-col p-3 gap-5 justify-between bg-gray-200 rounded-[30px] rounded-t-none">
+            <div className={`w-full pt-0 flex items-center 
+                            ${isOpen ? "h-[60vh] max-w-full md:max-w-2/3" : "hidden"}
+                            ${showAccountUpdateSection ? "h-[75vh] max-w-full md:max-w-2/3" : ""}`}>
+                
+                <div className={`w-full h-full flex flex-col p-3 gap-5 justify-between ${showAccountUpdateSection ? "hidden" : ""}`}>
+
                     <div className="w-full flex flex-col gap-6 h-2/5 bg-red-300 px-10">
-                        <div className="w-full h-1/2 bg-purple-300 rounded-[30px]">
-
-                        </div>
-                        <div className="w-full h-1/2 bg-cyan-300 rounded-[30px]">
-
-                        </div>
-                    </div>
-                    <div className="w-full h-3/5 rounded-[30px] bg-orange-300">
-
-                        <div className={`w-full h-full flex flex-row justify-center items-center`}>
-
-                            <motion.button
-                                className="relative w-full h-full rounded-[10px] cursor-pointer "
-                                animate={{ rotateY: showDeleteConfirm ? 180 : 0 }}
-                                transition={{ duration: 0.4 }}
-                                style={{ transformStyle: "preserve-3d" }}
-                                onClick={() => setShowDeleteConfirm(true)}
-                            >
-
-                                {/* Front (Delete) */}
-                                <div
-                                    className="absolute inset-0 flex items-center justify-center bg-red-500 rounded-[30px]"
-                                    style={{ backfaceVisibility: "hidden" }}
-                                >
-                                    <span className="text-md font-light tracking-widest">Delete</span>
-                                </div>
-
-                                {/* Back (Confirm delete) */}
-                                <div
-                                    className="absolute w-full h-full inset-0 flex items-center justify-center bg-red-500 rounded-[30px]"
-                                    style={{
-                                    transform: "rotateY(180deg)",
-                                    backfaceVisibility: "hidden"
-                                    }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        //setShowAccountSection(false);
-                                        setShowDeleteConfirm(false);
-                                        handleDeleteAccount();
-                                    }}
-                                >
-                                </div>
-
-                            </motion.button>
-
-                            <motion.div 
-                                whileHover={{ scale: 1.05 }} 
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                className={`${showAccountUpdateSection ? "w-1/3" : "w-full"} h-full rounded-[30px] flex flex-row justify-center items-center space-x-1 bg-green-500 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
-                                onClick={() => {
-                                    setShowAccountUpdateSection(true);
-                                    setPreviewUrl(user.profile_img_url);}}
-                            >
-                                <span className="text-md font-light text-center tracking-widest">Update</span>
-                            </motion.div>
-
-
-                            <motion.div 
-                                whileHover={{ scale: 1.05 }} 
-                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                                className={`w-full h-full rounded-[30px] flex flex-row justify-center items-center space-x-1 bg-yellow-300 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
-                                onClick={handleSignOut}
-                            >
-                                <span className="text-md font-light text-center tracking-widest">signout</span>
-                            </motion.div>
-
-                            <span className={`font-thin text-[9px] tracking-widest text-center ${showDeleteConfirm ? "" : "hidden"}`}>
-                                Please note that upon <span className="text-[9px] font-bold">Tapping the red circle</span>, all your data will be <span className="text-[10px] font-bold">deleted</span> and retained for 30 days in accordance with our policy. Review our <span className="underline">terms & conditions</span>, for more.
-                            </span>
-
-                        </div>
 
                     </div>
+
+                    {/* user specified actions */}
+                    {!user && (
+                        <>
+                            <div className={`w-full h-3/5 rounded-[30px] bg-gray-100 p-5`}>
+
+                                <div className={`w-full h-full flex flex-col justify-center items-start gap-3`}>
+
+                                    {/* Delete */}
+                                    <motion.div
+                                        className="relative w-full h-full"
+                                        animate={{ rotateY: showDeleteConfirm ? 180 : 0 }}
+                                        transition={{ duration: 0.4 }}
+                                        style={{ transformStyle: "preserve-3d" }}
+                                    >
+
+                                        {/* Front (Delete) */}
+                                        <div
+                                            className="absolute inset-0 flex items-end justify-start"
+                                            style={{ backfaceVisibility: "hidden" }}
+                                        >
+                                            <motion.div
+                                                whileHover={{ scale: 1.01 }} 
+                                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                                className="cursor-pointer w-1/3 py-5 bg-red-500 justify-center rounded-[60px] rounded-l-none flex text-md font-light tracking-widest"
+                                                onClick={() => setShowDeleteConfirm(true)}
+                                            >
+                                                Delete
+                                            </motion.div>
+                                        </div>
+
+                                        {/* Back (Confirm delete) */}
+                                        <div
+                                            className="absolute w-full h-full inset-0 flex items-center justify-center bg-red-500 rounded-[30px]"
+                                            style={{
+                                            transform: "rotateY(180deg)",
+                                            backfaceVisibility: "hidden"
+                                            }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                //setShowAccountSection(false);
+                                                setShowDeleteConfirm(false);
+                                                handleDeleteAccount();
+                                            }}
+                                        >
+                                        </div>
+
+                                    </motion.div>
+
+                                    {/* update account */}
+                                    <motion.div 
+                                        animate={{
+                                            width: ["55%", "70%", "55%"]
+                                        }}
+                                        whileHover={{ scale: 1.01 }}
+                                        transition={{
+                                            width: {
+                                            duration: 6,
+                                            repeat: Infinity,
+                                            ease: "easeInOut",
+                                            },
+                                            scale: {
+                                            type: "spring",
+                                            stiffness: 300,
+                                            damping: 20,
+                                            },
+                                        }}
+                                        className={`py-5 flex rounded-[60px] rounded-l-none flex flex-row justify-center items-center space-x-1 bg-green-500 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
+                                        onClick={() => {
+                                            setShowAccountUpdateSection(true);
+                                            setPreviewUrl(user?.profile_img_url || null);
+                                        }}
+                                    >
+                                        <span className="text-md font-light text-center tracking-widest">update</span>
+                                    </motion.div>
+
+                                    {/* sign out */}
+                                    <motion.div 
+                                        animate={{
+                                            width: ["35%", "50%", "35%"],
+                                        }}
+                                        whileHover={{ scale: 1.01 }}
+                                        transition={{
+                                            width: {
+                                            duration: 6,
+                                            repeat: Infinity,
+                                            ease: "easeInOut",
+                                            },
+                                            scale: {
+                                            type: "spring",
+                                            stiffness: 300,
+                                            damping: 20,
+                                            },
+                                        }}
+                                        className={`py-5 rounded-[60px] rounded-l-none flex flex-row justify-center items-center space-x-1 bg-yellow-300 cursor-pointer ${showDeleteConfirm ? "hidden" : ""}`}
+                                        onClick={handleSignOut}
+                                    >
+                                        <span className="text-md font-light text-center tracking-widest">signout</span>
+                                    </motion.div>
+
+                                    <span className={`font-thin text-[9px] tracking-widest text-center ${showDeleteConfirm ? "" : "hidden"}`}>
+                                        Please note that upon <span className="text-[9px] font-bold">Tapping the red circle</span>, all your data will be <span className="text-[10px] font-bold">deleted</span> and retained for 30 days in accordance with our policy. Review our <span className="underline">terms & conditions</span>, for more.
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        </>
+                    )}
+
                 </div>
+
+                {showAccountUpdateSection && (
+                    <>
+                        <div
+                            className="w-full h-full py-3 gap-5 flex flex-col justify-center items-center"
+                        >
+                            <motion.div
+                                animate={{y: [3,-3]}}
+                                transition={{ duration: 1, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
+                                onClick={() => setShowAccountUpdateSection(false)}
+                                className="cursor-pointer flex flex-col justify-center items-center"
+                            >           
+                                <svg className="w-6 h-6 rotate-180 " viewBox="0 0 24 24">
+                                    <g id="evaArrowIosDownwardFill0">
+                                        <g id="evaArrowIosDownwardFill1">
+                                            <path id="evaArrowIosDownwardFill2" fill="#5a5a5a" d="M12 16a1 1 0 0 1-.64-.23l-6-5a1 1 0 1 1 1.28-1.54L12 13.71l5.36-4.32a1 1 0 0 1 1.41.15a1 1 0 0 1-.14 1.46l-6 4.83A1 1 0 0 1 12 16Z"/>
+                                        </g>
+                                    </g>
+                                </svg>     
+                                <span className="tracking-widest text-sm font-thin">settings</span>
+                            </motion.div>
+                            <div className="flex">
+                                <UpdateAccount />
+                            </div>
+                        </div>
+                    </>
+                )}
+
             </div>
 
             <SettingsFooter passToHeadClick={toggleOpen}/>

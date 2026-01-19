@@ -47,16 +47,24 @@ function AppLayout() {
           animate={controls}
           initial={{ y: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className={`flex flex-col h-screen overflow-auto scrollbar-hide`}
+          className={` flex flex-col h-screen overflow-auto scrollbar-hide`}
         >
           <motion.div
             initial={{ height: 0 }}
             transition={{ duration: 0.1, ease: "easeInOut" }}
             className="z-50"
           >
-            <Settings isOpen={showSettings} toggleOpen={handleSettingsToggle}/>
+            <div className="relative">
+              {showSettings && (
+                <div className="fixed inset-0 z-30 backdrop-blur-lg bg-white/10" onClick={() => setShowSettings(false)}/>
+              )}
+
+              <motion.div className="relative z-50">
+                <Settings isOpen={showSettings} toggleOpen={handleSettingsToggle}/>
+              </motion.div>
+            </div>
           </motion.div>
-          <div className=''>
+          <div className={``}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/feed" element={<Feed />} />

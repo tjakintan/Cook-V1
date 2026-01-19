@@ -60,7 +60,7 @@ export default function Navbar({ showSignInUpPromptPage }) {
   return (
     <>
 
-      <div ref={containerRef} className={`z-50 fixed bottom-5 md:top-3 lg:top-3 md:bottom-auto left-1/2 -translate-x-1/2 flex py-3 gap-5 bg-white/30 backdrop-blur-lg
+      <div ref={containerRef} className={`z-60 fixed bottom-5 md:top-3 lg:top-3 md:bottom-auto left-1/2 -translate-x-1/2 flex py-3 gap-5 bg-white/30 backdrop-blur-lg
                 rounded-[30px] shadow-md overflow-hidden ${user ? "pointer-events-auto opacity-100" : "opacity-50 pointer-event-none"}`}>
 
           {user && positions[displayIndex]?.width > 0 && (
