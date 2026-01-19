@@ -174,9 +174,9 @@ export const SignUp = () => {
 
             <div className={`fixed inset-0 z-20`} onClick={() => navigate("/")}>
 
-                <div className="flex h-[100vh] items-center p-5 justify-center">
+                <div className="flex h-screen items-center p-5 items-start justify-center overflow-y-auto scrollbar-hide">
                     
-                    <div className={`max-w-80 outline-1 px-5 py-1 flex flex-col gap-1 scrollbar-hide cursor-pointer`} onClick={(e) => e.stopPropagation()}>
+                    <div className={`max-w-80 outline-1 px-5 py-1 flex flex-col gap-1 cursor-pointer`} onClick={(e) => e.stopPropagation()}>
                         
                         <div className="flex items-center justify-center">
                                 <div className="flex items-center justify-center overflow-hidden">
