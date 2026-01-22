@@ -52,11 +52,11 @@ function AppLayout() {
           <motion.div
             initial={{ height: 0 }}
             transition={{ duration: 0.1, ease: "easeInOut" }}
-            className="z-60 md:z-50"
+            className="z-60"
           >
             <div className="relative">
               {showSettings && (
-                <div className="fixed inset-0 z-10 backdrop-blur-lg bg-white/10" onClick={() => setShowSettings(false)}/>
+                <div className="fixed inset-0 z-10" onClick={() => setShowSettings(false)}/>
               )}
 
               <motion.div className="relative z-20">

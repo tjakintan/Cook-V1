@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import "../styles/component_style.css";
 
-export default function Placeholder() { 
+export default function Placeholder({dishSelectedImage}) { 
     const controls = useAnimationControls();
 
     useEffect(() => {

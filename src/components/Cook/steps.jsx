@@ -211,7 +211,7 @@ const Steps = ({ onBack, value, onPassToHead }) => {
     const [dish_steps, setDish_steps] = useState(
         Array.isArray(value?.dish_steps) && value.dish_steps.length > 0
             ? value.dish_steps.map(step => ({ ...step, id: crypto.randomUUID() }))
-            : [{ step_number: 1, description: "", timer: null, image_url: "", tips: "", id: crypto.randomUUID() }]
+            : [{ step_number: 1, description: "", timer: null, image_url: "", upload_url:"", tips: "", id: crypto.randomUUID() }]
     );
     const [shake, setShake] = useState(dish_steps.map(() => false));
     const [showTimer, setShowTimer] = useState(dish_steps.map(() => false));
@@ -356,12 +356,12 @@ const Steps = ({ onBack, value, onPassToHead }) => {
                 <WobblyText text="steps"/>
             </h1>
 
-            <div className="flex flex-col max-h-[1000px] overflow-y-auto justify-end scrollbar-hide">
+            <div className="flex flex-col max-h-[1000px] overflow-y-auto justify-end scrollbar-hide bg-gray-100 rounded-[30px]">
                 {dish_steps.map((step, idx) => (
                     
                     <motion.div 
                         key={step.id} 
-                        className={`${showBoxOption[idx] ? "" : ""} flex flex-col p-2`}
+                        className={`${showBoxOption[idx] ? "" : ""} flex flex-col p-1`}
                         initial={false}
                         style={{ transformOrigin: "top" }} 
                         animate={{
@@ -382,21 +382,27 @@ const Steps = ({ onBack, value, onPassToHead }) => {
                             </div>
 
                             {step.timer && (step.timer.hours || step.timer.minutes || step.timer.seconds) && (
-                                <div className="w-full h-full flex items-center justify-between gap-2 mb-2">
-                                    <div className="py-1 px-4 rounded-[20px] font-thin tracking-widest">
-                                        {formatTimer(step.timer)}
-                                    </div>
+                                <div className="w-full h-full flex items-center justify-start space-x-5 gap-2 mb-2">
                                     <div className="flex cursor-pointer" onClick={() => {updateStep(idx, "timer", null)}}>
                                         <svg className="w-6 h-6" viewBox="0 0 24 24">
                                             <line x1="4" y1="4" x2="20" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
                                             <line x1="20" y1="4" x2="4" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
                                         </svg>
                                     </div>
+                                    <div className="py-1 px-4 rounded-[20px] font-thin tracking-widest">
+                                        {formatTimer(step.timer)}
+                                    </div>
                                 </div>
                             )}
 
                             {step.tools && step.tools.length > 0 && (
-                                <div className="flex items-center justify-between gap-2 mb-2">
+                                <div className="flex items-center justify-start space-x-5 gap-2 mb-2">
+                                    <div className="flex cursor-pointer" onClick={() => {updateStep(idx, "tools", [])}}>
+                                        <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                            <line x1="4" y1="4" x2="20" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
+                                            <line x1="20" y1="4" x2="4" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
+                                        </svg>
+                                    </div>
                                     <div className="flex gap-2 max-w-60 md:max-w-150 overflow-x-auto scrollbar-hide">
                                         {step.tools.map((tool, i) => (
                                             <span
@@ -406,12 +412,6 @@ const Steps = ({ onBack, value, onPassToHead }) => {
                                                 {tool}
                                             </span>
                                         ))}
-                                    </div>
-                                    <div className="flex cursor-pointer" onClick={() => {updateStep(idx, "tools", [])}}>
-                                        <svg className="w-6 h-6" viewBox="0 0 24 24">
-                                            <line x1="4" y1="4" x2="20" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
-                                            <line x1="20" y1="4" x2="4" y2="20" stroke="black" strokeWidth="1" strokeLinecap="round"/>
-                                        </svg>
                                     </div>
                                 </div>
                             )}
@@ -425,7 +425,7 @@ const Steps = ({ onBack, value, onPassToHead }) => {
                                     boxOptionsRef.current[idx] = el || undefined;  
                                 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className={`flex`}
+                                className={`w-full flex`}
                             >
                                 <div className={`${showTimer[idx] ? "hidden" : ""} flex flex-col p-1`}>
 
@@ -499,16 +499,16 @@ const Steps = ({ onBack, value, onPassToHead }) => {
                                 </div>
 
                                 <div                                     
-                                    className={`flex flex-col items-center md:items-start 
+                                    className={`flex flex-col items-center 
                                                 justify-center rounded-[30px] overflow-hidden space-y-2 px-3 py-2
                                                 ${showTimer[idx] ? "" : "hidden"}`}
                                 >
                                     <div 
-                                        className={`flex flex-col md:flex-row gap-5`}
+                                        className={`flex flex-col gap-5 `}
                                         onClick={() => {setShowTimer(prev => prev.map((val, i) => (i === idx ? !val : val)));}}
                                     >
                                         <div 
-                                            className="flex flex-col md:flex-row gap-1 md:gap-5 items-center justify-center"
+                                            className="flex flex-row gap-1 md:gap-5 justify-center "
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <CircleSlider size={150} color="red" value={hours} max={24} onChange={setHours} label="hours"/>

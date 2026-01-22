@@ -3,11 +3,9 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useUser } from "../utils/user";
 import "../styles/component_style.css";
-import Profile from "./profile";
 
-export default function Navbar({ showSignInUpPromptPage }) {
+export default function Navbar() {
 
-  //map showSIgnupinppage to s;
   const location = useLocation();
   const { user } = useUser();
   const [ showSignInUpPage, setShowSignInUpPage ] = useState(false);
@@ -60,50 +58,7 @@ export default function Navbar({ showSignInUpPromptPage }) {
   return (
     <>
 
-      <div ref={containerRef} className={`z-60 fixed bottom-5 md:top-3 lg:top-3 md:bottom-auto left-1/2 -translate-x-1/2 flex py-3 gap-5 bg-white/30 backdrop-blur-lg
-                rounded-[30px] shadow-md overflow-hidden ${user ? "pointer-events-auto opacity-100" : "opacity-50 pointer-event-none"}`}>
 
-          {user && positions[displayIndex]?.width > 0 && (
-            <motion.div
-              className={`absolute inset-0 bg-black rounded-full`}
-              animate={{
-                width: positions[displayIndex].width,
-                x: positions[displayIndex].left,
-              }}
-              transition={{ type: "spring", stiffness: 500, damping: 35 }}
-            />
-          )}
-            {[
-              { label: "Home", to: "/feed", ref: homeRef, index: 0 },
-              { label: "Discover", to: "/discover", ref: discoverRef, index: 1 },
-              { label: "Post", to: "/upload", ref: uploadRef, index: 2 },
-            ].map((item) => (
-              <div key={item.to} className={`${user ? (displayIndex === item.index ? "text-white" : "text-black") : "text-black"}`}>
-                {user ? (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    ref={item.ref}
-                    className={`relative z-10 text-sm px-4 font-extralight tracking-wider`}
-                    onMouseEnter={() => setHoverIndex(item.index)}
-                    onMouseLeave={() => setHoverIndex(null)}
-                  >
-                    {item.label}
-                  </NavLink>
-                ) : (
-                  <div
-                    key={item.to}
-                    ref={item.ref}
-                    className={`relative z-10 text-sm px-4 font-extralight tracking-wider opacity-50 cursor-default`}
-                    onClick={() => setShowSignInUpPage(true)}
-                  >
-                    {item.label}
-                </div>
-                )}
-              </div>
-            ))}
-        
-      </div>
 
     </>
     

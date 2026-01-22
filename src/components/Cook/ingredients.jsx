@@ -137,7 +137,7 @@ const Ingredients = ({ onBack, value, onPassToHead, dish_name, dish_description 
                         : ing
                 )
             );
-        }, 200);
+        }, 100);
     };
 
     const selectSuggestion = (idx, suggestion) => {
@@ -235,10 +235,9 @@ const Ingredients = ({ onBack, value, onPassToHead, dish_name, dish_description 
                 <WobblyText text="ingredients"/>
             </h1>
 
-            <div className="flex flex-col p-1 gap-1 justify-end scrollbar-hide relative">
+            <div className=" max-h-[1000px] flex flex-col gap-1 justify-end scrollbar-hide relative bg-gray-100 rounded-[30px]">
 
                 {ingredients.map((ing, idx) => (
-
                     <motion.div 
                         key={`${ing.id || "ing"}-${idx}`} 
                         className={`relative rounded-[40px] flex flex-col items-center justify-center py-1 px-3`}
@@ -323,7 +322,7 @@ const Ingredients = ({ onBack, value, onPassToHead, dish_name, dish_description 
                                 </div>
                                 
                                 {/* Ingredient name input */}
-                                <div className="relative flex flex-col items-center justify-center p-1">
+                                <div className="relative flex flex-col items-center justify-center">
 
                                     <input 
                                         className="w-[175px] md:w-[300px] h-[40px] bg-gray-100 rounded-[25px] flex items-center justify-center 
@@ -341,7 +340,7 @@ const Ingredients = ({ onBack, value, onPassToHead, dish_name, dish_description 
 
                                         <div
                                             ref={el => {dropdownRef.current[idx] = el || undefined;}}
-                                            className="absolute top-[45px] z-50 w-full max-h-[200px] overflow-y-auto rounded-xl bg-white shadow-lg scrollbar-hide"
+                                            className="absolute top-[50px] z-50 w-full max-h-[200px] overflow-y-auto bg-white scrollbar-hide"
                                         >
                                             {ing.suggestions.map((sug) => (
 
