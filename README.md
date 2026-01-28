@@ -1,82 +1,36 @@
-# goMeal - 2026 (Serveless) - Frontend develoment
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This repository contains a part of the source code for the GoMeal platform.
+## Getting Started
 
-# INSTALLATION 
+First, run the development server:
 
-Enviroment variables(AWS REGION, AWS COGNITO IDENTITY) in the ".env" file
-Configuration variables in the "vite.config.js" file; entails the vite frameworks(Reacts, Tailwind) used and ports which local developments will be used("https://localhost:3000")
-Dependencies(importantly:- dropzone, oidc-context, framer-motion, router-dom, aws-sdk, etc.) can be found in the "package.json"; dependencjes can be added but on every instanstion of deployment run "rm -rf node_modules package-lock.json
-npm install" 
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-# DEPLOYMENT 
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-goMeal can deploy in 2 ways:
-1. Locally(2 ways):
-    a. Run "npm install npm run dev". This starts gomeal on web server "localhost" with port 3000 on your local computer 
-    b. Run "npm install npm run dev --host". This starts gomeal on webserver "10.0.0.234" with port 30 on your network
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-2. Deployed:
-    This reposity is connected to the dev branch all, commits are ONLY made to dev, this repository should NEVER run any git commands other than to start deployment 
-	•	git status
-	•	git add .
-	•	git commit -m "description-date&time-full_name"
-	•	git push
-    Upon success gomeal starts on "https://dev.gomeal.org" 
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Learn More
 
-# FILES 
+To learn more about Next.js, take a look at the following resources:
 
-./
-├── public/                  # Static files (gomeal's ico, png, psd. Other images/svg used)
-├── src/
-│   ├── assets/              # Images, fonts
-│   ├── components/          # Reusable UI components
-│   │   ├── user_post_meal/
-|   |   |    ├── index.js
-|   |   |    ├── Head.jsx 
-|   |   |    ├── MealInfo.jsx
-|   |   |    ├── Ingredients.jsx 
-|   |   |    ├── Steps.jsx
-|   |   |    ├── Dietary.jsx 
-|   |   |    └── Nutrition.jsx
-│   │   |
-│   │   ├── Messages.jsx
-│   │   ├── NavBar.jsx
-│   │   └── Profile.jsx
-│   │
-│   ├── pages/               # Page-level components (routes)
-│   │   ├── Home.jsx
-│   │   ├── Feed.jsx
-│   │   ├── Post.jsx
-│   │   ├── Discover.jsx
-│   │   ├── Auth.jsx
-│   │   ├── SignIn.jsx
-│   │   ├── SignUp.jsx
-│   │   └── Settings.jsx
-│   │
-│   ├── style/               # Styles 
-│   │   ├── component_style.css
-│   │   ├── main_page.css
-│   │   └── page_style.css
-│   ├── services/            # API calls
-│   │   └── api.js
-│   │
-│   ├── utils/             # Auth, global state
-│   │   ├── auth.js
-│   │   ├── cognito.js
-│   │   └── user.jsx
-│   │
-│   ├── hooks/               # Helpers
-│   │   ├── AuthHeader.jsx
-│   │   ├── WobblyText.jsx
-│   │   ├── UsePasscode.jsx
-│   │   └── Placrholder.jsx
-│   |
-│   ├── App.jsx
-│   └── main.jsx
-├── .env             # Example environment vars
-├── eslint.config.js
-├── package.json
-├── README.md
-└─vite.config.js
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
